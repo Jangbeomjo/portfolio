@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>장범조 | Portfolio</title>
+  <title>Portfolio</title>
 
   <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -19,7 +19,7 @@
           <a href="#skills">SKILLS</a>
           <a href="#projects">PROJECTS</a>
 
-          <a href="resume.pdf" target="_blank">
+          <a href="./docs/portfolio.pdf" target="_blank">
             RESUME
           </a>
 
@@ -27,7 +27,7 @@
             COVER LETTER
           </a>
 
-          <a href="https://github.com/본인아이디" target="_blank">
+          <a href="https://github.com/Jangbeomjo" target="_blank">
             GITHUB
           </a>
 
@@ -37,17 +37,22 @@
   </nav>
 
   <!-- 메인 화면 -->
-  <section class="hero">
+  <section id="home" class="hero">
 
     <div class="hero-content">
 
       <h1>
         안녕하세요 👋<br>
-        <span>백엔드 개발자 장범조</span>입니다
+        <span>장범조</span>입니다
       </h1>
 
       <p>
-        Spring Boot · Oracle · AI 기반 서비스 개발
+        Backend Developer · Spring Boot · Oracle · AWS · OpenAI
+      </p>
+
+      <p class="hero-desc">
+        사용자 중심의 서비스를 설계하고 개발하는
+        백엔드 개발자입니다.
       </p>
 
       <div class="btn-group">
@@ -57,7 +62,7 @@
         </a>
 
         <a
-          href="https://github.com"
+          href="https://github.com/Jangbeomjo"
           target="_blank"
           class="btn btn-outline">
           GitHub
@@ -72,20 +77,26 @@
   <!-- 소개 -->
   <section id="about">
 
-    <h2 class="section-title">About Me</h2>
+    <h2 class="section-title">
+      About Me
+    </h2>
 
     <div class="about-card">
 
-      <h3>국민대학교 소프트웨어학과</h3>
+      <h3>백엔드 개발자 장범조</h3>
 
       <p>
-        AI 기반 반려견 플랫폼 PAWS를
-        기획부터 개발, 배포까지 1인 개발하였습니다.
+        국민대학교 소프트웨어학과 졸업 예정
       </p>
 
       <p>
-        Spring Boot, Oracle, AWS를 활용한
-        백엔드 개발에 관심이 많습니다.
+        Spring Boot · Oracle Database · AWS · OpenAI API
+        기반 서비스 개발 경험을 보유하고 있습니다.
+      </p>
+
+      <p>
+        AI 기반 반려견 플랫폼 PAWS를
+        기획부터 설계, 개발, 배포까지 1인 개발하였습니다.
       </p>
 
     </div>
@@ -97,19 +108,57 @@
 
     <h2 class="section-title">Skills</h2>
 
-    <div class="skills-grid">
+    <!-- Backend -->
+    <h3 class="skill-category">Backend</h3>
 
+    <div class="skills-grid">
       <div class="skill-card">Java</div>
       <div class="skill-card">Spring Boot</div>
-      <div class="skill-card">Oracle</div>
+      <div class="skill-card">Spring MVC</div>
       <div class="skill-card">MyBatis</div>
+      <div class="skill-card">REST API</div>
+    </div>
+
+    <!-- Database -->
+    <h3 class="skill-category">Database</h3>
+
+    <div class="skills-grid">
+      <div class="skill-card">Oracle</div>
+      <div class="skill-card">SQL</div>
+      <div class="skill-card">PL/SQL</div>
+      <div class="skill-card">ERD Modeling</div>
+    </div>
+
+    <!-- Frontend -->
+    <h3 class="skill-category">Frontend</h3>
+
+    <div class="skills-grid">
+      <div class="skill-card">HTML5</div>
+      <div class="skill-card">CSS3</div>
       <div class="skill-card">JavaScript</div>
+      <div class="skill-card">jQuery</div>
+      <div class="skill-card">AJAX</div>
+    </div>
+
+    <!-- AI & Data -->
+    <h3 class="skill-category">AI & Data</h3>
+
+    <div class="skills-grid">
       <div class="skill-card">Python</div>
       <div class="skill-card">Flask</div>
-      <div class="skill-card">AWS</div>
-      <div class="skill-card">Docker</div>
-      <div class="skill-card">Git</div>
+      <div class="skill-card">OpenAI API</div>
+      <div class="skill-card">Sentiment Analysis</div>
+    </div>
 
+    <!-- Cloud & DevOps -->
+    <h3 class="skill-category">Cloud & DevOps</h3>
+
+    <div class="skills-grid">
+      <div class="skill-card">AWS EC2</div>
+      <div class="skill-card">Docker</div>
+      <div class="skill-card">Linux</div>
+      <div class="skill-card">Git</div>
+      <div class="skill-card">GitHub</div>
     </div>
 
   </section>
@@ -122,7 +171,8 @@
     <div class="project-grid">
 
       <!-- PAWS -->
-      <div class="project-card">
+      <div class="project-card"
+          onclick="location.href='pages/paws.html'">
 
         <div class="project-image"></div>
 
@@ -146,7 +196,8 @@
       </div>
 
       <!-- 헬스포인터 -->
-      <div class="project-card">
+      <div class="project-card"
+          onclick="location.href='pages/healthpointer.html'">
 
         <div class="project-image"></div>
 
@@ -169,7 +220,8 @@
       </div>
 
       <!-- 숨쉴취미 -->
-      <div class="project-card">
+      <div class="project-card"
+          onclick="location.href='pages/hobby.html'">
 
         <div class="project-image"></div>
 
@@ -202,11 +254,20 @@
 
     <div class="contact-card">
 
-      <p>📧 beomjo1121@gmail.com</p>
+      <p>📧 Email : beomjo1121@gmail.com</p>
 
       <p>
         💻 GitHub :
-        github.com/your-id
+        <a href="https://github.com/Jangbeomjo" target="_blank">
+          github.com/Jangbeomjo
+        </a>
+      </p>
+
+      <p>
+        📄 Resume :
+        <a href="./docs/portfolio.pdf" target="_blank">
+          Download PDF
+        </a>
       </p>
 
     </div>
