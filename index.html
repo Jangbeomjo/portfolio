@@ -3,281 +3,194 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio</title>
-
+  <title>장범조 | Backend Developer Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=Noto+Sans+KR:wght@300;400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 
-  <!-- 네비게이션 -->
-  <nav>
-    <div class="nav-container">
-      <div class="logo">Portfolio</div>
-        <div class="menu">
-          <a href="#home">HOME</a>
-          <a href="#about">ABOUT</a>
-          <a href="#skills">SKILLS</a>
-          <a href="#projects">PROJECTS</a>
+  <header class="site-header" id="header">
+    <a href="#home" class="brand">JANG BEOM JO</a>
+    <nav class="nav-desktop">
+      <a href="#about" data-nav="about">ABOUT</a>
+      <a href="#skills" data-nav="skills">SKILLS</a>
+      <a href="#education" data-nav="education">EDUCATION</a>
+      <a href="#projects" data-nav="projects">PROJECTS</a>
+      <a href="#activities" data-nav="activities">ACTIVITIES</a>
+      <a href="#contact" data-nav="contact">CONTACT</a>
+    </nav>
+    <button class="nav-toggle" type="button" aria-label="메뉴" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
 
-          <a href="./docs/portfolio.pdf" target="_blank">
-            RESUME
-          </a>
-
-          <a href="coverletter.pdf" target="_blank">
-            COVER LETTER
-          </a>
-
-          <a href="https://github.com/Jangbeomjo" target="_blank">
-            GITHUB
-          </a>
-
-          <a href="#contact">CONTACT</a>
-        </div>
-    </div>
+  <nav class="nav-mobile" aria-hidden="true">
+    <a href="#about">ABOUT</a>
+    <a href="#skills">SKILLS</a>
+    <a href="#education">EDUCATION</a>
+    <a href="#projects">PROJECTS</a>
+    <a href="#activities">ACTIVITIES</a>
+    <a href="#contact">CONTACT</a>
   </nav>
 
-  <!-- 메인 화면 -->
-  <section id="home" class="hero">
+  <main>
 
-    <div class="hero-content">
-
-      <h1>
-        안녕하세요 👋<br>
-        <span>장범조</span>입니다
-      </h1>
-
-      <p>
-        Backend Developer · Spring Boot · Oracle · AWS · OpenAI
-      </p>
-
-      <p class="hero-desc">
-        사용자 중심의 서비스를 설계하고 개발하는
-        백엔드 개발자입니다.
-      </p>
-
-      <div class="btn-group">
-
-        <a href="#projects" class="btn btn-primary">
-          프로젝트 보기
-        </a>
-
-        <a
-          href="https://github.com/Jangbeomjo"
-          target="_blank"
-          class="btn btn-outline">
-          GitHub
-        </a>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- 소개 -->
-  <section id="about">
-
-    <h2 class="section-title">
-      About Me
-    </h2>
-
-    <div class="about-card">
-
-      <h3>백엔드 개발자 장범조</h3>
-
-      <p>
-        국민대학교 소프트웨어학과 졸업 예정
-      </p>
-
-      <p>
-        Spring Boot · Oracle Database · AWS · OpenAI API
-        기반 서비스 개발 경험을 보유하고 있습니다.
-      </p>
-
-      <p>
-        AI 기반 반려견 플랫폼 PAWS를
-        기획부터 설계, 개발, 배포까지 1인 개발하였습니다.
-      </p>
-
-    </div>
-
-  </section>
-
-  <!-- 기술스택 -->
-  <section id="skills">
-
-    <h2 class="section-title">Skills</h2>
-
-    <!-- Backend -->
-    <h3 class="skill-category">Backend</h3>
-
-    <div class="skills-grid">
-      <div class="skill-card">Java</div>
-      <div class="skill-card">Spring Boot</div>
-      <div class="skill-card">Spring MVC</div>
-      <div class="skill-card">MyBatis</div>
-      <div class="skill-card">REST API</div>
-    </div>
-
-    <!-- Database -->
-    <h3 class="skill-category">Database</h3>
-
-    <div class="skills-grid">
-      <div class="skill-card">Oracle</div>
-      <div class="skill-card">SQL</div>
-      <div class="skill-card">PL/SQL</div>
-      <div class="skill-card">ERD Modeling</div>
-    </div>
-
-    <!-- Frontend -->
-    <h3 class="skill-category">Frontend</h3>
-
-    <div class="skills-grid">
-      <div class="skill-card">HTML5</div>
-      <div class="skill-card">CSS3</div>
-      <div class="skill-card">JavaScript</div>
-      <div class="skill-card">jQuery</div>
-      <div class="skill-card">AJAX</div>
-    </div>
-
-    <!-- AI & Data -->
-    <h3 class="skill-category">AI & Data</h3>
-
-    <div class="skills-grid">
-      <div class="skill-card">Python</div>
-      <div class="skill-card">Flask</div>
-      <div class="skill-card">OpenAI API</div>
-      <div class="skill-card">Sentiment Analysis</div>
-    </div>
-
-    <!-- Cloud & DevOps -->
-    <h3 class="skill-category">Cloud & DevOps</h3>
-
-    <div class="skills-grid">
-      <div class="skill-card">AWS EC2</div>
-      <div class="skill-card">Docker</div>
-      <div class="skill-card">Linux</div>
-      <div class="skill-card">Git</div>
-      <div class="skill-card">GitHub</div>
-    </div>
-
-  </section>
-
-  <!-- 프로젝트 -->
-  <section id="projects">
-
-    <h2 class="section-title">Projects</h2>
-
-    <div class="project-grid">
-
-      <!-- PAWS -->
-      <div class="project-card"
-          onclick="location.href='pages/paws.html'">
-
-        <div class="project-image"></div>
-
-        <div class="project-content">
-
-          <h3>PAWS</h3>
-
-          <p>
-            AI 기반 반려견 라이프 통합 플랫폼
-          </p>
-
-          <div class="tech">
-            <span>Spring Boot</span>
-            <span>Oracle</span>
-            <span>OpenAI</span>
-            <span>AWS</span>
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="hero-inner container">
+        <div class="hero-portrait reveal">
+          <div class="portrait-frame portrait-frame--hero">
+            <img src="./assets/profile.png" alt="장범조 프로필">
           </div>
-
         </div>
-
-      </div>
-
-      <!-- 헬스포인터 -->
-      <div class="project-card"
-          onclick="location.href='pages/healthpointer.html'">
-
-        <div class="project-image"></div>
-
-        <div class="project-content">
-
-          <h3>헬스포인터</h3>
-
-          <p>
-            AI 운동 및 건강 관리 플랫폼
-          </p>
-
-          <div class="tech">
-            <span>Spring Boot</span>
-            <span>Flask</span>
-            <span>Oracle</span>
+        <div class="hero-body">
+          <p class="hero-eyebrow reveal">Backend Developer · Portfolio</p>
+          <h1 class="hero-name reveal">JANG<br>BEOM JO</h1>
+          <p class="hero-tagline-ko reveal" id="heroIntro"></p>
+          <p class="hero-tagline-en reveal" id="heroTaglineEn"></p>
+          <div class="hero-links reveal">
+            <a href="https://github.com/Jangbeomjo" target="_blank" rel="noopener">GITHUB</a>
+            <span>—</span>
+            <a href="./docs/portfolio.pdf" target="_blank" rel="noopener">RESUME</a>
           </div>
-
-        </div>
-
-      </div>
-
-      <!-- 숨쉴취미 -->
-      <div class="project-card"
-          onclick="location.href='pages/hobby.html'">
-
-        <div class="project-image"></div>
-
-        <div class="project-content">
-
-          <h3>숨쉴취미</h3>
-
-          <p>
-            대학생 맞춤형 취미 추천 플랫폼
-          </p>
-
-          <div class="tech">
-            <span>HTML</span>
-            <span>CSS</span>
-            <span>JavaScript</span>
+          <div class="hero-scroll reveal" aria-hidden="true">
+            <span>SCROLL</span><i></i>
           </div>
-
         </div>
+      </div>
+    </section>
 
+    <!-- 01 ABOUT -->
+    <section class="section section-about" id="about">
+      <div class="container about-grid">
+        <div class="about-copy reveal">
+          <span class="section-index">01</span>
+          <h2 class="section-title">ABOUT ME</h2>
+          <p id="aboutText"></p>
+          <p>
+            국민대학교 소프트웨어학과(심화전공) 재학 중이며,
+            PAWS 캡스톤 프로젝트를 기획·설계·개발·배포까지 1인 개발했습니다.
+          </p>
+          <p class="signature">Jang Beom Jo</p>
+        </div>
+        <div class="about-portrait reveal">
+          <div class="portrait-frame portrait-frame--about">
+            <img src="./assets/profile.png" alt="">
+          </div>
+        </div>
       </div>
 
-    </div>
+      <div class="container about-meta reveal">
+        <div class="meta-block">
+          <h3>EDUCATION</h3>
+          <ul class="timeline-compact" id="eduCompact"></ul>
+        </div>
+        <div class="meta-block">
+          <h3>CORE STACK</h3>
+          <div class="stack-lines">
+            <p><span>Backend</span>Java · Spring Boot · REST API</p>
+            <p><span>Data</span>Oracle · SQL · ERD Modeling</p>
+            <p><span>Cloud</span>AWS EC2 · Docker · Git</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  </section>
+    <!-- 02 SKILLS -->
+    <section class="section section-skills" id="skills">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-index">02</span>
+            <h2 class="section-title">SKILLS</h2>
+          </div>
+        </div>
+        <div class="skill-bars reveal" id="skillBars"></div>
+        <div class="tech-cloud reveal" id="techCloud"></div>
+      </div>
+    </section>
 
-  <!-- 연락처 -->
-  <section id="contact">
+    <!-- 03 EDUCATION -->
+    <section class="section section-education" id="education">
+      <div class="education-panel reveal">
+        <span class="section-index section-index--light">03</span>
+        <h2 class="section-title section-title--light">EDUCATION</h2>
+        <ul class="timeline-full" id="eduTimeline"></ul>
+        <a class="text-link" href="./docs/portfolio.pdf" target="_blank" rel="noopener">VIEW MORE →</a>
+      </div>
+      <div class="education-visual reveal">
+        <div class="education-visual__bg" aria-hidden="true"></div>
+        <p class="education-visual__deco" aria-hidden="true">BUILD<br>DEPLOY<br>CREATE</p>
+      </div>
+    </section>
 
-    <h2 class="section-title">Contact</h2>
+    <!-- 04 PROJECTS -->
+    <section class="section section-projects" id="projects">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-index">04</span>
+            <h2 class="section-title">PROJECTS</h2>
+          </div>
+          <a class="text-link" href="https://github.com/Jangbeomjo" target="_blank" rel="noopener">VIEW ALL →</a>
+        </div>
+        <div class="project-grid reveal" id="projectGrid"></div>
+      </div>
+    </section>
 
-    <div class="contact-card">
+    <!-- 05 ACTIVITIES -->
+    <section class="section section-activities" id="activities">
+      <div class="section-activities__bg" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">05</span>
+          <h2 class="section-title">ACTIVITIES</h2>
+        </div>
+        <div class="activity-grid reveal" id="activityGrid"></div>
+      </div>
+    </section>
 
-      <p>📧 Email : beomjo1121@gmail.com</p>
+    <!-- 06 CONTACT -->
+    <section class="section section-contact" id="contact">
+      <div class="container contact-compact reveal">
+        <div class="contact-head">
+          <span class="section-index">06</span>
+          <h2 class="section-title">CONTACT</h2>
+        </div>
+        <p class="contact-lead">언제나 환영합니다.</p>
+        <dl class="contact-row">
+          <div>
+            <dt>E-MAIL</dt>
+            <dd><button type="button" class="copy-btn" data-copy="beomjo1121@gmail.com">beomjo1121@gmail.com</button></dd>
+          </div>
+          <div>
+            <dt>PHONE</dt>
+            <dd><a href="tel:01025271971">010-2527-1971</a></dd>
+          </div>
+          <div>
+            <dt>GITHUB</dt>
+            <dd><a href="https://github.com/Jangbeomjo" target="_blank" rel="noopener">github.com/Jangbeomjo</a></dd>
+          </div>
+          <div>
+            <dt>RESUME</dt>
+            <dd><a href="./docs/portfolio.pdf" target="_blank" rel="noopener">PDF Download</a></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
 
-      <p>
-        💻 GitHub :
-        <a href="https://github.com/Jangbeomjo" target="_blank">
-          github.com/Jangbeomjo
-        </a>
-      </p>
+  </main>
 
-      <p>
-        📄 Resume :
-        <a href="./docs/portfolio.pdf" target="_blank">
-          Download PDF
-        </a>
-      </p>
-
-    </div>
-
-  </section>
-
-  <!-- 푸터 -->
-  <footer>
-    © 2026 장범조 Portfolio
+  <footer class="site-footer">
+    <p>© 2026 JANG BEOM JO. ALL RIGHTS RESERVED.</p>
+    <button type="button" class="top-btn" id="topBtn">TOP ↑</button>
   </footer>
 
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./js/data.js"></script>
+  <script src="./js/main.js"></script>
 </body>
 </html>
