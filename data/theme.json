@@ -18,6 +18,14 @@
     "signature": "Cormorant Garamond"
   },
   "animations": true,
+  "layout": {
+    "containerMax": 1100,
+    "sectionPad": 0,
+    "portraitW": 280,
+    "portraitSm": 220,
+    "baseFontSize": 16,
+    "titleScale": 1
+  },
   "meta": {
     "updatedAt": "2026-07-10T06:53:28.892Z"
   }

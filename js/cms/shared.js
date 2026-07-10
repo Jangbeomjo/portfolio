@@ -18,11 +18,16 @@ const CMS = (() => {
     return [...(items || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }
 
+  function getList(listKey) {
+    const data = PortfolioStore.get();
+    if (listKey === "stackLines") return data.skills?.stackLines;
+    if (listKey === "aboutSections") return data.profile?.about?.sections;
+    return data[listKey]?.items;
+  }
+
   /** 리스트 항목 순서 변경 */
   function reorderItem(listKey, id, dir) {
-    const list = listKey === "stackLines"
-      ? PortfolioStore.get().skills?.stackLines
-      : PortfolioStore.get()[listKey]?.items;
+    const list = getList(listKey);
     if (!list) return false;
     const idx = list.findIndex((i) => i.id === id);
     if (idx < 0) return false;
@@ -64,6 +69,8 @@ const CMS = (() => {
   }
 
   const _imagePreviewCache = new Map();
+  const ASSET_CACHE_KEY = "portfolio_cms_asset_cache";
+  const MAX_PERSIST_PREVIEW = 1.5 * 1024 * 1024;
   const GITHUB_DEFAULTS = { owner: "Jangbeomjo", repo: "portfolio", branch: "main" };
   window.CMS_GITHUB = { ...GITHUB_DEFAULTS, ...(window.CMS_GITHUB || {}) };
 
@@ -85,6 +92,23 @@ const CMS = (() => {
     return `https://raw.githubusercontent.com/${gh.owner}/${gh.repo}/${gh.branch}/${clean}`;
   }
 
+  function readAssetCacheMap() {
+    try {
+      return JSON.parse(localStorage.getItem(ASSET_CACHE_KEY) || "{}");
+    } catch {
+      return {};
+    }
+  }
+
+  function writeAssetCacheEntry(cleanPath, previewUrl) {
+    if (!cleanPath || !previewUrl?.startsWith("data:") || previewUrl.length > MAX_PERSIST_PREVIEW) return;
+    try {
+      const map = readAssetCacheMap();
+      map[cleanPath] = previewUrl;
+      localStorage.setItem(ASSET_CACHE_KEY, JSON.stringify(map));
+    } catch { /* quota */ }
+  }
+
   function cacheImagePreview(path, previewUrl) {
     if (!path || !previewUrl) return;
     _imagePreviewCache.set(path, previewUrl);
@@ -92,7 +116,12 @@ const CMS = (() => {
     if (clean !== path) _imagePreviewCache.set(clean, previewUrl);
     if (!path.startsWith("./")) _imagePreviewCache.set(`./${clean}`, previewUrl);
     try {
-      sessionStorage.setItem(`cms-img:${clean}`, previewUrl);
+      if (previewUrl.startsWith("data:") && previewUrl.length <= MAX_PERSIST_PREVIEW) {
+        sessionStorage.setItem(`cms-asset:${clean}`, previewUrl);
+        writeAssetCacheEntry(clean, previewUrl);
+      } else if (!previewUrl.startsWith("blob:")) {
+        sessionStorage.setItem(`cms-asset:${clean}`, previewUrl);
+      }
     } catch { /* quota */ }
   }
 
@@ -103,13 +132,20 @@ const CMS = (() => {
     for (const key of keys) {
       if (_imagePreviewCache.has(key)) return _imagePreviewCache.get(key);
     }
-    try {
-      const stored = sessionStorage.getItem(`cms-img:${clean}`);
-      if (stored) {
-        cacheImagePreview(path, stored);
-        return stored;
-      }
-    } catch { /* ignore */ }
+    for (const prefix of ["cms-asset:", "cms-img:"]) {
+      try {
+        const stored = sessionStorage.getItem(`${prefix}${clean}`);
+        if (stored) {
+          cacheImagePreview(path, stored);
+          return stored;
+        }
+      } catch { /* ignore */ }
+    }
+    const cached = readAssetCacheMap()[clean];
+    if (cached) {
+      cacheImagePreview(path, cached);
+      return cached;
+    }
     return "";
   }
 
@@ -123,25 +159,29 @@ const CMS = (() => {
 
   const DEFAULT_PROFILE_IMAGE = "./assets/profile.png";
 
-  /** asset URL — 정적 파일은 로컬 우선, CMS 업로드만 GitHub raw */
+  /** CMS 업로드 asset — Draft 캐시 → GitHub raw → 로컬 */
+  function resolveCmsAssetUrl(path) {
+    const cached = readCachedPreview(path);
+    if (cached) return cached;
+    const clean = path.replace(/^\.\//, "");
+    const raw = githubRawUrl(clean);
+    if (raw) return raw;
+    return localAssetUrl(path);
+  }
+
+  /** asset URL — 정적 파일은 로컬 우선, CMS 업로드는 GitHub raw fallback */
   function resolveAssetUrl(path) {
     if (!path) return "";
     if (/^(https?:|blob:|data:)/.test(path)) return path;
     const clean = path.replace(/^\.\//, "");
-    const local = localAssetUrl(path);
 
-    /* assets/images/* — CMS 업로드 (GitHub raw fallback) */
-    if (clean.startsWith("assets/images/")) {
-      const cached = readCachedPreview(path);
-      if (cached) return cached;
-      const raw = githubRawUrl(clean);
-      if (raw) return raw;
+    if (clean.startsWith("assets/images/") || clean.startsWith("assets/docs/")) {
+      return resolveCmsAssetUrl(path);
     }
 
-    /* assets/* 정적 파일 — 항상 로컬 */
-    if (clean.startsWith("assets/")) return local;
+    if (clean.startsWith("assets/")) return localAssetUrl(path);
 
-    return local;
+    return localAssetUrl(path);
   }
 
   /** 이미지 로드 실패 시 GitHub raw → 로컬 fallback */
@@ -202,16 +242,31 @@ const CMS = (() => {
 
   /** 업로드 — GitHub 시도 후 실패 시 Draft 로컬 저장 */
   async function persistUploadedFile(file) {
+    const buildPreview = async () => {
+      if (file.type?.startsWith("image/")) {
+        try { return await toDraftImageUrl(file); } catch { /* fall through */ }
+      }
+      return fileToPersistentUrl(file);
+    };
+
     if (EditorAuth?.canUseGithub?.()) {
       try {
-        return await EditorUpload.uploadFile(file);
+        const path = await EditorUpload.uploadFile(file);
+        try {
+          const preview = await buildPreview();
+          if (preview) cacheImagePreview(path, preview);
+        } catch { /* preview optional */ }
+        return path;
       } catch (err) {
         console.warn("[CMS] GitHub upload failed:", err);
       }
     }
     EditorUI?.showToast?.("Draft에 로컬 저장됩니다.", "info");
-    if (file.type?.startsWith("image/")) return toDraftImageUrl(file);
-    return fileToPersistentUrl(file);
+    const localUrl = await buildPreview();
+    if (localUrl?.startsWith("blob:")) {
+      throw new Error("파일이 너무 커서 Draft에 저장할 수 없습니다. GitHub 로그인 후 업로드하세요.");
+    }
+    return localUrl;
   }
 
   (function preloadGithubConfig() {
@@ -278,6 +333,9 @@ const CMS = (() => {
       projects: ["projects"],
       skills: ["skills"],
       stackLines: ["skills", "about"],
+      introLines: ["hero", "about"],
+      resumeLines: ["education"],
+      aboutSections: ["about"],
     };
     const sections = map[listKey] || [];
     if (window.renderPortfolio) window.renderPortfolio(sections.length ? sections : undefined);
@@ -498,7 +556,7 @@ const CMS = (() => {
   return {
     esc, sortByOrder, reorderItem, deleteItem, deleteProfileLine,
     injectGenericControls, handleListAction, handleLineAction,
-    rerender, rerenderForList, compressImage, resolveAssetUrl, setImageSrc,
+    rerender, rerenderForList, compressImage, resolveAssetUrl, setImageSrc, localAssetUrl, githubRawUrl,
     fileToPersistentUrl, persistUploadedFile, initReveal, signalPortfolioReady,
     collectUsedImages, uploadImageWithFallback, applyImageSource, clearImageSource, toDraftImageUrl,
     getImagePreviewUrl, getGithubConfig,

@@ -59,7 +59,6 @@ const CMSHeader = (() => {
   async function loginHandler() {
     try {
       await InlineEditor.startOAuth();
-      await CMSPageActions.offerDraftRestoreAfterLogin();
       render();
     } catch (err) {
       EditorUI.showToast(err?.message || "로그인에 실패했습니다.", "error");

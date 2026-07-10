@@ -1,0 +1,373 @@
+/* ===================================================
+   Editorial Portfolio — Reference layout skin
+   (기능·편집·모바일 레이아웃은 기존 CSS/JS 유지)
+   =================================================== */
+
+body {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* ── Header ── */
+.site-header:not(.is-scrolled) {
+  background: transparent;
+  border-bottom: none;
+}
+
+.brand {
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.nav-desktop a {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ── Box link (VIEW MORE / VIEW ALL) ── */
+.text-link--box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  border: 1px solid var(--line-strong);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  color: var(--muted);
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+}
+
+.text-link--box:hover {
+  color: var(--white);
+  border-color: var(--white);
+  background: var(--surface-tint-04);
+}
+
+/* ── Hero ── */
+@media (min-width: 961px) {
+  .hero {
+    min-height: 100vh;
+    background: var(--black);
+    padding: clamp(6rem, 12vw, 9rem) 0 clamp(3rem, 6vw, 4rem);
+  }
+
+  .hero-inner {
+    align-items: center;
+    gap: clamp(3rem, 7vw, 6rem);
+  }
+
+  .portrait-frame--hero {
+    width: min(360px, 34vw);
+    max-height: min(78vh, 560px);
+  }
+
+  .hero-eyebrow {
+    color: var(--accent-readable, var(--accent));
+    letter-spacing: 0.22em;
+  }
+
+  .hero-name {
+    font-size: clamp(3rem, 7.5vw, 5.75rem);
+    letter-spacing: 0.05em;
+    line-height: 1.02;
+  }
+
+  .hero-tagline-ko {
+    color: var(--body-soft);
+  }
+
+  .hero-tagline-en {
+    color: var(--muted);
+  }
+
+  .hero-links {
+    margin-top: 0.5rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .hero-scroll {
+    right: -2.5rem;
+  }
+}
+
+/* ── Section typography (editorial) ── */
+.section-index {
+  color: var(--accent-readable, var(--accent));
+  font-weight: 400;
+}
+
+.section-title {
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.section-head {
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── About ── */
+.section-about {
+  background: var(--black);
+  border-top: 1px solid var(--line);
+}
+
+.about-copy p {
+  color: var(--body-soft);
+}
+
+.signature {
+  font-family: var(--signature);
+  font-style: italic;
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  color: var(--white) !important;
+  margin: 1.25rem 0 0.75rem !important;
+  letter-spacing: 0.02em;
+}
+
+.section-crosslink {
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 961px) {
+  .about-grid {
+    align-items: start;
+  }
+
+  .portrait-frame--about {
+    width: min(260px, 24vw);
+    margin-left: auto;
+  }
+
+  .about-section-block {
+    border: none;
+    padding: 0;
+    background: transparent;
+    margin-bottom: 1rem;
+  }
+
+  .about-section-block h4 {
+    color: var(--accent-readable, var(--accent));
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .about-section-block p {
+    color: var(--body-soft);
+    font-size: 0.92rem;
+    line-height: 1.75;
+  }
+}
+
+/* ── Education (burgundy panel + visual) ── */
+.section-education {
+  background: var(--black);
+  border-top: 1px solid var(--line);
+}
+
+.section-education__inner {
+  border: 1px solid var(--line);
+}
+
+.education-panel {
+  background: var(--accent-deep);
+}
+
+@media (min-width: 961px) {
+  .education-panel__content {
+    padding: clamp(2.5rem, 5vw, 3.75rem);
+  }
+}
+
+.education-visual {
+  background: var(--black);
+}
+
+.education-visual__deco {
+  color: var(--accent);
+  opacity: 0.55;
+  letter-spacing: 0.42em;
+  font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+}
+
+/* ── Skills (language-bar feel) ── */
+.section-skills {
+  background: var(--black);
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 961px) {
+  .skill-bar__track {
+    height: 1px;
+    background: var(--surface-tint-10);
+  }
+
+  .skill-bar__fill {
+    background: linear-gradient(to right, var(--accent), color-mix(in srgb, var(--white) 85%, transparent));
+  }
+
+  .skill-category h4 {
+    color: var(--accent-readable, var(--accent));
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+}
+
+/* ── Career / Training / Certs / Awards ── */
+.section-career,
+.section-training,
+.section-certificates,
+.section-awards {
+  background: var(--black);
+  border-top: 1px solid var(--line);
+}
+
+/* ── Activities (icon row) ── */
+.section-activities {
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 961px) {
+  .activity-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .activity-card {
+    background: color-mix(in srgb, var(--black) 55%, transparent);
+    border: 1px solid var(--line);
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .activity-card::before {
+    content: "◆";
+    display: block;
+    font-size: 0.55rem;
+    color: var(--accent-readable, var(--accent));
+    margin-bottom: 1rem;
+    letter-spacing: 0.2em;
+  }
+
+  .activity-card time {
+    color: var(--accent-readable, var(--accent));
+    letter-spacing: 0.1em;
+  }
+}
+
+/* ── Projects ── */
+.section-projects {
+  background: var(--black);
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 961px) {
+  .project-grid {
+    gap: 1.25rem;
+  }
+
+  .project-card {
+    background: var(--surface-2);
+    border-color: var(--line);
+  }
+
+  .project-card:hover {
+    transform: none;
+    border-color: var(--line-strong);
+  }
+
+  .project-card__thumb {
+    height: 160px;
+  }
+
+  .project-card__meta h3 {
+    font-family: var(--serif);
+    letter-spacing: 0.06em;
+  }
+
+  .project-card__body time {
+    color: var(--accent-readable, var(--accent));
+  }
+}
+
+/* ── Contact (compact) ── */
+.section-contact {
+  background: var(--black);
+  border-top: 1px solid var(--line);
+}
+
+.contact-compact .section-headline {
+  margin-bottom: 0.35rem;
+}
+
+.contact-lead {
+  color: var(--body-soft);
+}
+
+.contact-field dd a,
+.contact-row dd a {
+  color: var(--body-soft);
+}
+
+.contact-field dd a:hover,
+.contact-row dd a:hover {
+  color: var(--accent-readable, var(--accent));
+}
+
+/* ── Footer ── */
+.site-footer {
+  background: var(--black);
+  border-top: 1px solid var(--line);
+}
+
+/* ── Mobile: compact utilities ── */
+@media (max-width: 960px) {
+  .section-contact {
+    padding: clamp(1.35rem, 4vw, 1.85rem) 0;
+  }
+
+  .contact-head .section-index {
+    font-size: 1.15rem;
+  }
+
+  .contact-head .section-title {
+    font-size: 0.88rem;
+  }
+
+  .contact-lead {
+    font-size: 0.68rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .contact-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem 0.75rem;
+    padding-top: 0.55rem;
+  }
+
+  .contact-field dt,
+  .contact-row dt {
+    font-size: 0.5rem;
+    margin-bottom: 0.08rem;
+  }
+
+  .contact-row dd,
+  .contact-row dd a,
+  .contact-link-field {
+    font-size: 0.64rem;
+    line-height: 1.3;
+  }
+
+  .text-link--box {
+    font-size: 0.58rem;
+    padding: 0.45rem 0.85rem;
+  }
+
+  .signature {
+    font-size: 1.15rem;
+    margin-top: 0.65rem !important;
+  }
+}

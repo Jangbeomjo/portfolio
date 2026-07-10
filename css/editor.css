@@ -26,7 +26,7 @@
   border-color: var(--accent);
 }
 
-/* 편집 툴바 (상단 고정) */
+/* 편집 툴바 (상단 고정) — 항상 다크 UI, 테마와 무관한 대비 토큰 사용 */
 .editor-toolbar {
   position: fixed;
   top: 0;
@@ -36,14 +36,40 @@
   z-index: 10050;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
+  justify-content: space-between;
+  gap: 0.65rem;
   padding: 0.55rem 1rem;
-  background: rgba(12, 12, 12, 0.96);
+  background: var(--editor-ui-bg, rgba(12, 12, 12, 0.96));
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid var(--editor-ui-border, rgba(255, 255, 255, 0.12));
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  color: var(--editor-ui-text, #F5F0EA);
+}
+
+.editor-toolbar__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.editor-toolbar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.editor-toolbar__session {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
 }
 
 .editor-toolbar.is-visible {
@@ -62,10 +88,18 @@ body.edit-mode .site-header {
 .editor-toolbar__badge {
   font-size: 0.62rem;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--editor-ui-accent, var(--accent-readable, #C4788B));
   padding-right: 0.6rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  margin-right: 0.2rem;
+  border-right: 1px solid var(--editor-ui-border-faint, rgba(255, 255, 255, 0.1));
+  white-space: nowrap;
+}
+
+.editor-toolbar__autosave {
+  font-size: 0.7rem;
+  color: var(--editor-ui-muted, #A39E97);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .editor-toolbar__btn {
@@ -73,22 +107,31 @@ body.edit-mode .site-header {
   font-size: 0.68rem;
   letter-spacing: 0.06em;
   font-family: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--editor-ui-border, rgba(255, 255, 255, 0.12));
   border-radius: 6px;
   background: transparent;
-  color: var(--white);
+  color: var(--editor-ui-text, #F5F0EA);
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.editor-toolbar__btn:hover { border-color: var(--accent); }
-.editor-toolbar__btn--primary { background: var(--accent); border-color: var(--accent); }
-.editor-toolbar__btn--primary:hover { background: var(--accent-deep); }
-.editor-toolbar__btn--ghost { border-color: transparent; color: var(--muted); }
+.editor-toolbar__btn:hover { border-color: var(--editor-ui-accent, var(--accent-readable)); color: var(--editor-ui-text, #F5F0EA); }
+.editor-toolbar__btn--primary {
+  background: var(--editor-ui-primary-bg, var(--accent));
+  border-color: var(--editor-ui-primary-bg, var(--accent));
+  color: var(--editor-ui-primary-text, var(--text-on-accent, #fff));
+}
+.editor-toolbar__btn--primary:hover {
+  background: var(--editor-ui-primary-deep, var(--accent-deep));
+  border-color: var(--editor-ui-primary-deep, var(--accent-deep));
+  color: var(--editor-ui-primary-text, var(--text-on-accent, #fff));
+}
+.editor-toolbar__btn--ghost { border-color: transparent; color: var(--editor-ui-muted, #A39E97); }
+.editor-toolbar__btn--ghost:hover { color: var(--editor-ui-text, #F5F0EA); }
 
 /* 편집모드 — 편집 가능 요소 스타일 */
 .edit-mode .is-editable {
-  outline: 1px dashed rgba(122, 31, 31, 0.5);
+  outline: 1px dashed var(--edit-accent-soft, var(--edit-accent-dim, rgba(122, 31, 31, 0.5)));
   outline-offset: 3px;
   border-radius: 2px;
   cursor: text;
@@ -96,13 +139,13 @@ body.edit-mode .site-header {
 }
 
 .edit-mode .is-editable:hover {
-  outline-color: var(--accent);
-  background: rgba(122, 31, 31, 0.06);
+  outline-color: var(--edit-accent, var(--accent-readable));
+  background: var(--edit-accent-bg, rgba(122, 31, 31, 0.06));
 }
 
 .edit-mode .is-editable:focus {
-  outline: 2px solid var(--accent);
-  background: rgba(122, 31, 31, 0.1);
+  outline: 2px solid var(--edit-accent, var(--accent-readable));
+  background: var(--edit-accent-bg-hover, rgba(122, 31, 31, 0.1));
 }
 
 .edit-mode .is-editable::after {
@@ -111,7 +154,7 @@ body.edit-mode .site-header {
   top: -8px;
   right: -8px;
   font-size: 0.6rem;
-  color: var(--accent);
+  color: var(--edit-accent, var(--accent-readable));
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
@@ -123,7 +166,7 @@ body.edit-mode .site-header {
 /* 이미지 편집 */
 .edit-mode .is-editable-image {
   cursor: pointer;
-  outline: 2px dashed rgba(122, 31, 31, 0.4);
+  outline: 2px dashed var(--edit-accent-soft, var(--edit-accent-dim, rgba(122, 31, 31, 0.4)));
   outline-offset: 4px;
   position: relative;
 }
@@ -187,7 +230,7 @@ body.edit-mode .site-header {
   right: 0;
   top: -1.2rem;
   font-size: 0.6rem;
-  color: var(--accent);
+  color: var(--edit-accent, var(--accent-readable));
   white-space: nowrap;
 }
 
@@ -204,9 +247,9 @@ body.edit-mode .site-header {
   align-items: center;
   padding: 0.25rem 0.55rem;
   font-size: 0.6rem;
-  border: 1px dashed var(--accent);
+  border: 1px dashed var(--edit-accent, var(--accent-readable));
   background: transparent;
-  color: var(--accent);
+  color: var(--edit-accent, var(--accent-readable));
   cursor: pointer;
   border-radius: 4px;
   margin-left: 0.4rem;
@@ -218,16 +261,24 @@ body.edit-mode .site-header {
   padding: 0.5rem 1rem;
   font-size: 0.68rem;
   letter-spacing: 0.08em;
-  border: 1px dashed rgba(122, 31, 31, 0.5);
+  border: 1px dashed var(--edit-accent-soft, var(--edit-accent-dim, rgba(122, 31, 31, 0.5)));
   background: transparent;
-  color: var(--accent);
+  color: var(--edit-accent, var(--accent-readable));
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.2s;
 }
 
 .edit-mode .edit-add-btn { display: inline-block; }
-.edit-add-btn:hover { background: rgba(122, 31, 31, 0.1); border-style: solid; }
+.edit-add-btn:hover {
+  background: var(--edit-accent-bg-hover, rgba(122, 31, 31, 0.1));
+  border-color: var(--edit-accent, var(--accent-readable));
+  border-style: solid;
+}
+
+.about-intro-lines {
+  display: none;
+}
 
 /* 프로젝트 컨트롤 */
 .edit-mode .project-card { position: relative; }
@@ -255,7 +306,10 @@ body.edit-mode .site-header {
   backdrop-filter: blur(4px);
 }
 
-.edit-ctrl-btn:hover { border-color: var(--accent); background: rgba(122, 31, 31, 0.5); }
+.edit-ctrl-btn:hover {
+  border-color: var(--edit-accent, var(--accent-readable));
+  background: var(--edit-accent-bg-strong, rgba(122, 31, 31, 0.5));
+}
 
 .edit-hidden-badge {
   position: absolute;
@@ -275,7 +329,7 @@ body.edit-mode .site-header {
 .edit-mode .project-deploy {
   display: block !important;
   margin-top: 0.4rem;
-  color: var(--muted);
+  color: var(--muted-readable, var(--muted));
   font-size: 0.65rem;
 }
 
@@ -304,10 +358,11 @@ body.edit-mode .site-header {
 .editor-modal__box {
   position: relative;
   width: min(440px, 92vw);
-  background: rgba(12, 12, 12, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--editor-ui-bg, rgba(12, 12, 12, 0.95));
+  border: 1px solid var(--editor-ui-border, rgba(255, 255, 255, 0.1));
   border-radius: 12px;
   backdrop-filter: blur(20px);
+  color: var(--editor-ui-text, #F5F0EA);
 }
 
 .editor-modal__head {
@@ -315,21 +370,31 @@ body.edit-mode .site-header {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--editor-ui-border-faint, rgba(255, 255, 255, 0.08));
 }
 
-.editor-modal__head h3 { font-size: 0.9rem; letter-spacing: 0.05em; }
+.editor-modal__head h3 {
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  color: var(--editor-ui-text, #F5F0EA);
+}
 
 .editor-modal__close {
   background: none;
   border: none;
-  color: var(--muted);
+  color: var(--editor-ui-muted, #A39E97);
   font-size: 1.3rem;
   cursor: pointer;
 }
 
 .editor-modal__body { padding: 1.2rem; }
-.editor-modal__foot { padding: 0.8rem 1.2rem; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end; gap: 0.4rem; }
+.editor-modal__foot {
+  padding: 0.8rem 1.2rem;
+  border-top: 1px solid var(--editor-ui-border-faint, rgba(255, 255, 255, 0.08));
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
 
 .editor-device-code {
   text-align: center;
@@ -342,20 +407,41 @@ body.edit-mode .site-header {
 .editor-device-code strong {
   font-size: 1.6rem;
   letter-spacing: 0.25em;
-  color: var(--accent);
+  color: var(--editor-ui-accent, var(--accent-readable));
 }
 
 .editor-oauth-link {
   display: block;
   text-align: center;
   font-size: 0.78rem;
-  color: var(--accent);
+  color: var(--editor-ui-accent, var(--accent-readable));
   margin-top: 0.8rem;
 }
 
-.editor-loading-text { font-size: 0.82rem; color: var(--muted); text-align: center; }
+.editor-loading-text {
+  font-size: 0.82rem;
+  color: var(--editor-ui-muted, #A39E97);
+  text-align: center;
+}
 
 /* 폼 */
+.editor-form__section {
+  margin: 0.35rem 0 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--editor-ui-border-faint, rgba(255, 255, 255, 0.08));
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--editor-ui-muted, #A39E97);
+  text-transform: uppercase;
+}
+
+.editor-range-wrap span {
+  min-width: 2.75rem;
+  font-size: 0.72rem;
+  color: var(--editor-ui-text, #F5F0EA);
+  text-align: right;
+}
+
 .editor-form { display: flex; flex-direction: column; gap: 0.8rem; }
 
 .editor-form label {
@@ -364,7 +450,7 @@ body.edit-mode .site-header {
   gap: 0.3rem;
   font-size: 0.68rem;
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: var(--editor-ui-muted, #A39E97);
   text-transform: uppercase;
 }
 
@@ -372,10 +458,10 @@ body.edit-mode .site-header {
 .editor-form textarea,
 .editor-form select {
   padding: 0.6rem 0.8rem;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--editor-ui-surface, rgba(0, 0, 0, 0.4));
+  border: 1px solid var(--editor-ui-border, rgba(255, 255, 255, 0.1));
   border-radius: 6px;
-  color: var(--white);
+  color: var(--editor-ui-text, #F5F0EA);
   font-family: inherit;
   font-size: 0.85rem;
 }
@@ -386,7 +472,7 @@ body.edit-mode .site-header {
   gap: 0.8rem;
 }
 
-.editor-range-wrap input[type="range"] { flex: 1; accent-color: var(--accent); }
+.editor-range-wrap input[type="range"] { flex: 1; accent-color: var(--editor-ui-accent, var(--accent-readable)); }
 
 /* 토스트 */
 .editor-toast {
@@ -395,10 +481,11 @@ body.edit-mode .site-header {
   right: 1.5rem;
   z-index: 10025;
   padding: 0.7rem 1.2rem;
-  background: rgba(12, 12, 12, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--editor-ui-bg, rgba(12, 12, 12, 0.95));
+  border: 1px solid var(--editor-ui-border, rgba(255, 255, 255, 0.1));
   border-radius: 8px;
   font-size: 0.8rem;
+  color: var(--editor-ui-text, #F5F0EA);
   opacity: 0;
   transform: translateY(8px);
   transition: all 0.3s;
@@ -411,12 +498,20 @@ body.edit-mode .site-header {
 .editor-toast--error { border-color: #9b2226; }
 
 /* 스킬 바 메타 (편집모드) */
-.skill-bar__meta { display: none; font-size: 0.6rem; color: var(--muted); margin-top: 0.2rem; }
+.skill-bar__meta { display: none; font-size: 0.6rem; color: var(--muted-readable, var(--muted)); margin-top: 0.2rem; }
 .edit-mode .skill-bar__meta { display: block; }
 
 /* 리스트 항목 컨트롤 (학력·활동·상세라인) */
 .edit-mode .edit-list-item {
   position: relative;
+}
+
+.edit-mode .about-section-block.edit-list-item {
+  padding-right: 4.25rem;
+}
+
+.edit-mode .about-section-block .edit-list-item__controls {
+  top: 0.45rem;
 }
 
 .edit-mode .edit-list-item__controls {
@@ -442,7 +537,7 @@ body.edit-mode .site-header {
   position: relative;
   font-size: 0.82rem;
   line-height: 1.7;
-  color: var(--muted);
+  color: var(--muted-readable, var(--muted));
   padding: 0.35rem 0 0.35rem 1rem;
   border-left: 2px solid var(--line);
   margin-bottom: 0.4rem;
@@ -452,12 +547,16 @@ body.edit-mode .site-header {
   content: "·";
   position: absolute;
   left: -0.15rem;
-  color: var(--accent);
+  color: var(--accent-readable, var(--accent));
 }
 
 .detail-lines--light li {
-  color: rgba(255, 255, 255, 0.65);
-  border-left-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-on-accent-muted);
+  border-left-color: var(--line-on-accent);
+}
+
+.detail-lines--light li::before {
+  color: var(--text-on-accent-soft);
 }
 
 .detail-lines--hero li {
@@ -468,31 +567,85 @@ body.edit-mode .site-header {
 .detail-lines__heading {
   font-size: 0.62rem;
   letter-spacing: 0.14em;
-  color: var(--muted);
+  color: var(--muted-readable, var(--muted));
   margin-top: 1.25rem;
   margin-bottom: 0.35rem;
 }
 
 .detail-lines__heading--light {
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-on-accent-faint);
 }
 
 @media (max-width: 768px) {
-  .editor-toolbar { flex-wrap: wrap; padding: 0.45rem 0.6rem; }
-  body.edit-mode { --editor-toolbar-h: 72px; }
   .edit-toggle-btn { top: auto; bottom: 1rem; right: 1rem; }
 }
 
 /* 확장 툴바 */
-.editor-toolbar__autosave {
-  font-size: 0.7rem;
-  color: var(--muted);
-  margin-right: 0.5rem;
-}
-
 .editor-toolbar__btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.editor-toolbar__btn--mobile-only {
+  display: none;
+}
+
+.editor-toolbar__btn--exit {
+  border-color: var(--editor-ui-border, rgba(255, 255, 255, 0.18));
+  color: var(--editor-ui-text, #F5F0EA);
+}
+
+@media (max-width: 960px) {
+  .editor-toolbar__btn--desktop-only {
+    display: none !important;
+  }
+
+  .editor-toolbar__btn--mobile-only {
+    display: inline-flex;
+  }
+
+  .editor-toolbar {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.45rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .editor-toolbar__meta {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: calc(100% - 9.5rem);
+  }
+
+  .editor-toolbar__badge {
+    font-size: 0.58rem;
+    padding-right: 0.45rem;
+  }
+
+  .editor-toolbar__autosave {
+    font-size: 0.54rem;
+  }
+
+  .editor-toolbar__session {
+    margin-left: auto;
+    order: 1;
+  }
+
+  .editor-toolbar__actions {
+    flex: 1 1 100%;
+    order: 2;
+    justify-content: flex-start;
+    gap: 0.3rem;
+  }
+
+  .editor-toolbar__btn {
+    padding: 0.32rem 0.55rem;
+    font-size: 0.58rem;
+  }
+
+  body.edit-mode {
+    --editor-toolbar-h: 74px;
+  }
 }
 
 /* Preview bar */
@@ -526,7 +679,7 @@ body.preview-mode { padding-top: 48px; }
 
 .editor-diff-note {
   font-size: 0.85rem;
-  color: var(--muted);
+  color: var(--editor-ui-muted, #A39E97);
   margin-top: 0.75rem;
 }
 

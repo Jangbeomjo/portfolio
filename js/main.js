@@ -9,15 +9,6 @@
     const loaded = await DataLoader.loadPortfolio();
     PortfolioStore.init(loaded.raw);
 
-    // Draft 복구 — 로그인한 관리자만
-    if (EditorAuth?.getSession?.() && EditorAutosave.hasDraft()) {
-      const restore = await EditorAutosave.promptRestore();
-      if (restore) {
-        const draft = EditorAutosave.loadDraft();
-        if (draft) PortfolioStore.importAll(draft);
-      }
-    }
-
     EditorHistory.reset(PortfolioStore.get());
     window.renderPortfolio();
     CMS.signalPortfolioReady?.();
@@ -290,18 +281,14 @@ function updateFooter(profile) {
 function renderAboutSections(about) {
   const container = document.getElementById("aboutSections");
   if (!container) return;
-  const fields = [
-    { key: "tagline", label: "한 줄 소개" },
-    { key: "intro", label: "자기소개" },
-    { key: "growth", label: "성장 과정" },
-    { key: "strengths", label: "강점" },
-    { key: "collaboration", label: "협업 경험" },
-    { key: "goals", label: "목표" },
-  ];
-  container.innerHTML = fields.map(({ key, label }) =>
-    about[key] || document.body.classList.contains("edit-mode")
-      ? `<div class="about-section-block"><h4>${label}</h4><p data-edit-field="about.${key}">${esc(about[key] || "")}</p></div>`
-      : ""
+  const isEdit = document.body.classList.contains("edit-mode");
+  const sections = sortByOrder(about?.sections || []);
+  const visible = isEdit ? sections : sections.filter((s) => String(s.text || "").trim());
+  container.innerHTML = visible.map((item) =>
+    `<div class="about-section-block edit-list-item" data-edit-list="aboutSections" data-edit-id="${item.id}">
+      <h4 data-edit-field="label">${esc(item.label || "제목")}</h4>
+      <p data-edit-field="text">${esc(item.text || "")}</p>
+    </div>`
   ).join("");
 }
 
@@ -344,16 +331,36 @@ function renderHeaderActions() {
   CMSHeader?.render?.();
 }
 
+function isExternalLink(url) {
+  const u = String(url || "").trim();
+  return /^https?:\/\//i.test(u) || u.startsWith("//");
+}
+
+function linkTargetAttrs(url) {
+  return isExternalLink(url) ? ' target="_blank" rel="noopener noreferrer"' : "";
+}
+
+function isLikelyUrl(value) {
+  const v = String(value || "").trim();
+  return /^(https?:\/\/|\.\/|\/|mailto:|tel:)/i.test(v);
+}
+
 function renderHeroLinks(links) {
   if (!links) return;
   const container = document.querySelector(".hero-links");
   if (!container) return;
   const items = [];
-  if (links.github) items.push(`<a href="${esc(links.github)}" data-edit-field="links.github" target="_blank" rel="noopener">GITHUB</a>`);
-  if (links.resume) items.push(`<a href="${esc(links.resume)}" data-edit-field="links.resume" target="_blank" rel="noopener">RESUME</a>`);
+  if (links.github) {
+    items.push(`<a href="${esc(links.github)}" data-edit-href="profile.links.github"${linkTargetAttrs(links.github)}>GITHUB</a>`);
+  }
+  if (links.resume) {
+    items.push(`<a href="${esc(links.resume)}" data-edit-href="profile.links.resume"${linkTargetAttrs(links.resume)}>RESUME</a>`);
+  }
   container.innerHTML = items.length ? items.join("<span>—</span>") : "";
   container.dataset.editGroup = "profile.links";
 }
+
+window.renderHeroLinks = renderHeroLinks;
 
 function renderHeroChips(skills) {
   const el = document.getElementById("heroChips");
@@ -415,10 +422,17 @@ function renderProfileImages(profile) {
   const fallback = "./assets/profile.png";
   document.querySelectorAll(".portrait-frame img").forEach((img) => {
     const isAbout = img.closest(".portrait-frame--about");
-    const source = isAbout ? (profile.aboutImage || profile.avatar) : profile.avatar;
+    const isContact = img.closest(".portrait-frame--contact");
+    const source = isAbout
+      ? (profile.aboutImage || profile.avatar)
+      : isContact
+        ? (profile.contactImage || profile.aboutImage || profile.avatar)
+        : profile.avatar;
     CMS.setImageSrc(img, source, fallback);
     if (profile.name) img.alt = `${profile.name} 프로필`;
-    img.dataset.editImage = isAbout ? "profile.aboutImage" : "profile.avatar";
+    if (isAbout) img.dataset.editImage = "profile.aboutImage";
+    else if (isContact) img.dataset.editImage = "profile.contactImage";
+    else img.dataset.editImage = "profile.avatar";
   });
   renderEducationMedia(profile);
   renderActivitiesBackground(profile);
@@ -562,11 +576,12 @@ function renderProjectCard(p) {
       <div class="project-card__meta">
         <h3 data-edit-field="title">${esc(p.title)}</h3>
         ${statusLabel}
-        <a class="project-card__gh" href="${esc(p.github || "#")}" data-edit-field="github" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗</a>
+        <a class="project-card__gh" href="${esc(p.github || "#")}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">↗</a>
       </div>
       <time data-edit-field="period">${esc(p.period)}</time>
       <small data-edit-field="type">${esc(p.type)}</small>
       <small data-edit-field="role">${esc(p.role || "")}</small>
+      <small class="edit-only project-github" data-edit-field="github">${esc(p.github || "GitHub URL")}</small>
       <small class="edit-only" data-edit-field="teamSize">${esc(p.teamSize ? `팀 ${p.teamSize}인` : "팀 인원")}</small>
       <p data-edit-field="desc">${esc(p.desc)}</p>
       <p class="edit-only" data-edit-field="achievements">${esc(p.achievements || "성과")}</p>
@@ -588,6 +603,11 @@ function renderActivityCard(a) {
     <small data-edit-field="sub">${esc(a.sub || a.description)}</small>
     <small class="edit-only" data-edit-field="organization">${esc(a.organization || a.company || "")}</small>
   </div>`;
+}
+
+function contactLinkText(dt, val) {
+  if (dt === "E-MAIL" || dt === "PHONE") return val;
+  return dt;
 }
 
 function renderContact(profile) {
@@ -618,7 +638,7 @@ function renderContact(profile) {
       const text = val ? esc(val) : "";
       const ddInner = isEdit
         ? `<span class="contact-link-field" data-edit-field="${field}" data-placeholder="https://...">${text}</span>`
-        : (val ? `<a href="${esc(val)}" target="_blank" rel="noopener">${esc(val)}</a>` : "");
+        : (val ? `<a href="${esc(val)}"${linkTargetAttrs(val)}>${esc(contactLinkText(dt, val))}</a>` : "");
       return `<div class="contact-field">
         <dt>${dt}</dt>
         <dd>${ddInner}</dd>

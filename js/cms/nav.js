@@ -187,8 +187,7 @@ const CMSNav = (() => {
     if (!header || !toggle || !mobile) return;
 
     if (open) {
-      document.getElementById("themeSwitcherPanel")?.classList.remove("is-open");
-      document.getElementById("themeSwitcherToggle")?.setAttribute("aria-expanded", "false");
+      window.ThemeSwitcher?.close?.();
       refreshMobileNav();
       mobile.removeAttribute("aria-hidden");
     } else {

@@ -10,7 +10,28 @@ const PortfolioStore = (() => {
 
   const DEFAULT_ABOUT = {
     tagline: "", intro: "", growth: "", strengths: "", collaboration: "", goals: "",
+    sections: [],
   };
+
+  const LEGACY_ABOUT_FIELDS = [
+    { key: "tagline", label: "한 줄 소개" },
+    { key: "intro", label: "자기소개" },
+    { key: "growth", label: "성장 과정" },
+    { key: "strengths", label: "강점" },
+    { key: "collaboration", label: "협업 경험" },
+    { key: "goals", label: "목표" },
+  ];
+
+  function normalizeAboutSections(about) {
+    const base = { ...DEFAULT_ABOUT, ...(about || {}) };
+    if (Array.isArray(base.sections) && base.sections.length) return base;
+    base.sections = LEGACY_ABOUT_FIELDS
+      .map(({ key, label }, order) => (base[key]
+        ? { id: `as-${key}`, label, text: base[key], order }
+        : null))
+      .filter(Boolean);
+    return base;
+  }
 
   const DEFAULT_RESUMES = { items: [], meta: {} };
   const DEFAULT_DOCUMENTS = { items: [], meta: {} };
@@ -34,6 +55,7 @@ const PortfolioStore = (() => {
   function normalize(raw) {
     const profile = raw.profile || {};
     if (!profile.about) profile.about = { ...DEFAULT_ABOUT, ...(raw.about || {}) };
+    profile.about = normalizeAboutSections(profile.about);
     const skills = raw.skills || { bars: [], tags: [], stackLines: [], meta: {} };
     if (!skills.stackLines) skills.stackLines = [];
     const documents = typeof DocumentAccess !== "undefined"
@@ -101,6 +123,11 @@ const PortfolioStore = (() => {
       if (!data.skills.stackLines) data.skills.stackLines = [];
       return data.skills.stackLines;
     }
+    if (listKey === "aboutSections") {
+      if (!data.profile.about) data.profile.about = normalizeAboutSections({});
+      if (!data.profile.about.sections) data.profile.about.sections = [];
+      return data.profile.about.sections;
+    }
     return data[listKey]?.items;
   }
 
@@ -132,6 +159,11 @@ const PortfolioStore = (() => {
     if (listKey === "stackLines") {
       if (!data.skills.stackLines) data.skills.stackLines = [];
       data.skills.stackLines.push(item);
+      notifyChange();
+      return item;
+    }
+    if (listKey === "aboutSections") {
+      getItemList("aboutSections").push(item);
       notifyChange();
       return item;
     }

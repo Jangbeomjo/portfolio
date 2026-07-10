@@ -21,7 +21,10 @@
       const raw = await DataLoader.loadAllRaw();
       PortfolioStore.init(raw);
       normalizeDocumentsInStore();
-      if (EditorAuth?.getSession?.()) await restoreDraftIfAny();
+      if (EditorAuth?.getSession?.()) {
+        await restoreDraftIfAny();
+        normalizeDocumentsInStore();
+      }
       EditorHistory.reset(PortfolioStore.get());
       accessCtx = DocumentAccess.getContext();
       await handleDeepLinkAccess();
@@ -56,7 +59,7 @@
   }
 
   async function restoreDraftIfAny() {
-    await CMSPageActions.restoreDraftOnLoad();
+    await CMSPageActions.restoreDraftOnLoad({ restoreIfLoggedIn: true });
   }
 
   /** 공유 링크로 진입 시 토큰 검증 */
@@ -110,12 +113,13 @@
   function renderDocCard(d) {
     const isEdit = DocumentAccess.isEditMode();
     const canPrev = DocumentAccess.canPreview(d, accessCtx);
+    const canOpen = DocumentAccess.canOpen(d, accessCtx);
     const canDown = DocumentAccess.canDownload(d, accessCtx);
     const fileUrl = DocumentAccess.getFileUrl(d);
     const hasFile = DocumentAccess.hasFile(d);
     const size = d.fileSize ? formatSize(d.fileSize) : "";
     const versionCount = (d.versions || []).length;
-    const thumb = renderThumbnail(d, canPrev, hasFile);
+    const thumb = renderThumbnail(d, canOpen, canPrev, hasFile);
     const fileStatus = isEdit
       ? (hasFile
         ? `<span class="doc-file-status doc-file-status--ok">● 파일 등록됨</span>`
@@ -130,7 +134,8 @@
     ].filter(Boolean);
 
     const actionRow = [
-      canPrev && fileUrl ? `<button type="button" class="doc-action-btn" data-doc-user-action="preview" data-doc-id="${d.id}">미리보기</button>` : "",
+      canOpen && fileUrl ? `<button type="button" class="doc-action-btn doc-action-btn--primary" data-doc-user-action="open" data-doc-id="${d.id}">열기</button>` : "",
+      canPrev && fileUrl && !isEdit && !canOpen ? `<button type="button" class="doc-action-btn" data-doc-user-action="preview" data-doc-id="${d.id}">미리보기</button>` : "",
       canDown && fileUrl ? `<button type="button" class="doc-action-btn" data-doc-user-action="download" data-doc-id="${d.id}">다운로드</button>` : "",
       d.visibility === "password" && !DocumentAccess.isEditMode() && !accessCtx.unlockedIds.includes(d.id)
         ? `<button type="button" class="doc-action-btn" data-doc-user-action="unlock" data-doc-id="${d.id}">비밀번호</button>` : "",
@@ -139,7 +144,7 @@
             <button type="button" class="doc-action-btn doc-action-btn--upload" data-doc-user-action="upload" data-doc-id="${d.id}">↑ 파일 업로드</button>
             <span class="doc-card__upload-hint">파일을 업로드해 주세요</span>
           </div>` : "",
-      hasFile && !canPrev && !canDown && !isEdit ? `<span class="doc-card__muted">접근 권한 없음</span>` : "",
+      hasFile && !canOpen && !canPrev && !canDown && !isEdit ? `<span class="doc-card__muted">접근 권한 없음</span>` : "",
     ].filter(Boolean).join("");
 
     return `<article class="doc-card doc-card--${d.classification}${hasFile ? "" : " doc-card--no-file"}" data-doc-id="${d.id}">
@@ -170,24 +175,47 @@
     </article>`;
   }
 
-  /** 카드에 PDF iframe 없음 — 자동 다운로드/로드 방지 */
-  function renderThumbnail(d, canPreview, hasFile) {
+  /** 카드 썸네일 — 클릭 시 열기 */
+  function renderThumbnail(d, canOpen, canPreview, hasFile) {
+    const openAttrs = canOpen && hasFile
+      ? ` data-doc-user-action="open" data-doc-id="${d.id}" role="button" tabindex="0" aria-label="${esc(d.name)} 열기"`
+      : "";
+    const clickableClass = canOpen && hasFile ? " doc-card__thumb--clickable" : "";
+
     if (!hasFile) {
       return `<div class="doc-card__thumb doc-card__thumb--empty"><span>📭</span><small>파일 없음</small></div>`;
     }
-    if (!canPreview) {
+    if (!canOpen && !canPreview) {
       return `<div class="doc-card__thumb doc-card__thumb--locked"><span>${fileIcon(d.fileType)}</span><small>잠김</small></div>`;
     }
     if (["png", "jpg", "jpeg", "gif", "webp"].includes(d.fileType)) {
-      return `<div class="doc-card__thumb"><img src="${esc(DocumentAccess.getFileUrl(d))}" alt="" loading="lazy"></div>`;
+      return `<div class="doc-card__thumb${clickableClass}"${openAttrs}><img src="${esc(DocumentAccess.getFileUrl(d))}" alt="" loading="lazy"></div>`;
     }
-    return `<div class="doc-card__thumb doc-card__thumb--pdf"><span>PDF</span><small>미리보기 클릭</small></div>`;
+    if (d.fileType === "html" || d.fileType === "htm") {
+      return `<div class="doc-card__thumb doc-card__thumb--html${clickableClass}"${openAttrs}><span>HTML</span><small>열기 클릭</small></div>`;
+    }
+    return `<div class="doc-card__thumb doc-card__thumb--pdf${clickableClass}"${openAttrs}><span>PDF</span><small>${canOpen ? "열기 클릭" : "미리보기"}</small></div>`;
   }
 
   function bindCardActions() {
     document.querySelectorAll("[data-doc-user-action]").forEach((btn) => {
+      if (btn.dataset.docActionBound) return;
+      btn.dataset.docActionBound = "1";
       btn.onclick = () => handleUserAction(btn.dataset.docUserAction, btn.dataset.docId);
+      btn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleUserAction(btn.dataset.docUserAction, btn.dataset.docId);
+        }
+      });
     });
+  }
+
+  function inferDocFileType(doc) {
+    const type = (doc.fileType || "").toLowerCase();
+    if (type) return type;
+    const path = doc.storage?.path || doc.fileUrl || "";
+    return path.match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase() || "pdf";
   }
 
   async function handleUserAction(action, docId) {
@@ -196,6 +224,28 @@
 
     if (action === "unlock") {
       openPasswordModal(doc);
+      return;
+    }
+
+    if (action === "open") {
+      if (!DocumentAccess.canOpen(doc, accessCtx)) {
+        EditorUI.showToast("열기 권한이 없습니다.", "error");
+        return;
+      }
+      if (!DocumentAccess.hasFile(doc)) {
+        EditorUI.showToast("업로드된 파일이 없습니다. 편집 모드에서 파일을 업로드해 주세요.", "error");
+        return;
+      }
+      const viewable = ["pdf", "png", "jpg", "jpeg", "gif", "webp", "html", "htm"];
+      if (viewable.includes(inferDocFileType(doc))) {
+        openPreviewModal(doc);
+        return;
+      }
+      try {
+        await DocumentAccess.openFile(doc);
+      } catch (err) {
+        EditorUI.showToast(err.message, "error");
+      }
       return;
     }
 
@@ -210,10 +260,15 @@
 
     if (action === "download") {
       if (!DocumentAccess.canDownload(doc, accessCtx)) {
-        const msg = DocumentAccess.isAdmin()
-          ? "이 문서는 다운로드가 허용되지 않습니다."
-          : "다운로드는 로그인한 관리자만 가능합니다.";
-        EditorUI.showToast(msg, "error");
+        if (!doc.access?.allowDownload) {
+          EditorUI.showToast("이 문서는 다운로드가 허용되지 않습니다.", "error");
+        } else if (!DocumentAccess.hasDocAccess(doc, accessCtx)) {
+          EditorUI.showToast("다운로드 권한이 없습니다. 비밀번호 확인 또는 공유 링크가 필요합니다.", "error");
+        } else if (!DocumentAccess.hasFile(doc)) {
+          EditorUI.showToast("다운로드할 파일이 없습니다.", "error");
+        } else {
+          EditorUI.showToast("다운로드할 수 없습니다.", "error");
+        }
         return;
       }
       try {
@@ -231,22 +286,194 @@
 
   function openPreviewModal(doc) {
     const url = DocumentAccess.getFileUrl(doc);
+    if (!url) {
+      EditorUI.showToast("파일 URL을 찾을 수 없습니다. PDF를 다시 업로드해 주세요.", "error");
+      return;
+    }
+
+    const fileType = inferDocFileType(doc);
+    const isPdf = fileType === "pdf";
     let body = "";
-    if (["png", "jpg", "jpeg", "gif", "webp"].includes(doc.fileType)) {
-      body = `<div class="doc-preview-modal"><img src="${CMS.esc(url)}" alt="${CMS.esc(doc.name)}"></div>`;
-    } else if (doc.fileType === "pdf") {
+    if (["png", "jpg", "jpeg", "gif", "webp"].includes(fileType)) {
+      body = `<div class="doc-preview-modal"><img id="docPreviewImg" src="${CMS.esc(url)}" alt="${CMS.esc(doc.name)}"></div>`;
+    } else if (isPdf) {
+      body = `<div class="doc-preview-modal doc-preview-modal--pdf"><div id="docPreviewPdf" class="doc-pdf-viewer"><p class="doc-preview-loading">문서 불러오는 중...</p></div></div>`;
+    } else if (fileType === "html" || fileType === "htm") {
       body = `<div class="doc-preview-modal doc-preview-modal--pdf">
-        <iframe src="${CMS.esc(url)}#toolbar=0&navpanes=0" title="${CMS.esc(doc.name)}" sandbox="allow-scripts allow-same-origin"></iframe>
+        <iframe id="docPreviewFrame" src="${CMS.esc(url)}" title="${CMS.esc(doc.name)}" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
       </div>`;
     } else {
-      body = `<p>이 형식은 브라우저 미리보기를 지원하지 않습니다.</p>`;
+      body = `<p>이 형식은 브라우저 미리보기를 지원하지 않습니다. <strong>다운로드</strong>를 이용해 주세요.</p>`;
     }
-    EditorUI.openModal({
-      title: doc.name,
-      body,
-      foot: `<button class="editor-toolbar__btn editor-toolbar__btn--ghost" id="previewClose">닫기</button>`,
-    });
+
+    const foot = isPdf
+      ? `<button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="previewClose">닫기</button>`
+      : `<button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="previewOpen">새 탭에서 열기</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="previewClose">닫기</button>`;
+
+    EditorUI.openModal({ title: doc.name, body, foot });
     document.getElementById("previewClose").onclick = EditorUI.closeModal;
+
+    if (!isPdf) {
+      document.getElementById("previewOpen")?.addEventListener("click", async () => {
+        try {
+          await DocumentAccess.openFile(doc);
+        } catch (err) {
+          EditorUI.showToast(err.message, "error");
+        }
+      });
+    }
+
+    if (isPdf) {
+      requestAnimationFrame(() => {
+        const container = document.getElementById("docPreviewPdf");
+        renderPdfViewer(container, url).catch((err) => {
+          EditorUI.showToast(err.message || "PDF 미리보기에 실패했습니다.", "error");
+          if (container) {
+            container.innerHTML = `<p class="doc-empty-hint">${CMS.esc(err.message || "PDF 미리보기에 실패했습니다.")}</p>`;
+          }
+        });
+      });
+    }
+  }
+
+  const PDFJS_CDN = [
+    {
+      script: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
+      worker: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js",
+    },
+    {
+      script: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js",
+      worker: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js",
+    },
+  ];
+
+  let pdfJsLoadPromise = null;
+
+  function loadPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if (pdfJsLoadPromise) return pdfJsLoadPromise;
+
+    pdfJsLoadPromise = new Promise((resolve, reject) => {
+      let idx = 0;
+      const tryNext = () => {
+        if (idx >= PDFJS_CDN.length) {
+          reject(new Error("PDF 뷰어를 불러오지 못했습니다. 네트워크 연결을 확인해 주세요."));
+          return;
+        }
+        const source = PDFJS_CDN[idx++];
+        const script = document.createElement("script");
+        script.src = source.script;
+        script.onload = () => {
+          if (!window.pdfjsLib) {
+            tryNext();
+            return;
+          }
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = source.worker;
+          resolve(window.pdfjsLib);
+        };
+        script.onerror = tryNext;
+        document.head.appendChild(script);
+      };
+      tryNext();
+    });
+
+    return pdfJsLoadPromise;
+  }
+
+  async function fetchPdfData(url) {
+    if (url.startsWith("data:")) {
+      const base64 = url.split(",")[1];
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes.buffer;
+    }
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("PDF 파일을 불러오지 못했습니다.");
+    return res.arrayBuffer();
+  }
+
+  function measurePdfScale(container, baseWidth) {
+    const modalBox = container?.closest(".editor-modal__box");
+    const desktop = window.matchMedia("(min-width: 641px)").matches;
+    const maxCap = desktop ? 960 : 900;
+    const width = Math.max(
+      container?.clientWidth || 0,
+      modalBox?.clientWidth ? modalBox.clientWidth - 56 : 0,
+      Math.min(window.innerWidth * (desktop ? 0.9 : 0.88), maxCap),
+      280,
+    );
+    return Math.min(Math.max(width / baseWidth, 0.4), desktop ? 1.75 : 1.6);
+  }
+
+  /** PDF.js — 1페이지 먼저 표시, 나머지는 스크롤 시 렌더 */
+  async function renderPdfViewer(container, url) {
+    if (!container) throw new Error("미리보기 영역을 찾지 못했습니다.");
+
+    const pdfjsLib = await loadPdfJs();
+    container.innerHTML = `<p class="doc-preview-loading">문서 불러오는 중...</p>`;
+    const data = await fetchPdfData(url);
+    const pdf = await pdfjsLib.getDocument({ data }).promise;
+
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    container.innerHTML = "";
+    const status = document.createElement("p");
+    status.className = "doc-pdf-status";
+    status.textContent = `총 ${pdf.numPages}페이지`;
+
+    const pagesWrap = document.createElement("div");
+    pagesWrap.className = "doc-pdf-pages";
+    container.appendChild(status);
+    container.appendChild(pagesWrap);
+
+    const firstPage = await pdf.getPage(1);
+    const scale = measurePdfScale(container, firstPage.getViewport({ scale: 1 }).width);
+
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const slot = document.createElement("div");
+      slot.className = "doc-pdf-page-slot";
+      slot.dataset.page = String(pageNum);
+      slot.innerHTML = `<p class="doc-preview-loading">${pageNum}페이지 준비 중...</p>`;
+      pagesWrap.appendChild(slot);
+    }
+
+    const rendered = new Set();
+
+    async function renderPage(pageNum) {
+      if (rendered.has(pageNum)) return;
+      rendered.add(pageNum);
+      const slot = pagesWrap.querySelector(`[data-page="${pageNum}"]`);
+      if (!slot) return;
+
+      const page = await pdf.getPage(pageNum);
+      const viewport = page.getViewport({ scale });
+      const canvas = document.createElement("canvas");
+      canvas.className = "doc-pdf-page";
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      slot.innerHTML = "";
+      slot.appendChild(canvas);
+      await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+      status.textContent = `${pageNum} / ${pdf.numPages} 페이지`;
+    }
+
+    await renderPage(1);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const pageNum = Number(entry.target.dataset.page);
+        renderPage(pageNum).catch(() => {});
+        observer.unobserve(entry.target);
+      });
+    }, { root: container, rootMargin: "240px 0px" });
+
+    pagesWrap.querySelectorAll(".doc-pdf-page-slot").forEach((slot, index) => {
+      if (index === 0) return;
+      observer.observe(slot);
+    });
   }
 
   function openPasswordModal(doc) {

@@ -19,20 +19,27 @@ const EditorUI = (() => {
     toolbar.id = "editorToolbar";
     toolbar.className = "editor-toolbar";
     toolbar.innerHTML = `
-      <span class="editor-toolbar__badge">편집 모드</span>
-      <span class="editor-toolbar__autosave" id="editorAutosaveLabel"></span>
-      <button type="button" class="editor-toolbar__btn" id="editorUndoBtn" title="Ctrl+Z" disabled>↶</button>
-      <button type="button" class="editor-toolbar__btn" id="editorRedoBtn" title="Ctrl+Y" disabled>↷</button>
-      <button type="button" class="editor-toolbar__btn" id="editorPreviewBtn" title="Preview">Preview</button>
-      <button type="button" class="editor-toolbar__btn" id="editorSeoBtn" title="SEO">SEO</button>
-      <button type="button" class="editor-toolbar__btn" id="editorThemeBtn" title="테마">테마</button>
-      <button type="button" class="editor-toolbar__btn" id="editorGithubBtn" title="GitHub">GitHub</button>
-      <button type="button" class="editor-toolbar__btn" id="editorBackupBtn" title="백업">백업</button>
-      <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="editorClearDraftBtn" title="Draft 삭제">Draft 삭제</button>
-      <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="editorCancelBtn">취소</button>
-      <button type="button" class="editor-toolbar__btn" id="editorSaveBtn" title="Ctrl+S">Draft 저장</button>
-      <button type="button" class="editor-toolbar__btn editor-toolbar__btn--primary" id="editorPublishBtn">Publish</button>
-      <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="editorLogoutBtn">로그아웃</button>`;
+      <div class="editor-toolbar__meta">
+        <span class="editor-toolbar__badge">편집 모드</span>
+        <span class="editor-toolbar__autosave" id="editorAutosaveLabel"></span>
+      </div>
+      <div class="editor-toolbar__actions">
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorUndoBtn" title="Ctrl+Z" disabled>↶</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorRedoBtn" title="Ctrl+Y" disabled>↷</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorPreviewBtn" title="Preview">Preview</button>
+        <button type="button" class="editor-toolbar__btn" id="editorSeoBtn" title="SEO">SEO</button>
+        <button type="button" class="editor-toolbar__btn" id="editorThemeBtn" title="테마">테마</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorGithubBtn" title="GitHub">GitHub</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorBackupBtn" title="백업">백업</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="editorClearDraftBtn" title="Draft 삭제">Draft 삭제</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost editor-toolbar__btn--desktop-only" id="editorCancelBtn">취소</button>
+        <button type="button" class="editor-toolbar__btn" id="editorSaveBtn" title="Ctrl+S">Draft 저장</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--primary" id="editorPublishBtn">Publish</button>
+      </div>
+      <div class="editor-toolbar__session">
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--exit editor-toolbar__btn--mobile-only" id="editorExitBtn">편집종료</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="editorLogoutBtn">로그아웃</button>
+      </div>`;
     document.body.appendChild(toolbar);
 
     bindOnce("editorUndoBtn", () => handlers.undo?.());
@@ -44,6 +51,7 @@ const EditorUI = (() => {
     bindOnce("editorBackupBtn", () => handlers.backup?.());
     bindOnce("editorClearDraftBtn", () => handlers.clearDraft?.());
     bindOnce("editorCancelBtn", () => handlers.cancel?.());
+    bindOnce("editorExitBtn", () => handlers.exit?.());
     bindOnce("editorSaveBtn", () => handlers.save?.());
     bindOnce("editorPublishBtn", () => handlers.publish?.());
     bindOnce("editorLogoutBtn", () => handlers.logout?.());
@@ -187,12 +195,13 @@ const EditorUI = (() => {
   function onGithub(fn) { handlers.github = fn; }
   function onBackup(fn) { handlers.backup = fn; }
   function onClearDraft(fn) { handlers.clearDraft = fn; }
+  function onExit(fn) { handlers.exit = fn; }
 
   return {
     init, showToolbar, hideToolbar, showPreviewBar, hidePreviewBar,
     openModal, closeModal, showToast, showLoading, confirm,
     onSave, onPublish, onPreview, onCancel, onLogout, onUndo, onRedo,
-    onSeo, onTheme, onGithub, onBackup, onClearDraft,
+    onSeo, onTheme, onGithub, onBackup, onClearDraft, onExit,
     showOAuthModal, showTokenInputModal,
     updateHistoryButtons, updateAutosaveLabel, showSkeleton,
   };

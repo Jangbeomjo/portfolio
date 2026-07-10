@@ -55,9 +55,11 @@ const DocumentAccess = (() => {
       || (PRIVATE_CATEGORIES.has(category) ? "private" : PUBLIC_CATEGORIES.has(category) ? "public" : "private");
 
     const path = doc.storage?.path || doc.fileUrl || "";
+    const safePath = isDocumentAsset(path) ? path : "";
+    const extFromPath = safePath.match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase() || "";
     const storage = {
       provider: doc.storage?.provider || "github",
-      path,
+      path: safePath,
       bucket: doc.storage?.bucket || "",
       key: doc.storage?.key || "",
       region: doc.storage?.region || "",
@@ -84,7 +86,8 @@ const DocumentAccess = (() => {
       category,
       classification,
       storage,
-      fileUrl: path,
+      fileUrl: safePath,
+      fileType: doc.fileType || extFromPath || "pdf",
       access,
       visibility,
       versions: Array.isArray(doc.versions) ? doc.versions : [],
@@ -101,12 +104,25 @@ const DocumentAccess = (() => {
   function getFileUrl(doc) {
     if (!doc) return "";
     const path = doc.storage?.path || doc.fileUrl || "";
+    if (!isDocumentAsset(path)) return "";
     return path ? CMS.resolveAssetUrl(path) : "";
+  }
+
+  /** 사이트 내부 HTML 페이지는 문서 파일로 취급하지 않음 */
+  function isDocumentAsset(path) {
+    if (!path || typeof path !== "string") return false;
+    const trimmed = path.trim();
+    if (!trimmed) return false;
+    if (/^(https?:|blob:|data:)/.test(trimmed)) return true;
+    const clean = trimmed.replace(/^\.\//, "").toLowerCase();
+    if (/^pages\/.*\.(html|htm)$/.test(clean)) return false;
+    if (clean === "index.html") return false;
+    return true;
   }
 
   function hasFile(doc) {
     const path = doc?.storage?.path || doc?.fileUrl || "";
-    return typeof path === "string" && path.trim().length > 0;
+    return isDocumentAsset(path);
   }
 
   function isShareValid(doc, ctx) {
@@ -122,7 +138,7 @@ const DocumentAccess = (() => {
 
   function hasDocAccess(doc, ctx = getContext()) {
     if (!doc) return false;
-    if (isEditMode()) return true;
+    if (isEditMode() || isAdmin()) return true;
     if (doc.visibility === "public") return true;
     if (doc.visibility === "private") return false;
     if (doc.visibility === "link") return isShareValid(doc, ctx);
@@ -136,18 +152,27 @@ const DocumentAccess = (() => {
     return !!getFileUrl(doc);
   }
 
+  function canOpen(doc, ctx = getContext()) {
+    if (!hasDocAccess(doc, ctx)) return false;
+    if (!hasFile(doc)) return false;
+    if (isEditMode()) return true;
+    return !!doc.access?.allowPreview;
+  }
+
   function canDownload(doc, ctx = getContext()) {
     if (!hasDocAccess(doc, ctx)) return false;
-    if (isEditMode()) return !!getFileUrl(doc);
+    if (!hasFile(doc)) return false;
+    if (isEditMode()) return true;
     if (!doc.access?.allowDownload) return false;
-    return !!getFileUrl(doc);
+    return true;
   }
 
   function canList(doc, ctx = getContext()) {
     if (isEditMode() || isAdmin()) return true;
-    if (doc.visibility === "public" && doc.access?.allowPreview) return true;
+    if (!hasFile(doc)) return false;
+    if (doc.visibility === "public" && (doc.access?.allowPreview || doc.access?.allowDownload)) return true;
     if (doc.visibility === "link" && isShareValid(doc, ctx)) return true;
-    if (doc.visibility === "password" && isPasswordUnlocked(doc, ctx)) return true;
+    if (doc.visibility === "password") return true;
     return false;
   }
 
@@ -246,7 +271,8 @@ const DocumentAccess = (() => {
   }
 
   async function downloadFile(doc) {
-    const url = getFileUrl(doc);
+    const path = doc.storage?.path || doc.fileUrl || "";
+    let url = getFileUrl(doc);
     if (!url) throw new Error("파일이 없습니다.");
     const ext = doc.fileType ? `.${doc.fileType}` : "";
     const name = `${doc.name}${ext}`;
@@ -257,7 +283,53 @@ const DocumentAccess = (() => {
       await downloadWithWatermark(url, name, `${doc.name} — Confidential`);
       return;
     }
+
+    const urls = [url];
+    const clean = path.replace(/^\.\//, "");
+    if (clean.startsWith("assets/docs/") || clean.startsWith("assets/images/")) {
+      const raw = CMS.githubRawUrl?.(clean) || "";
+      if (raw && !urls.includes(raw)) urls.push(raw);
+      const local = CMS.localAssetUrl?.(path) || "";
+      if (local && !urls.includes(local)) urls.push(local);
+    }
+
+    for (const tryUrl of urls) {
+      try {
+        const res = await fetch(tryUrl);
+        if (!res.ok) continue;
+        const blob = await res.blob();
+        triggerDownload(URL.createObjectURL(blob), name);
+        return;
+      } catch { /* try next */ }
+    }
     triggerDownload(url, name);
+  }
+
+  async function openFile(doc, { inline = true } = {}) {
+    if (!hasFile(doc)) throw new Error("업로드된 파일이 없습니다.");
+    if (doc.fileType === "pdf") {
+      throw new Error("PDF는 「열기」로 화면에서 확인해 주세요.");
+    }
+    let url = getFileUrl(doc);
+    if (!url) throw new Error("파일이 없습니다.");
+
+    const needsBlob = inline && !url.startsWith("blob:") && !url.startsWith("data:");
+    if (needsBlob) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("fetch failed");
+        const blob = await res.blob();
+        const mime = blob.type || EditorUpload?.DOC_TYPES?.[doc.fileType] || "application/octet-stream";
+        const viewBlob = blob.type ? blob : new Blob([await blob.arrayBuffer()], { type: mime });
+        url = URL.createObjectURL(viewBlob);
+        setTimeout(() => URL.revokeObjectURL(url), 120000);
+      } catch {
+        /* direct URL fallback */
+      }
+    }
+
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (!win) throw new Error("팝업이 차단되었습니다. 브라우저에서 팝업을 허용해 주세요.");
   }
 
   function defaultAccessForCategory(category) {
@@ -277,11 +349,11 @@ const DocumentAccess = (() => {
   }
 
   return {
-    normalize, normalizeAll, getContext, getFileUrl, hasFile,
-    isAdmin, isEditMode, hasDocAccess, canList, canPreview, canDownload,
+    normalize, normalizeAll, getContext, getFileUrl, hasFile, isDocumentAsset,
+    isAdmin, isEditMode, hasDocAccess, canList, canPreview, canOpen, canDownload,
     visibilityLabel, classificationLabel, badgeClass,
     hashPassword, verifyPassword, unlockDoc, generateShareToken, buildShareLink,
-    archiveVersion, downloadFile, downloadWithWatermark,
+    archiveVersion, downloadFile, downloadWithWatermark, openFile,
     defaultAccessForCategory, PUBLIC_CATEGORIES, PRIVATE_CATEGORIES, VIS_LABELS,
     isShareValid,
   };

@@ -15,7 +15,7 @@
     try {
       const raw = await DataLoader.loadAllRaw();
       PortfolioStore.init(raw);
-      await CMSPageActions.restoreDraftOnLoad();
+      await CMSPageActions.restoreDraftOnLoad({ restoreIfLoggedIn: true });
       EditorHistory.reset(PortfolioStore.get());
       bindTypeTabs();
       bindActionHub();
@@ -229,7 +229,7 @@
       <p ${isEdit ? `data-edit-resume-field="description" data-resume-id="${r.id}"` : ""}>${esc(r.description || "")}</p>
       <blockquote class="resume-card__excerpt">${esc(excerpt)}</blockquote>
       <div class="resume-card__actions">
-        <a href="${isEdit ? writeHref : viewHref}" class="text-link resume-card__write">${isEdit ? "✎ 직접 작성" : "열어보기"}</a>
+        <a href="${isEdit ? writeHref : viewHref}" class="text-link resume-card__write" data-resume-nav="${r.slug}">${isEdit ? "✎ 직접 작성" : "열어보기"}</a>
         ${pdfLink ? `<a href="${esc(pdfLink)}" target="_blank" rel="noopener" class="text-link">PDF</a>` : ""}
       </div>
       ${isEdit ? `<div class="resume-card__controls page-controls">
@@ -243,6 +243,15 @@
   }
 
   function bindResumeCardControls() {
+    document.querySelectorAll(".resume-card__write[data-resume-nav]").forEach((link) => {
+      if (link.dataset.navBound) return;
+      link.dataset.navBound = "1";
+      link.addEventListener("click", () => {
+        if (!canEdit()) return;
+        CMSPageActions.saveDraftNow();
+      });
+    });
+
     document.querySelectorAll(".resume-card .resume-card__controls:not([data-bound])").forEach((controls) => {
       controls.dataset.bound = "1";
       const card = controls.closest(".resume-card");

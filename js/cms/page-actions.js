@@ -7,7 +7,15 @@ const CMSPageActions = (() => {
 
   function saveDraftNow() {
     if (!PortfolioStore?.get?.()) return;
-    EditorAutosave?.saveDraft?.(PortfolioStore.get());
+    EditorAutosave?.flush?.(PortfolioStore.get()) || EditorAutosave?.saveDraft?.(PortfolioStore.get());
+  }
+
+  if (!window.__cmsDraftFlushBound) {
+    window.__cmsDraftFlushBound = true;
+    window.addEventListener("pagehide", saveDraftNow);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") saveDraftNow();
+    });
   }
 
   function stashPendingResume(item) {
@@ -51,8 +59,8 @@ const CMSPageActions = (() => {
     } catch { /* ignore */ }
   }
 
-  /** 페이지 로드 시 — Resume 이동 직후에만 Draft 자동 복구 (confirm 없음) */
-  async function restoreDraftOnLoad({ slug } = {}) {
+  /** 페이지 로드 시 — 로그인 + Draft 있으면 자동 복구 (confirm 없음) */
+  async function restoreDraftOnLoad({ slug, restoreIfLoggedIn = false } = {}) {
     if (!EditorAuth?.getSession?.() || !EditorAutosave?.hasDraft?.()) return false;
     const draft = EditorAutosave.loadDraft();
     if (!draft) return false;
@@ -61,7 +69,7 @@ const CMSPageActions = (() => {
     const slugInDraft = slug && draft.resumes?.items?.some((r) => r.slug === slug);
     const fromResumeNav = slug && navSlug === slug;
 
-    if (slugInDraft || fromResumeNav) {
+    if (slugInDraft || fromResumeNav || restoreIfLoggedIn) {
       PortfolioStore.importAll(draft);
       if (fromResumeNav) sessionStorage.removeItem(RESUME_NAV_KEY);
       return true;
@@ -69,20 +77,9 @@ const CMSPageActions = (() => {
     return false;
   }
 
-  /** 로그인 직후 — 사용자가 명시적으로 로그인했을 때만 Draft 복구 확인 */
+  /** 로그인 직후 Draft 복구 — 편집 시작 시 enterEditMode()에서 처리 */
   async function offerDraftRestoreAfterLogin() {
-    if (!EditorAuth?.getSession?.() || !EditorAutosave?.hasDraft?.()) return false;
-    const restore = await EditorAutosave.promptRestore();
-    if (!restore) return false;
-    const draft = EditorAutosave.loadDraft();
-    if (!draft) return false;
-    PortfolioStore.importAll(draft);
-    CMS?.rerender?.();
-    window.renderResumeDocument?.();
-    window.renderResumeList?.();
-    window.renderDocuments?.();
-    window.renderImageLibrary?.();
-    return true;
+    return false;
   }
 
   function navigateToResumeEditor(slug) {

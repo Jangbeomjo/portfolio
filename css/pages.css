@@ -340,12 +340,39 @@ body.edit-mode .page-main {
   font: inherit;
   font-size: 0.78rem;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--body-soft);
   white-space: nowrap;
 }
 
 .doc-action-btn:hover {
   color: var(--white);
+}
+
+.doc-action-btn--primary {
+  color: var(--accent-readable, var(--accent));
+  font-weight: 500;
+}
+
+.doc-action-btn--primary:hover {
+  color: var(--white);
+}
+
+.doc-card__thumb--clickable {
+  cursor: pointer;
+}
+
+.doc-card__thumb--clickable:hover {
+  outline: 2px solid var(--accent-readable, var(--accent));
+  outline-offset: 2px;
+}
+
+.doc-card__thumb--html {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background: var(--surface-tint-06, rgba(255, 255, 255, 0.06));
 }
 
 .doc-action-btn--upload {
@@ -458,6 +485,73 @@ body.edit-mode .page-main {
   border-radius: 0.35rem;
 }
 
+.doc-pdf-viewer {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.doc-pdf-pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.doc-pdf-page {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  background: #fff;
+  border-radius: 0.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.doc-pdf-status {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.doc-pdf-page-slot {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.doc-preview-loading {
+  padding: 2rem 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* PC — 문서 열기 모달 확대 */
+@media (min-width: 641px) {
+  .editor-modal__box:has(.doc-preview-modal) {
+    width: min(960px, 94vw);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .editor-modal__box:has(.doc-preview-modal) .editor-modal__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 1rem 1.4rem;
+  }
+
+  .doc-preview-modal,
+  .doc-pdf-viewer {
+    max-height: 80vh;
+  }
+
+  .doc-preview-modal--pdf iframe {
+    height: 80vh;
+  }
+}
+
 .doc-version-list {
   list-style: none;
   padding: 0;
@@ -489,25 +583,27 @@ body.edit-mode .page-main {
   justify-content: flex-end;
 }
 
-/* About 확장 */
-.about-sections {
-  margin: 1.5rem 0;
-}
+/* About 확장 — desktop */
+@media (min-width: 961px) {
+  .about-sections {
+    margin: 1.5rem 0;
+  }
 
-.about-section-block {
-  margin-bottom: 1.25rem;
-}
+  .about-section-block {
+    margin-bottom: 1.25rem;
+  }
 
-.about-section-block h4 {
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-  margin-bottom: 0.35rem;
-}
+  .about-section-block h4 {
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+  }
 
-.about-section-block p {
-  color: var(--muted);
-  line-height: 1.7;
+  .about-section-block p {
+    color: var(--muted);
+    line-height: 1.7;
+  }
 }
 
 .edit-featured-badge {
@@ -587,9 +683,8 @@ body.edit-mode .page-main {
 }
 
 @media (max-width: 960px) {
-  .section-training .section-head {
+  .section-training .section-headline {
     margin-bottom: 1.25rem;
-    padding-bottom: 0.75rem;
   }
 
   .training-grid {
@@ -675,10 +770,9 @@ body.edit-mode .page-main {
 }
 
 @media (max-width: 960px) {
-  .section-certificates .section-head,
-  .section-awards .section-head {
+  .section-certificates .section-headline,
+  .section-awards .section-headline {
     margin-bottom: 1.25rem;
-    padding-bottom: 0.75rem;
   }
 
   .cert-list,
@@ -723,9 +817,12 @@ body.edit-mode .page-main {
 /* Skill categories */
 .skill-categories {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .skill-category h4 {
@@ -1706,7 +1803,7 @@ body.is-loading .skeleton-overlay {
 }
 
 .resume-doc-section.is-locked:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-tint-03);
 }
 
 .resume-doc-section__title {
@@ -1719,7 +1816,7 @@ body.is-loading .skeleton-overlay {
 
 .resume-doc-section__content {
   white-space: pre-wrap;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--body-soft);
   font-size: 0.92rem;
   line-height: 1.75;
 }
@@ -1731,7 +1828,7 @@ body.is-loading .skeleton-overlay {
 
 .resume-doc-meta__link {
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--body-muted);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -2596,6 +2693,68 @@ body.is-loading .skeleton-overlay {
 
   .project-grid--page {
     gap: 0.5rem;
+  }
+}
+
+/* Desktop — Education (02) typography (loads after editor.css) */
+@media (min-width: 961px) {
+  .education-panel .section-headline {
+    margin-bottom: 1.35rem;
+  }
+
+  .education-panel .section-index {
+    font-size: clamp(2.25rem, 3.8vw, 3.5rem);
+  }
+
+  .education-panel .section-title {
+    font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+    letter-spacing: 0.1em;
+  }
+
+  .education-panel .timeline-full li {
+    grid-template-columns: 150px 1fr;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+  }
+
+  .education-panel .timeline-full time {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .education-panel .timeline-full strong {
+    font-size: 1.125rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .education-panel .timeline-full span[data-edit-field="major"],
+  .education-panel .timeline-full span[data-edit-field="minor"],
+  .education-panel .timeline-full p {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+
+  .education-panel .timeline-full small {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .education-panel .detail-lines__heading {
+    font-size: 0.875rem;
+    letter-spacing: 0.12em;
+    margin-top: 1.75rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .education-panel .detail-lines li {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    padding: 0.45rem 0 0.45rem 1.15rem;
+  }
+
+  .education-panel .text-link {
+    font-size: 0.9375rem;
+    letter-spacing: 0.06em;
   }
 }
 

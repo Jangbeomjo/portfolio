@@ -1,4 +1,4 @@
-/** Auto-generated — file:// fallback */
+/** Auto-generated — file:// fallback. Run: python scripts/bundle-data.py */
 window.__PORTFOLIO_RAW__ = {
   "profile": {
     "name": "장범조",
@@ -438,6 +438,14 @@ window.__PORTFOLIO_RAW__ = {
       "signature": "Cormorant Garamond"
     },
     "animations": true,
+    "layout": {
+      "containerMax": 1100,
+      "sectionPad": 0,
+      "portraitW": 280,
+      "portraitSm": 220,
+      "baseFontSize": 16,
+      "titleScale": 1
+    },
     "meta": {
       "updatedAt": "2026-07-10T06:53:28.892Z"
     }
@@ -604,21 +612,21 @@ window.__PORTFOLIO_RAW__ = {
         "classification": "public",
         "storage": {
           "provider": "github",
-          "path": "./pages/resume.html",
+          "path": "",
           "bucket": "",
           "key": "",
           "region": ""
         },
-        "fileUrl": "./pages/resume.html",
-        "fileType": "html",
+        "fileUrl": "",
+        "fileType": "pdf",
         "fileSize": 0,
-        "description": "온라인 이력서 페이지 (PDF 업로드 전)",
+        "description": "PDF 업로드 필요 — 편집 모드에서 ↑ 파일 업로드",
         "uploadedAt": "2026-07-09T00:00:00.000Z",
         "updatedAt": "2026-07-09T00:00:00.000Z",
         "visibility": "public",
         "access": {
           "allowPreview": true,
-          "allowDownload": false,
+          "allowDownload": true,
           "watermarkOnDownload": false,
           "shareToken": "",
           "shareExpiresAt": "",
@@ -634,21 +642,21 @@ window.__PORTFOLIO_RAW__ = {
         "classification": "public",
         "storage": {
           "provider": "github",
-          "path": "./pages/resume.html",
+          "path": "",
           "bucket": "",
           "key": "",
           "region": ""
         },
-        "fileUrl": "./pages/resume.html",
-        "fileType": "html",
+        "fileUrl": "",
+        "fileType": "pdf",
         "fileSize": 0,
-        "description": "온라인 이력서 페이지",
+        "description": "PDF 업로드 필요 — 편집 모드에서 ↑ 파일 업로드",
         "uploadedAt": "2026-07-09T00:00:00.000Z",
         "updatedAt": "2026-07-09T00:00:00.000Z",
         "visibility": "public",
         "access": {
           "allowPreview": true,
-          "allowDownload": false,
+          "allowDownload": true,
           "watermarkOnDownload": false,
           "shareToken": "",
           "shareExpiresAt": "",

@@ -216,16 +216,97 @@ function hexToRgb(hex) {
   return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
 }
 
+function relativeLuminance(hex) {
+  const { r, g, b } = hexToRgb(hex?.startsWith("#") ? hex : "#000000");
+  const channel = (v) => {
+    const s = v / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+
+function isLightColor(hex) {
+  return relativeLuminance(hex) > 0.58;
+}
+
+function contrastRatio(fgHex, bgHex) {
+  const L1 = relativeLuminance(fgHex?.startsWith("#") ? fgHex : "#888888");
+  const L2 = relativeLuminance(bgHex?.startsWith("#") ? bgHex : "#0D0D0D");
+  return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+}
+
+function mixHex(hexA, hexB, t) {
+  const a = hexToRgb(hexA?.startsWith("#") ? hexA : "#888888");
+  const b = hexToRgb(hexB?.startsWith("#") ? hexB : "#141414");
+  const mix = (x, y) => Math.round(x + (y - x) * t);
+  const toHex = (n) => n.toString(16).padStart(2, "0");
+  return `#${toHex(mix(a.r, b.r))}${toHex(mix(a.g, b.g))}${toHex(mix(a.b, b.b))}`;
+}
+
+function ensureContrast(fgHex, bgHex, minRatio = 3.2) {
+  const fg = fgHex?.startsWith("#") ? fgHex : "#888888";
+  const bg = bgHex?.startsWith("#") ? bgHex : "#0D0D0D";
+  if (contrastRatio(fg, bg) >= minRatio) return fg;
+  const target = isLightColor(bg) ? "#141414" : "#F5F0EA";
+  for (let t = 0.05; t <= 1; t += 0.05) {
+    const candidate = mixHex(fg, target, t);
+    if (contrastRatio(candidate, bg) >= minRatio) return candidate;
+  }
+  return target;
+}
+
+function pickTextOn(bgHex, light = "#FFFFFF", dark = "#141414") {
+  return isLightColor(bgHex) ? dark : light;
+}
+
+function rgbaOn(bgHex, alpha, light = [255, 255, 255], dark = [20, 20, 20]) {
+  const rgb = isLightColor(bgHex) ? dark : light;
+  return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+}
+
 function applyThemeSurfaces(colors, mode) {
   const root = document.documentElement;
   const isLight = mode === "light";
   const bg = colors?.background || "#0D0D0D";
+  const surface = colors?.surface || "#161616";
+  const accent = colors?.primary || "#8B2942";
+  const text = colors?.text || (isLight ? "#1A1A1A" : "#F5F0EA");
   const deep = colors?.primaryDeep || "#5C1A2A";
-  const deepRgb = hexToRgb(deep.startsWith("#") ? deep : "#5C1A2A");
+  const deepHex = deep.startsWith("#") ? deep : "#5C1A2A";
+  const deepRgb = hexToRgb(deepHex);
+  const textHex = text.startsWith("#") ? text : (isLight ? "#1A1A1A" : "#F5F0EA");
+  const mutedHex = colors?.muted || (isLight ? "#6B6560" : "#A39E97");
+  const tint = isLight ? "0, 0, 0" : "255, 255, 255";
+  const onAccent = pickTextOn(deepHex);
+  const bgHex = bg.startsWith("#") ? bg : "#0D0D0D";
+  const surfaceHex = surface.startsWith("#") ? surface : "#161616";
+
+  root.style.setProperty("--accent-readable", ensureContrast(accent, bgHex));
+  root.style.setProperty("--accent-readable-surface", ensureContrast(accent, surfaceHex));
+  root.style.setProperty("--muted-readable", ensureContrast(mutedHex, bgHex, 3));
+  root.style.setProperty("--muted-readable-surface", ensureContrast(mutedHex, surfaceHex, 3));
 
   root.style.setProperty("--line", isLight ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.1)");
   root.style.setProperty("--line-strong", isLight ? "rgba(0, 0, 0, 0.14)" : "rgba(255, 255, 255, 0.18)");
   root.style.setProperty("--muted-dim", isLight ? "#8A8580" : "#6B6660");
+
+  root.style.setProperty("--text-primary", textHex);
+  root.style.setProperty("--text-soft", colors?.muted || (isLight ? "#6B6560" : "#A39E97"));
+  root.style.setProperty("--text-on-accent", onAccent);
+  root.style.setProperty("--text-on-accent-muted", rgbaOn(deepHex, 0.72));
+  root.style.setProperty("--text-on-accent-faint", rgbaOn(deepHex, 0.48));
+  root.style.setProperty("--text-on-accent-soft", rgbaOn(deepHex, 0.82));
+  root.style.setProperty("--text-on-accent-dim", rgbaOn(deepHex, 0.58));
+  root.style.setProperty("--line-on-accent", rgbaOn(deepHex, 0.14));
+  root.style.setProperty("--surface-tint-03", `rgba(${tint}, 0.03)`);
+  root.style.setProperty("--surface-tint-04", `rgba(${tint}, 0.04)`);
+  root.style.setProperty("--surface-tint-06", `rgba(${tint}, 0.06)`);
+  root.style.setProperty("--surface-tint-08", `rgba(${tint}, 0.08)`);
+  root.style.setProperty("--surface-tint-10", `rgba(${tint}, 0.10)`);
+  root.style.setProperty("--surface-tint-55", `rgba(${tint}, 0.55)`);
+  root.style.setProperty("--body-soft", `color-mix(in srgb, ${textHex} 78%, transparent)`);
+  root.style.setProperty("--body-muted", `color-mix(in srgb, ${textHex} 62%, transparent)`);
+  root.style.setProperty("--body-faint", `color-mix(in srgb, ${textHex} 48%, transparent)`);
 
   if (isLight) {
     root.style.setProperty("--header-bg", "rgba(255, 255, 255, 0.9)");
@@ -242,6 +323,25 @@ function applyThemeSurfaces(colors, mode) {
     "--panel-overlay",
     `linear-gradient(rgba(${deepRgb.r}, ${deepRgb.g}, ${deepRgb.b}, 0.82), rgba(${deepRgb.r}, ${deepRgb.g}, ${deepRgb.b}, 0.9))`
   );
+
+  const editorBg = "#0C0C0C";
+  const editAccent = ensureContrast(accent, bgHex, 3.5);
+  root.style.setProperty("--editor-ui-bg", editorBg);
+  root.style.setProperty("--editor-ui-text", "#F5F0EA");
+  root.style.setProperty("--editor-ui-muted", ensureContrast("#A39E97", editorBg, 3));
+  root.style.setProperty("--editor-ui-accent", ensureContrast(accent, editorBg, 4.5));
+  root.style.setProperty("--editor-ui-border", "rgba(255, 255, 255, 0.12)");
+  root.style.setProperty("--editor-ui-border-faint", "rgba(255, 255, 255, 0.08)");
+  root.style.setProperty("--editor-ui-surface", "rgba(0, 0, 0, 0.4)");
+  root.style.setProperty("--editor-ui-primary-bg", accent.startsWith("#") ? accent : "#8B2942");
+  root.style.setProperty("--editor-ui-primary-text", pickTextOn(accent.startsWith("#") ? accent : "#8B2942"));
+  root.style.setProperty("--editor-ui-primary-deep", deepHex);
+  root.style.setProperty("--edit-accent", editAccent);
+  root.style.setProperty("--edit-accent-dim", `color-mix(in srgb, ${editAccent} 55%, transparent)`);
+  root.style.setProperty("--edit-accent-soft", `color-mix(in srgb, ${editAccent} 35%, transparent)`);
+  root.style.setProperty("--edit-accent-bg", `color-mix(in srgb, ${editAccent} 8%, transparent)`);
+  root.style.setProperty("--edit-accent-bg-hover", `color-mix(in srgb, ${editAccent} 14%, transparent)`);
+  root.style.setProperty("--edit-accent-bg-strong", `color-mix(in srgb, ${editAccent} 50%, transparent)`);
 }
 
 function applyTheme(theme) {
@@ -272,12 +372,53 @@ function applyTheme(theme) {
   document.body.classList.add(`theme-${preset}`);
   document.body.classList.toggle("theme-light", mode === "light");
   document.body.classList.toggle("no-animations", animations === false);
-  document.body.classList.toggle("theme-glass", false);
+  document.body.classList.toggle("theme-glass", !!theme.glassmorphism);
   document.body.classList.toggle("theme-flashy", !!THEME_PRESETS[preset]?.flashy);
   document.body.dataset.themePreset = preset;
   document.body.dataset.themeMode = mode;
 
+  applyThemeLayout(theme);
   ThemeSwitcher?.syncUI?.();
+}
+
+const THEME_LAYOUT_DEFAULTS = {
+  containerMax: 1100,
+  sectionPad: 0,
+  portraitW: 280,
+  portraitSm: 220,
+  baseFontSize: 16,
+  titleScale: 1,
+};
+
+function applyThemeLayout(theme) {
+  const root = document.documentElement;
+  const layout = { ...THEME_LAYOUT_DEFAULTS, ...(theme?.layout || {}) };
+  const maxW = Number(layout.containerMax) || THEME_LAYOUT_DEFAULTS.containerMax;
+
+  root.style.setProperty(
+    "--container",
+    `min(${maxW}px, calc(100% - 2 * var(--page-gutter, 1.5rem)))`
+  );
+
+  const sectionPad = Number(layout.sectionPad);
+  if (sectionPad > 0) {
+    root.style.setProperty("--section-pad", `${sectionPad}rem`);
+  } else {
+    root.style.removeProperty("--section-pad");
+  }
+
+  const portraitW = Number(layout.portraitW) || THEME_LAYOUT_DEFAULTS.portraitW;
+  const portraitSm = Number(layout.portraitSm) || THEME_LAYOUT_DEFAULTS.portraitSm;
+  root.style.setProperty("--portrait-w", `min(${portraitW}px, 72vw)`);
+  root.style.setProperty("--portrait-w-sm", `min(${portraitSm}px, 55vw)`);
+
+  const baseFontSize = Number(layout.baseFontSize) || THEME_LAYOUT_DEFAULTS.baseFontSize;
+  root.style.fontSize = baseFontSize === THEME_LAYOUT_DEFAULTS.baseFontSize
+    ? ""
+    : `${baseFontSize}px`;
+
+  const titleScale = Number(layout.titleScale) || THEME_LAYOUT_DEFAULTS.titleScale;
+  root.style.setProperty("--title-scale", String(titleScale));
 }
 
 function resolveThemeMode(mode) {
@@ -332,6 +473,77 @@ function mergeThemeWithVisitorChoice(baseTheme) {
 const ThemeSwitcher = (() => {
   let bound = false;
 
+  function getPanel() {
+    return document.getElementById("themeSwitcherPanel");
+  }
+
+  function getToggle() {
+    return document.getElementById("themeSwitcherToggle");
+  }
+
+  function getBackdrop() {
+    return document.getElementById("themeSwitcherBackdrop");
+  }
+
+  function ensureBackdrop() {
+    if (getBackdrop()) return;
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      '<button type="button" class="theme-switcher__backdrop" id="themeSwitcherBackdrop" aria-hidden="true" tabindex="-1"></button>'
+    );
+  }
+
+  function mountPanel() {
+    const panel = getPanel();
+    ensureBackdrop();
+    if (panel && panel.parentElement !== document.body) {
+      document.body.appendChild(panel);
+    }
+  }
+
+  function positionThemePanel() {
+    const panel = getPanel();
+    const toggle = getToggle();
+    if (!panel || !panel.classList.contains("is-open") || !toggle) return;
+
+    if (window.matchMedia("(max-width: 960px)").matches) {
+      panel.style.removeProperty("top");
+      panel.style.removeProperty("right");
+      panel.style.removeProperty("left");
+      panel.style.removeProperty("bottom");
+      return;
+    }
+
+    const rect = toggle.getBoundingClientRect();
+    panel.style.top = `${rect.bottom + 6}px`;
+    panel.style.right = `${Math.max(12, window.innerWidth - rect.right)}px`;
+    panel.style.left = "auto";
+    panel.style.bottom = "auto";
+  }
+
+  function setPanelOpen(open) {
+    const panel = getPanel();
+    const toggle = getToggle();
+    const backdrop = getBackdrop();
+    if (!panel || !toggle) return;
+
+    panel.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    panel.setAttribute("aria-hidden", String(!open));
+    document.body.classList.toggle("theme-panel-open", open);
+    backdrop?.classList.toggle("is-open", open);
+    backdrop?.setAttribute("aria-hidden", String(!open));
+
+    if (open) {
+      mountPanel();
+      positionThemePanel();
+    }
+  }
+
+  function closePanel() {
+    setPanelOpen(false);
+  }
+
   function render(container) {
     if (!container || container.querySelector(".theme-switcher")) return;
     const current = getSavedPreset() || normalizePresetName(document.body.dataset.themePreset) || "modern";
@@ -359,6 +571,7 @@ const ThemeSwitcher = (() => {
           <div class="theme-switcher__grid">${cards}</div>
         </div>
       </div>`);
+    mountPanel();
     bind(container);
   }
 
@@ -369,40 +582,45 @@ const ThemeSwitcher = (() => {
     document.addEventListener("click", (e) => {
       const toggle = e.target.closest("#themeSwitcherToggle");
       const card = e.target.closest("[data-theme-preset]");
-      const panel = document.getElementById("themeSwitcherPanel");
+      const backdrop = e.target.closest("#themeSwitcherBackdrop");
 
       if (toggle) {
         e.stopPropagation();
         CMSNav?.closeMenu?.();
-        const open = !panel?.classList.contains("is-open");
-        panel?.classList.toggle("is-open", open);
-        toggle.setAttribute("aria-expanded", String(open));
-        panel?.setAttribute("aria-hidden", String(!open));
+        const open = !getPanel()?.classList.contains("is-open");
+        setPanelOpen(open);
+        return;
+      }
+
+      if (backdrop) {
+        e.stopPropagation();
+        closePanel();
         return;
       }
 
       if (card) {
         e.stopPropagation();
         selectPreset(card.dataset.themePreset);
-        panel?.classList.remove("is-open");
-        document.getElementById("themeSwitcherToggle")?.setAttribute("aria-expanded", "false");
-        panel?.setAttribute("aria-hidden", "true");
+        closePanel();
         return;
       }
 
-      if (!e.target.closest(".theme-switcher")) {
-        panel?.classList.remove("is-open");
-        document.getElementById("themeSwitcherToggle")?.setAttribute("aria-expanded", "false");
-        panel?.setAttribute("aria-hidden", "true");
+      if (!e.target.closest(".theme-switcher") && !e.target.closest("#themeSwitcherPanel")) {
+        closePanel();
       }
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        document.getElementById("themeSwitcherPanel")?.classList.remove("is-open");
-        document.getElementById("themeSwitcherToggle")?.setAttribute("aria-expanded", "false");
-      }
+      if (e.key === "Escape") closePanel();
     });
+
+    window.addEventListener("scroll", () => {
+      if (getPanel()?.classList.contains("is-open")) positionThemePanel();
+    }, { passive: true });
+
+    window.addEventListener("resize", () => {
+      if (getPanel()?.classList.contains("is-open")) positionThemePanel();
+    }, { passive: true });
   }
 
   function selectPreset(presetName) {
@@ -428,7 +646,7 @@ const ThemeSwitcher = (() => {
     if (base) applyTheme(mergeThemeWithVisitorChoice(base));
   }
 
-  return { render, syncUI, selectPreset, initFromStore };
+  return { render, syncUI, selectPreset, initFromStore, close: closePanel };
 })();
 
 window.applyTheme = applyTheme;

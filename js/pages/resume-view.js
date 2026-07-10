@@ -232,23 +232,29 @@
   }
 
   function addSection(title) {
-    currentResume.sections = currentResume.sections || [];
-    if (currentResume.sections.some((s) => s.title === title)) {
+    const slug = new URLSearchParams(location.search).get("slug");
+    const resume = PortfolioStore.findResumeBySlug(slug) || currentResume;
+    if (!resume) return;
+    currentResume = resume;
+    resume.sections = resume.sections || [];
+    if (resume.sections.some((s) => s.title === title)) {
       EditorUI.showToast(`「${title}」 항목이 이미 있습니다.`, "info");
       return;
     }
-    currentResume.sections.push({
+    resume.sections.push({
       id: EditorGitHub.generateId("s"),
       title,
       content: "",
-      order: currentResume.sections.length,
+      order: resume.sections.length,
     });
     PortfolioStore.notifyChange();
+    CMSPageActions.saveDraftNow();
     renderDocument();
     EditorUI.showToast(`「${title}」 항목이 추가되었습니다.`, "success");
   }
 
   function bindSectionForm(canWrite) {
+    const slug = new URLSearchParams(location.search).get("slug");
     document.querySelectorAll("[data-section-field]").forEach((el) => {
       if (canWrite) el.removeAttribute("readonly");
       if (el.dataset.sectionBound) return;
@@ -257,13 +263,19 @@
         if (!isWritable()) return;
         const id = el.dataset.sectionId;
         const field = el.dataset.sectionField;
-        const section = currentResume.sections.find((s) => s.id === id);
+        const resume = PortfolioStore.findResumeBySlug(slug);
+        if (!resume?.sections) return;
+        const section = resume.sections.find((s) => s.id === id);
         if (!section) return;
         section[field] = (el.value ?? el.textContent).trim();
+        currentResume = resume;
         PortfolioStore.notifyChange();
       };
       el.addEventListener("input", save);
-      el.addEventListener("blur", save);
+      el.addEventListener("blur", () => {
+        save();
+        CMSPageActions.saveDraftNow();
+      });
     });
 
     document.querySelectorAll("[data-section-action]").forEach((btn) => {
@@ -276,9 +288,13 @@
   }
 
   function handleSectionAction(btn) {
+    const slug = new URLSearchParams(location.search).get("slug");
+    const resume = PortfolioStore.findResumeBySlug(slug) || currentResume;
+    if (!resume?.sections) return;
+    currentResume = resume;
     const sectionEl = btn.closest("[data-section-id]");
     const id = sectionEl.dataset.sectionId;
-    const sections = currentResume.sections;
+    const sections = resume.sections;
     const idx = sections.findIndex((s) => s.id === id);
     if (idx < 0) return;
     const action = btn.dataset.sectionAction;
@@ -288,6 +304,7 @@
         sections.splice(idx, 1);
         sections.forEach((s, i) => { s.order = i; });
         PortfolioStore.notifyChange();
+        CMSPageActions.saveDraftNow();
         renderDocument();
       });
       return;
@@ -305,6 +322,7 @@
     } else return;
     sections.forEach((s, i) => { s.order = i; });
     PortfolioStore.notifyChange();
+    CMSPageActions.saveDraftNow();
     renderDocument();
   }
 

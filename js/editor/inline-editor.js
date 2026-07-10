@@ -25,6 +25,18 @@ const InlineEditor = (() => {
     return active;
   }
 
+  function syncLoggedInViewState() {
+    if (!EditorAuth.getSession()) return;
+    if (document.body.classList.contains("edit-mode")) {
+      ensureActive();
+      refreshEditState();
+      return;
+    }
+    active = false;
+    EditorUI.hideToolbar?.();
+    CMSHeader?.render?.();
+  }
+
   function init() {
     EditorUI.init();
     bindToolbar();
@@ -33,25 +45,21 @@ const InlineEditor = (() => {
     bindGlobalShortcuts();
     bindDataPipeline();
 
-    document.addEventListener("portfolio:ready", () => {
-      if (EditorAuth.getSession()) enterEditMode();
-    });
+    document.addEventListener("portfolio:ready", syncLoggedInViewState);
 
     document.addEventListener("portfolio:rendered", () => {
       if (ensureActive()) refreshEditState();
     });
 
-    if (window.__portfolioReady && EditorAuth.getSession()) {
-      enterEditMode();
-    }
+    if (window.__portfolioReady) syncLoggedInViewState();
   }
 
   /** cms:data-changed → autosave + history */
   function bindDataPipeline() {
     let historyTimer = null;
     document.addEventListener("cms:data-changed", (e) => {
-      if (!active) return;
-      const recordHistory = e.detail?.recordHistory !== false;
+      if (!active && !EditorAuth?.getSession?.()) return;
+      const recordHistory = e.detail?.recordHistory !== false && active;
       if (recordHistory) {
         clearTimeout(historyTimer);
         historyTimer = setTimeout(() => EditorHistory.push(), 400);
@@ -201,6 +209,7 @@ const InlineEditor = (() => {
   /** 렌더 후 contenteditable·클래스만 갱신 (리스너 재등록 불필요) */
   function refreshEditState() {
     document.querySelectorAll("[data-edit-field]").forEach((el) => {
+      if (el.matches(".project-card__gh") || el.closest(".hero-links")) return;
       el.classList.add("is-editable");
       el.contentEditable = "true";
     });
@@ -230,6 +239,15 @@ const InlineEditor = (() => {
       CMSHeader?.render?.();
       return;
     }
+
+    if (EditorAutosave.hasDraft() && EditorAutosave.draftDiffersFrom(PortfolioStore.get())) {
+      const restore = await EditorAutosave.promptRestore();
+      if (restore) {
+        const draft = EditorAutosave.loadDraft();
+        if (draft) PortfolioStore.importAll(draft);
+      }
+    }
+
     active = true;
     document.body.classList.add("edit-mode");
     EditorUI.showToolbar();
@@ -265,6 +283,11 @@ const InlineEditor = (() => {
     else if (window.renderDocuments) window.renderDocuments();
     else if (window.renderImageLibrary) window.renderImageLibrary();
   }
+  function isLikelyUrl(value) {
+    const v = String(value || "").trim();
+    return /^(https?:\/\/|\.\/|\/|mailto:|tel:)/i.test(v);
+  }
+
   function syncField(el) {
     const field = el.dataset.editField;
     const list = el.closest("[data-edit-list]");
@@ -275,7 +298,12 @@ const InlineEditor = (() => {
         PortfolioStore.get().profile.links = PortfolioStore.get().profile.links || {};
         PortfolioStore.get().profile.links[child] = "";
         PortfolioStore.notifyChange();
+        window.renderHeroLinks?.(PortfolioStore.get().profile.links);
       }
+      return;
+    }
+
+    if ((field === "github" || field?.endsWith(".github") || field?.endsWith(".resume")) && !isLikelyUrl(value)) {
       return;
     }
 
@@ -310,7 +338,11 @@ const InlineEditor = (() => {
         return;
       }
       PortfolioStore.updateItem(listKey, id, field, value);
-      if (field === "github" && el.tagName === "A") el.href = value;
+      if (field === "github") {
+        const card = el.closest(".project-card");
+        const ghLink = card?.querySelector(".project-card__gh");
+        if (ghLink && isLikelyUrl(value)) ghLink.href = value;
+      }
       if (listKey === "projects" && field === "href") {
         const card = el.closest(".project-card");
         if (card) card.dataset.href = value;
@@ -318,8 +350,8 @@ const InlineEditor = (() => {
       return;
     }
 
-    // about.* 필드
-    if (field?.startsWith("about.")) {
+    // about.* 레거시 flat 필드 (마이그레이션 전 draft 호환)
+    if (field?.startsWith("about.") && !list) {
       const key = field.replace("about.", "");
       PortfolioStore.get().about = PortfolioStore.get().about || {};
       PortfolioStore.get().about[key] = value;
@@ -333,6 +365,7 @@ const InlineEditor = (() => {
       profile.links = profile.links || {};
       profile.links[child] = value;
       PortfolioStore.notifyChange();
+      window.renderHeroLinks?.(profile.links);
       return;
     }
 
@@ -341,8 +374,8 @@ const InlineEditor = (() => {
       const profile = PortfolioStore.get().profile;
       profile.links = profile.links || {};
       profile.links[child] = value;
-      if (el.tagName === "A") el.href = value;
       PortfolioStore.notifyChange();
+      window.renderHeroLinks?.(profile.links);
       return;
     }
 
@@ -477,7 +510,10 @@ const InlineEditor = (() => {
     injectAddBtn("trainingGrid", "교육/활동 추가", addTraining);
     injectAddBtn("certList", "자격증 추가", addCertificate);
     injectAddBtn("awardList", "수상 추가", addAward);
-    injectAddBtn("heroIntroLines", "소개 라인 추가", () => addProfileLine("introLines"));
+    const addIntroLine = () => addProfileLine("introLines");
+    injectAddBtn("heroIntroLines", "소개 라인 추가", addIntroLine);
+    injectAddBtn("aboutIntroLines", "소개 라인 추가", addIntroLine);
+    injectAddBtn("aboutSections", "About 항목 추가", addAboutSection);
     injectAddBtn("resumeLines", "이력서 라인 추가", () => addProfileLine("resumeLines"));
   }
 
@@ -549,15 +585,15 @@ const InlineEditor = (() => {
   function injectAddBtn(containerId, label, handler) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    const parent = container.parentElement;
-    let btn = parent.querySelector(`.edit-add-btn[data-for="${containerId}"]`);
+    const host = container.closest(".hero-intro-block, .about-intro-lines") || container.parentElement;
+    let btn = host.querySelector(`.edit-add-btn[data-for="${containerId}"]`);
     if (!btn) {
       btn = document.createElement("button");
       btn.type = "button";
       btn.className = "edit-add-btn edit-only";
       btn.dataset.for = containerId;
       btn.textContent = `+ ${label}`;
-      parent.appendChild(btn);
+      container.insertAdjacentElement("afterend", btn);
     }
     btn._handler = handler;
   }
@@ -620,6 +656,17 @@ const InlineEditor = (() => {
     PortfolioStore.addItem(listKey, item);
     const section = category === "career" ? "career" : "activities";
     window.renderPortfolio?.([section, "about"]);
+  }
+
+  function addAboutSection() {
+    const sections = PortfolioStore.get().profile.about?.sections || [];
+    PortfolioStore.addItem("aboutSections", {
+      id: EditorGitHub.generateId("as"),
+      label: "새 항목",
+      text: "",
+      order: sections.length,
+    });
+    window.renderPortfolio?.(["about"]);
   }
 
   function addProfileLine(arrayKey) {
@@ -778,6 +825,10 @@ const InlineEditor = (() => {
     EditorUI.onPublish(publishAll);
     EditorUI.onPreview(() => EditorDraft.enterPreview());
     EditorUI.onCancel(cancelEdit);
+    EditorUI.onExit(() => {
+      exitEditMode();
+      CMSHeader?.render?.();
+    });
     EditorUI.onLogout(logout);
     EditorUI.onUndo(() => { if (EditorHistory.undo()) rerenderCurrentPage(); });
     EditorUI.onRedo(() => { if (EditorHistory.redo()) rerenderCurrentPage(); });
@@ -935,6 +986,7 @@ const InlineEditor = (() => {
     const theme = PortfolioStore.get().theme;
     const c = theme.colors || {};
     const f = theme.fonts || {};
+    const layout = { containerMax: 1100, sectionPad: 0, portraitW: 280, portraitSm: 220, baseFontSize: 16, titleScale: 1, ...(theme.layout || {}) };
     const presetOptions = Object.entries(window.THEME_PRESETS || {}).map(([key, p]) =>
       `<option value="${key}"${theme.preset === key ? " selected" : ""}>${CMS.esc(p.label)} — ${CMS.esc(p.desc)}</option>`
     ).join("");
@@ -956,13 +1008,57 @@ const InlineEditor = (() => {
           <option value="true"${theme.animations !== false ? " selected" : ""}>ON</option>
           <option value="false"${theme.animations === false ? " selected" : ""}>OFF</option>
         </select></label>
+        <p class="editor-form__section">레이아웃 · 글자 크기</p>
+        <label>컨테이너 너비 (px)
+          <div class="editor-range-wrap">
+            <input type="range" id="themeContainerMax" min="900" max="1400" step="10" value="${layout.containerMax}">
+            <span id="themeContainerMaxVal">${layout.containerMax}</span>
+          </div>
+        </label>
+        <label>섹션 상하 여백 (rem, 0=자동)
+          <div class="editor-range-wrap">
+            <input type="range" id="themeSectionPad" min="0" max="8" step="0.25" value="${layout.sectionPad}">
+            <span id="themeSectionPadVal">${layout.sectionPad || "auto"}</span>
+          </div>
+        </label>
+        <label>프로필 사진 너비 (px)
+          <div class="editor-range-wrap">
+            <input type="range" id="themePortraitW" min="160" max="400" step="10" value="${layout.portraitW}">
+            <span id="themePortraitWVal">${layout.portraitW}</span>
+          </div>
+        </label>
+        <label>기본 글자 크기 (px)
+          <div class="editor-range-wrap">
+            <input type="range" id="themeBaseFont" min="14" max="18" step="1" value="${layout.baseFontSize}">
+            <span id="themeBaseFontVal">${layout.baseFontSize}</span>
+          </div>
+        </label>
+        <label>제목 크기 배율
+          <div class="editor-range-wrap">
+            <input type="range" id="themeTitleScale" min="85" max="115" step="1" value="${Math.round((layout.titleScale || 1) * 100)}">
+            <span id="themeTitleScaleVal">${Math.round((layout.titleScale || 1) * 100)}%</span>
+          </div>
+        </label>
       </div>`,
       foot: `<button class="editor-toolbar__btn editor-toolbar__btn--ghost" id="themeCancel">취소</button><button class="editor-toolbar__btn editor-toolbar__btn--primary" id="themeApply">적용</button>`,
     });
+    const bindRange = (id, valId, fmt = (v) => v) => {
+      const input = document.getElementById(id);
+      const out = document.getElementById(valId);
+      if (!input || !out) return;
+      input.oninput = () => { out.textContent = fmt(input.value); };
+    };
+    bindRange("themeContainerMax", "themeContainerMaxVal");
+    bindRange("themeSectionPad", "themeSectionPadVal", (v) => (Number(v) > 0 ? v : "auto"));
+    bindRange("themePortraitW", "themePortraitWVal");
+    bindRange("themeBaseFont", "themeBaseFontVal");
+    bindRange("themeTitleScale", "themeTitleScaleVal", (v) => `${v}%`);
     document.getElementById("themePreset").onchange = (e) => {
+      const keepGlass = document.getElementById("themeGlass")?.checked;
       const preset = applyPreset(e.target.value);
       if (preset) {
         Object.assign(theme, preset);
+        if (keepGlass !== undefined) theme.glassmorphism = keepGlass;
         applyTheme(theme);
       }
     };
@@ -976,6 +1072,14 @@ const InlineEditor = (() => {
       theme.colors.background = document.getElementById("themeBg").value;
       theme.fonts = { serif: document.getElementById("themeSerif").value, sans: document.getElementById("themeSans").value, signature: f.signature || "Cormorant Garamond" };
       theme.animations = document.getElementById("themeAnim").value === "true";
+      theme.layout = {
+        containerMax: Number(document.getElementById("themeContainerMax").value),
+        sectionPad: Number(document.getElementById("themeSectionPad").value),
+        portraitW: Number(document.getElementById("themePortraitW").value),
+        portraitSm: layout.portraitSm || 220,
+        baseFontSize: Number(document.getElementById("themeBaseFont").value),
+        titleScale: Number(document.getElementById("themeTitleScale").value) / 100,
+      };
       PortfolioStore.notifyChange();
       applyTheme(theme);
       EditorUI.closeModal();

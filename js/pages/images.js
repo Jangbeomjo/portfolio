@@ -21,13 +21,6 @@
     try {
       const raw = await DataLoader.loadAllRaw();
       PortfolioStore.init(raw);
-      if (EditorAuth?.getSession?.() && EditorAutosave.hasDraft()) {
-        const restore = await EditorAutosave.promptRestore();
-        if (restore) {
-          const draft = EditorAutosave.loadDraft();
-          if (draft) PortfolioStore.importAll(draft);
-        }
-      }
       EditorHistory.reset(PortfolioStore.get());
       renderImageLibrary();
       bindDropzone();
