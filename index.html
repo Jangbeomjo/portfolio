@@ -7,12 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=Noto+Sans+KR:wght@300;400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css?v=20260718">
-  <link rel="stylesheet" href="./css/themes.css?v=20260716">
-  <link rel="stylesheet" href="./css/mobile.css?v=20260721">
-  <link rel="stylesheet" href="./css/editor.css?v=20260723">
+  <link rel="stylesheet" href="./css/style.css?v=20260824">
+  <link rel="stylesheet" href="./css/themes.css?v=20260831">
+  <link rel="stylesheet" href="./css/mobile.css?v=20260830">
+  <link rel="stylesheet" href="./css/editor.css?v=20260824">
   <link rel="stylesheet" href="./css/pages.css?v=20260716">
-  <link rel="stylesheet" href="./css/editorial.css?v=20260731">
+  <link rel="stylesheet" href="./css/editorial.css?v=20260831">
 </head>
 <body>
 
@@ -58,6 +58,7 @@
       </div>
       <div class="hero-mobile-bar reveal" id="heroMobileBar" aria-hidden="true">
         <div class="hero-chips" id="heroChips" aria-label="주요 기술"></div>
+        <div class="hero-journey" id="heroJourney" aria-label="주요 여정"></div>
         <nav class="hero-quick" id="heroQuickNav" aria-label="빠른 이동">
           <a href="#about">About</a>
           <a href="#projects">Work</a>
@@ -116,7 +117,7 @@
         </div>
         <div class="education-visual reveal">
           <img class="education-visual__img" src="./assets/profile.png" alt="">
-          <p class="education-visual__deco" aria-hidden="true">BUILD<br>DEPLOY<br>CREATE</p>
+          <p class="education-visual__deco" aria-hidden="true">智<br>能<br>开发</p>
         </div>
       </div>
     </section>
@@ -208,19 +209,28 @@
     <!-- 10 CONTACT -->
     <section class="section section-contact" id="contact">
       <div class="container contact-compact reveal">
-        <div class="section-headline contact-head">
-          <span class="section-index">10</span>
-          <h2 class="section-title">CONTACT</h2>
+        <div class="contact-grid">
+          <div class="contact-copy">
+            <div class="section-headline contact-head">
+              <span class="section-index">10</span>
+              <h2 class="section-title">CONTACT</h2>
+            </div>
+            <p class="contact-lead">언제나 환영합니다.</p>
+            <div class="contact-row"></div>
+          </div>
+          <div class="contact-portrait reveal">
+            <div class="portrait-frame portrait-frame--contact">
+              <img src="./assets/profile.png" alt="장범조 프로필">
+            </div>
+          </div>
         </div>
-        <p class="contact-lead">언제나 환영합니다.</p>
-        <div class="contact-row"></div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>© 2026 JANG BEOM JO. ALL RIGHTS RESERVED.</p>
     <button type="button" class="top-btn" id="topBtn">TOP ↑</button>
+    <p>© 2026 JANG BEOM JO. ALL RIGHTS RESERVED.</p>
   </footer>
 
   <div class="skeleton-overlay" id="skeletonOverlay" aria-hidden="true"></div>
@@ -234,16 +244,17 @@
   <script src="./js/editor/history.js"></script>
   <script src="./js/editor/autosave.js?v=20260801"></script>
   <script src="./js/editor/draft.js"></script>
-  <script src="./js/cms/shared.js?v=20260723"></script>
+  <script src="./js/cms/shared.js?v=20260824"></script>
   <script src="./js/editor/auth.js"></script>
   <script src="./js/editor/github.js"></script>
   <script src="./js/editor/upload.js"></script>
   <script src="./js/editor/ui.js"></script>
   <script src="./js/cms/github-panel.js"></script>
   <script src="./js/cms/header.js?v=20260801"></script>
-  <script src="./js/editor/inline-editor.js?v=20260801"></script>
+  <script src="./js/editor/inline-editor.js?v=20260824"></script>
   <script src="./js/seo.js"></script>
-  <script src="./js/theme.js?v=20260731"></script>
-  <script src="./js/main.js?v=20260801"></script>
+  <script src="./js/theme.js?v=20260824"></script>
+  <script src="./js/project-detail.js?v=20260824"></script>
+  <script src="./js/main.js?v=20260824"></script>
 </body>
 </html>

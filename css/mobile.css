@@ -206,6 +206,7 @@
 
   /* 카드·칩·그리드 — 화면 너비 안쪽으로 고정 */
   .hero-chips,
+  .hero-journey,
   .hero-quick,
   .hero-mobile-bar,
   .skill-categories,
@@ -228,13 +229,9 @@
   /* HERO — 모바일 풀스크린 + 사진 왼쪽 · 텍스트 오른쪽 */
   .hero {
     position: relative;
-    min-height: 100svh;
-    min-height: 100dvh;
+    min-height: auto;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: stretch;
-    align-items: stretch;
+    display: block;
     overflow: hidden;
     isolation: isolate;
   }
@@ -266,11 +263,11 @@
   .hero-inner {
     position: relative;
     z-index: 1;
-    flex: 1;
+    flex: none;
     display: grid;
     grid-template-columns: min(140px, 38vw) 1fr;
     grid-template-areas:
-      "portrait eyebrow"
+      "eyebrow eyebrow"
       "portrait name"
       "portrait links"
       "tagline-ko tagline-ko"
@@ -278,13 +275,43 @@
       "intro-lines intro-lines";
     align-items: start;
     align-content: center;
-    gap: 0.35rem 1rem;
+    gap: 0.45rem 1rem;
     text-align: left;
     width: 100%;
     max-width: 100%;
     min-height: 0;
-    padding: calc(4.5rem + env(safe-area-inset-top, 0px)) var(--page-gutter) 0.75rem;
+    padding: calc(4.5rem + env(safe-area-inset-top, 0px)) var(--page-gutter) 0.65rem;
     box-sizing: border-box;
+  }
+
+  .hero-inner.container::before {
+    content: "程 序 开 发";
+    position: absolute;
+    top: calc(4.5rem + env(safe-area-inset-top, 0px));
+    left: calc(var(--page-gutter) + 0.25rem);
+    z-index: 0;
+    writing-mode: vertical-rl;
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 9vw, 3.2rem);
+    letter-spacing: 0.22em;
+    color: var(--ep-hanja-mobile, color-mix(in srgb, var(--accent) 18%, transparent));
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-inner.container::after {
+    content: "云 端 部 署";
+    position: absolute;
+    right: var(--page-gutter);
+    bottom: 6.5rem;
+    z-index: 0;
+    writing-mode: vertical-rl;
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    letter-spacing: 0.2em;
+    color: var(--ep-hanja-soft, color-mix(in srgb, var(--accent) 12%, transparent));
+    pointer-events: none;
+    user-select: none;
   }
 
   .hero-body {
@@ -299,10 +326,17 @@
 
   .hero-eyebrow {
     grid-area: eyebrow;
-    align-self: end;
+    align-self: start;
+    justify-self: center;
+    width: 100%;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
     font-size: 0.58rem;
     letter-spacing: 0.12em;
-    margin-bottom: 0;
+    margin: 0 0 0.15rem;
     line-height: 1.4;
     color: var(--accent-readable, var(--accent));
   }
@@ -311,7 +345,7 @@
     grid-area: name;
     font-size: clamp(1.55rem, 6.2vw, 1.85rem);
     line-height: 1.06;
-    margin-bottom: 0;
+    margin: 1.15rem 0 0;
     letter-spacing: 0.02em;
     color: var(--white);
   }
@@ -370,7 +404,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.95rem;
+    gap: 0.75rem;
+    margin-top: 0;
     position: relative;
     z-index: 1;
     padding: 0.85rem var(--page-gutter) calc(1.15rem + env(safe-area-inset-bottom, 0px));
@@ -398,12 +433,12 @@
 
   .hero-chip {
     padding: 0.32rem 0.62rem;
-    border: 1px solid color-mix(in srgb, var(--accent-readable, var(--accent)) 28%, var(--line));
+    border: 1px solid var(--ep-chip-border, color-mix(in srgb, var(--accent-readable, var(--accent)) 28%, var(--line)));
     border-radius: 999px;
     font-size: 0.58rem;
     letter-spacing: 0.07em;
-    color: var(--muted-readable, var(--muted));
-    background: color-mix(in srgb, var(--surface) 86%, var(--black));
+    color: var(--ep-chip-text, var(--muted-readable, var(--muted)));
+    background: var(--ep-chip-bg, color-mix(in srgb, var(--surface) 86%, var(--black)));
     backdrop-filter: blur(8px);
     animation: heroChipIn 0.55s var(--ease, ease) both;
   }
@@ -613,9 +648,8 @@
 
   .section-education__inner {
     position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, auto);
+    display: block;
+    overflow: hidden;
     min-height: 0;
     border: none;
     width: 100%;
@@ -627,25 +661,26 @@
     grid-area: 1 / 1;
     position: relative;
     z-index: 1;
+    width: 100%;
     min-height: 0;
   }
 
   .education-visual {
-    grid-area: 1 / 1;
-    position: relative;
-    justify-self: end;
-    align-self: start;
-    width: 96px;
-    height: 122px;
-    margin: 1.35rem var(--page-gutter) 0 0;
-    min-height: 0 !important;
+    position: absolute;
+    top: 2.25rem;
+    right: calc(var(--page-gutter) + 1.5rem);
+    width: clamp(84px, 27vw, 108px);
+    aspect-ratio: 4 / 5;
+    height: auto;
+    margin: 0;
     z-index: 2;
+    pointer-events: auto;
     background: rgba(0, 0, 0, 0.35);
     overflow: hidden;
     border-radius: 0.35rem;
     border: 1px solid var(--line-on-accent);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
-    pointer-events: auto;
+    box-sizing: border-box;
   }
 
   .education-visual__img {
@@ -653,7 +688,8 @@
     height: 100%;
     min-height: 0 !important;
     object-fit: cover;
-    object-position: center top;
+    object-position: center 18%;
+    border-radius: 0.35rem;
   }
 
   .education-visual__deco {
@@ -662,7 +698,7 @@
 
   .education-panel__content {
     padding: 1.35rem var(--page-gutter);
-    padding-right: calc(96px + var(--page-gutter) + 0.85rem);
+    padding-right: calc(clamp(84px, 27vw, 108px) + var(--page-gutter) + 1.35rem);
   }
 
   .education-panel__bg-btn {
@@ -896,6 +932,10 @@
     padding: clamp(1.35rem, 4vw, 1.85rem) 0;
   }
 
+  .contact-portrait {
+    display: none !important;
+  }
+
   .contact-row {
     grid-template-columns: 1fr 1fr;
     gap: 0.45rem 0.75rem;
@@ -1007,8 +1047,9 @@
   }
 
   .hero {
-    min-height: 100svh;
-    min-height: 100dvh;
+    min-height: auto !important;
+    height: auto;
+    display: block;
     padding: 0;
   }
 
@@ -1057,14 +1098,23 @@
   }
 
   .education-visual {
-    width: 88px;
-    height: 112px;
-    margin-top: 1.15rem;
-    margin-right: var(--page-gutter);
+    top: 2rem;
+    right: calc(var(--page-gutter) + 1rem);
+    width: clamp(84px, 27vw, 100px);
   }
 
   .education-panel__content {
-    padding-right: calc(88px + var(--page-gutter) + 0.85rem);
+    padding-right: calc(clamp(84px, 27vw, 100px) + var(--page-gutter) + 1rem);
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .contact-row {
+    text-align: left;
   }
 
   .section-title {
@@ -1135,5 +1185,120 @@
 
   body.nav-open header.menu-open {
     z-index: 10101;
+  }
+
+  /* 프로젝트 상세 모달 — 모바일 한 화면 */
+  .project-detail-modal {
+    padding: 0.5rem;
+  }
+
+  .project-detail-modal__panel {
+    width: 100%;
+    max-height: calc(100dvh - 1rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project-detail-modal__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .project-detail-modal__close {
+    position: absolute;
+    top: 0.45rem;
+    right: 0.45rem;
+    float: none;
+    margin: 0;
+    z-index: 3;
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.1rem;
+  }
+
+  .project-detail-modal__hero {
+    height: clamp(230px, 38vh, 290px);
+    flex-shrink: 0;
+  }
+
+  .project-detail-modal__body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0.65rem 0.95rem 0.8rem;
+  }
+
+  .project-detail-modal__period {
+    font-size: 0.56rem;
+    margin-bottom: 0.18rem;
+  }
+
+  .project-detail-modal__title {
+    font-size: 1.12rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .project-detail-modal__type,
+  .project-detail-modal__role,
+  .project-detail-modal__meta {
+    font-size: 0.6rem;
+    margin-bottom: 0.12rem;
+  }
+
+  .project-detail-modal__desc {
+    font-size: 0.7rem;
+    line-height: 1.5;
+    margin: 0.35rem 0 0.45rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .project-detail-modal__block {
+    padding-top: 0.45rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .project-detail-modal__block h3 {
+    font-size: 0.64rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .project-detail-modal__block p {
+    font-size: 0.64rem;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .project-detail-modal__tags {
+    gap: 0.28rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .project-detail-modal__tags span {
+    font-size: 0.54rem;
+    padding: 0.16rem 0.42rem;
+  }
+
+  .project-detail-modal__gallery {
+    display: none;
+  }
+
+  .project-detail-modal__links {
+    gap: 0.35rem;
+    padding-top: 0.25rem;
+  }
+
+  .project-detail-modal__link {
+    font-size: 0.58rem;
+    padding: 0.32rem 0.65rem;
   }
 }

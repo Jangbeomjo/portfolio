@@ -527,6 +527,24 @@ body.edit-mode .site-header {
   right: -0.25rem;
 }
 
+.edit-mode .hero-journey__item.edit-list-item {
+  position: relative;
+  padding-top: 1.25rem;
+}
+
+.edit-mode .hero-journey .edit-list-item__controls {
+  top: 0;
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.edit-mode .hero-journey + .edit-add-btn {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  text-align: center;
+}
+
 .detail-lines {
   list-style: none;
   margin: 0.75rem 0 0;

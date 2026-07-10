@@ -65,7 +65,7 @@
     }
 
     grid.innerHTML = items.map((p) => PortfolioRender.renderProjectCard(p)).join("");
-    grid.querySelectorAll(".project-card[data-href]").forEach((c) => { delete c.dataset.navBound; });
+    grid.querySelectorAll(".project-card[data-edit-id]").forEach((c) => { delete c.dataset.detailBound; });
     PortfolioRender.bindProjectCardClicks();
 
     if (isEdit && window.InlineEditor?.refreshEditState) {

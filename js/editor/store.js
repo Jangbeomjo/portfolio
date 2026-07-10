@@ -123,6 +123,10 @@ const PortfolioStore = (() => {
       if (!data.skills.stackLines) data.skills.stackLines = [];
       return data.skills.stackLines;
     }
+    if (listKey === "skills") {
+      if (!data.skills.bars) data.skills.bars = [];
+      return data.skills.bars;
+    }
     if (listKey === "aboutSections") {
       if (!data.profile.about) data.profile.about = normalizeAboutSections({});
       if (!data.profile.about.sections) data.profile.about.sections = [];
@@ -177,7 +181,7 @@ const PortfolioStore = (() => {
     return data.skills?.bars?.find((s) => s.id === id) || null;
   }
 
-  /** 프로필 배열 항목 (introLines, resumeLines) */
+  /** 프로필 배열 항목 (introLines, resumeLines, heroJourney) */
   function findProfileLine(arrayKey, id) {
     return data.profile[arrayKey]?.find((i) => i.id === id) || null;
   }

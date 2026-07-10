@@ -21,7 +21,11 @@ const CMS = (() => {
   function getList(listKey) {
     const data = PortfolioStore.get();
     if (listKey === "stackLines") return data.skills?.stackLines;
+    if (listKey === "skills") return data.skills?.bars;
     if (listKey === "aboutSections") return data.profile?.about?.sections;
+    if (listKey === "heroJourney") return data.profile?.heroJourney;
+    if (listKey === "introLines") return data.profile?.introLines;
+    if (listKey === "resumeLines") return data.profile?.resumeLines;
     return data[listKey]?.items;
   }
 
@@ -43,7 +47,11 @@ const CMS = (() => {
   function deleteItem(listKey, id, label = "항목") {
     EditorUI.confirm(`이 ${label}을(를) 삭제하시겠습니까?`).then((ok) => {
       if (ok) {
-        PortfolioStore.removeItem(listKey, id);
+        if (listKey === "heroJourney" || listKey === "introLines" || listKey === "resumeLines") {
+          PortfolioStore.removeProfileLine(listKey, id);
+        } else {
+          PortfolioStore.removeItem(listKey, id);
+        }
         rerender();
       }
     });
@@ -335,6 +343,7 @@ const CMS = (() => {
       stackLines: ["skills", "about"],
       introLines: ["hero", "about"],
       resumeLines: ["education"],
+      heroJourney: ["hero"],
       aboutSections: ["about"],
     };
     const sections = map[listKey] || [];

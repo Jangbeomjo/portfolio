@@ -156,6 +156,17 @@ const InlineEditor = (() => {
         return;
       }
 
+      const addScreenshot = e.target.closest("[data-add-screenshot]");
+      if (addScreenshot) { e.stopPropagation(); addProjectScreenshot(addScreenshot.dataset.addScreenshot); return; }
+
+      const projectTagAdd = e.target.closest(".project-tag-add");
+      if (projectTagAdd) {
+        e.preventDefault();
+        e.stopPropagation();
+        addProjectTag(projectTagAdd.closest(".project-card"));
+        return;
+      }
+
       const tagAdd = e.target.closest(".edit-tag-add");
       if (tagAdd) {
         e.preventDefault();
@@ -178,14 +189,24 @@ const InlineEditor = (() => {
 
       const certUpload = e.target.closest("[data-cert-upload]");
       if (certUpload) { e.stopPropagation(); uploadCertProof(certUpload.dataset.certUpload); return; }
-
-      const addScreenshot = e.target.closest("[data-add-screenshot]");
-      if (addScreenshot) { e.stopPropagation(); addProjectScreenshot(addScreenshot.dataset.addScreenshot); return; }
     });
 
     // dblclick — 태그 삭제
     document.addEventListener("dblclick", (e) => {
       if (!ensureActive()) return;
+      const projectTag = e.target.closest(".project-tag");
+      if (projectTag) {
+        const card = projectTag.closest(".project-card");
+        const id = card?.dataset.editId;
+        const idx = parseInt(projectTag.dataset.editTagIndex, 10);
+        const project = id ? PortfolioStore.findItem("projects", id) : null;
+        if (project?.tags && !isNaN(idx)) {
+          project.tags.splice(idx, 1);
+          PortfolioStore.notifyChange();
+          rerenderAllProjects();
+        }
+        return;
+      }
       const tag = e.target.closest(".tech-tag");
       if (!tag) return;
       const idx = parseInt(tag.dataset.editTagIndex, 10);
@@ -209,7 +230,7 @@ const InlineEditor = (() => {
   /** 렌더 후 contenteditable·클래스만 갱신 (리스너 재등록 불필요) */
   function refreshEditState() {
     document.querySelectorAll("[data-edit-field]").forEach((el) => {
-      if (el.matches(".project-card__gh") || el.closest(".hero-links")) return;
+      if (el.matches(".project-card__detail") || el.closest(".hero-links")) return;
       el.classList.add("is-editable");
       el.contentEditable = "true";
     });
@@ -218,6 +239,7 @@ const InlineEditor = (() => {
     document.querySelectorAll(".project-card").forEach((card) => {
       card.style.cursor = "default";
       renderProjectControls(card);
+      prepareProjectTags(card);
     });
     document.querySelectorAll(".tech-cloud").forEach(prepareTagCloud);
     CMS.injectGenericControls();
@@ -292,7 +314,20 @@ const InlineEditor = (() => {
     const field = el.dataset.editField;
     const list = el.closest("[data-edit-list]");
     const value = el.innerText.trim();
-    if (!value || value === "https://..." || value === el.dataset?.placeholder) {
+    const isPlaceholder = !value
+      || value === "https://..."
+      || value === el.dataset?.placeholder
+      || value === "날짜 (예: 2024.03)"
+      || value === "발급기관";
+    if (isPlaceholder) {
+      if (list && field) {
+        const listKey = list.dataset.editList;
+        if (listKey === "introLines" || listKey === "resumeLines" || listKey === "heroJourney") {
+          PortfolioStore.updateProfileLine(listKey, list.dataset.editId, listKey === "heroJourney" ? field : "text", "");
+        } else {
+          PortfolioStore.updateItem(listKey, list.dataset.editId, field, "");
+        }
+      }
       if (field?.startsWith("profile.links.")) {
         const child = field.replace("profile.links.", "");
         PortfolioStore.get().profile.links = PortfolioStore.get().profile.links || {};
@@ -313,6 +348,10 @@ const InlineEditor = (() => {
       const id = list.dataset.editId;
       if (listKey === "introLines" || listKey === "resumeLines") {
         PortfolioStore.updateProfileLine(listKey, id, "text", value);
+        return;
+      }
+      if (listKey === "heroJourney") {
+        PortfolioStore.updateProfileLine(listKey, id, field, value);
         return;
       }
       if (listKey === "skills") {
@@ -488,11 +527,45 @@ const InlineEditor = (() => {
   }
 
   function addTag(cloud) {
+    if (!cloud) return;
     const tag = prompt("새 기술 태그:");
     if (tag) {
       PortfolioStore.get().skills.tags.push(tag.trim());
       window.renderPortfolio(["skills"]);
     }
+  }
+
+  function prepareProjectTags(card) {
+    const container = card.querySelector("[data-edit-tags]");
+    if (!container) return;
+    container.classList.add("is-editable-tags");
+    container.querySelectorAll(".project-tag").forEach((tag) => {
+      tag.contentEditable = "true";
+      tag.title = "클릭하여 수정, 더블클릭하여 삭제";
+      if (tag.dataset.tagBound) return;
+      tag.dataset.tagBound = "1";
+      tag.addEventListener("blur", () => {
+        const id = card.dataset.editId;
+        const idx = parseInt(tag.dataset.editTagIndex, 10);
+        const project = id ? PortfolioStore.findItem("projects", id) : null;
+        if (project?.tags && !isNaN(idx)) {
+          project.tags[idx] = tag.textContent.trim();
+          PortfolioStore.notifyChange(false);
+        }
+      });
+    });
+  }
+
+  function addProjectTag(card) {
+    const id = card?.dataset.editId;
+    const project = id ? PortfolioStore.findItem("projects", id) : null;
+    if (!project) return;
+    const tag = prompt("새 태그:");
+    if (!tag?.trim()) return;
+    project.tags = project.tags || [];
+    project.tags.push(tag.trim());
+    PortfolioStore.notifyChange();
+    rerenderAllProjects();
   }
 
   // ─── 리스트 추가 버튼 ───────────────────────────────────────
@@ -513,6 +586,7 @@ const InlineEditor = (() => {
     const addIntroLine = () => addProfileLine("introLines");
     injectAddBtn("heroIntroLines", "소개 라인 추가", addIntroLine);
     injectAddBtn("aboutIntroLines", "소개 라인 추가", addIntroLine);
+    injectAddBtn("heroJourney", "여정 추가", addHeroJourneyItem);
     injectAddBtn("aboutSections", "About 항목 추가", addAboutSection);
     injectAddBtn("resumeLines", "이력서 라인 추가", () => addProfileLine("resumeLines"));
   }
@@ -676,6 +750,20 @@ const InlineEditor = (() => {
     profile[arrayKey].push({ id, text: "새 항목", order: profile[arrayKey].length });
     PortfolioStore.notifyChange();
     window.renderPortfolio(["hero", "about", "education"]);
+  }
+
+  function addHeroJourneyItem() {
+    const profile = PortfolioStore.get().profile;
+    profile.heroJourney = profile.heroJourney || [];
+    const id = EditorGitHub.generateId("hj");
+    profile.heroJourney.push({
+      id,
+      year: "2026",
+      label: "새 여정",
+      order: profile.heroJourney.length,
+    });
+    PortfolioStore.notifyChange();
+    window.renderPortfolio(["hero"]);
   }
 
   // ─── 이미지 / 스킬 슬라이더 ────────────────────────────────

@@ -34,6 +34,12 @@
       "order": 1
     }
   ],
+  "heroJourney": [
+    { "id": "hj-1", "year": "2021", "label": "국민대 SW학과", "order": 0 },
+    { "id": "hj-2", "year": "2024", "label": "빅데이터 과정", "order": 1 },
+    { "id": "hj-3", "year": "2025", "label": "PAWS 배포", "order": 2 },
+    { "id": "hj-4", "year": "2026", "label": "졸업 예정", "order": 3 }
+  ],
   "avatar": "./assets/images/1783665769957-img_4643.jpeg",
   "aboutImage": "./assets/profile.png",
   "backgroundImage": "",
@@ -41,6 +47,7 @@
   "educationPanelBackground": "./assets/images/1783665974174-img_2586.jpeg",
   "activitiesBackgroundImage": "",
   "logo": "",
+  "contactImage": "./assets/profile.png",
   "contactLead": "언제나 환영합니다.",
   "footerText": "",
   "gallery": [],

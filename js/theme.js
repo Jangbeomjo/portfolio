@@ -6,11 +6,28 @@ const THEME_STORAGE_KEY = "portfolio-theme-preset";
 const LEGACY_PRESET_MAP = {
   minimal: "ivory",
   glass: "ink",
-  midnight: "obsidian",
-  cream: "paper",
-  slate: "carbon",
+  midnight: "moonlit",
+  cream: "pearl",
+  paper: "pearl",
+  slate: "moonlit",
   forest: "sage",
-  noir: "obsidian",
+  noir: "mulberry",
+  rosewood: "mulberry",
+  obsidian: "twilight",
+  dusk: "twilight",
+  sand: "pearl",
+  carbon: "moonlit",
+  neon: "mulberry",
+  aurora: "blush",
+  sunset: "peach",
+  electric: "ocean",
+  prism: "lilac",
+};
+
+const EDITORIAL_FONTS = {
+  serif: "Playfair Display",
+  sans: "Noto Sans KR",
+  signature: "Cormorant Garamond",
 };
 
 const THEME_PRESETS = {
@@ -22,8 +39,9 @@ const THEME_PRESETS = {
       primary: "#8B2942", primaryDeep: "#5C1A2A",
       background: "#0D0D0D", surface: "#161616", surface2: "#1E1E1E",
       text: "#F5F0EA", muted: "#A39E97",
+      tintSkills: "#161616", tintActivities: "#141414",
     },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
     mode: "dark",
   },
   ivory: {
@@ -34,8 +52,9 @@ const THEME_PRESETS = {
       primary: "#8B2942", primaryDeep: "#5C1A2A",
       background: "#FAF8F5", surface: "#FFFFFF", surface2: "#F3F0EB",
       text: "#1A1A1A", muted: "#6B6560",
+      tintSkills: "#F0EBE3", tintActivities: "#EDE8E0",
     },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
     mode: "light",
   },
   ink: {
@@ -46,158 +65,127 @@ const THEME_PRESETS = {
       primary: "#7A9BB8", primaryDeep: "#152238",
       background: "#0B1018", surface: "#111A27", surface2: "#182232",
       text: "#E8ECF0", muted: "#8A95A8",
+      tintSkills: "#141C28", tintActivities: "#101820",
     },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
     mode: "dark",
   },
-  rosewood: {
-    label: "Rosewood",
-    desc: "다크 · 로즈우드",
-    swatch: ["#C4786E", "#141010", "#EDE6E0"],
+  blush: {
+    label: "Blush",
+    desc: "로즈 · 크림",
+    swatch: ["#C2788E", "#FAF7F4", "#3D2A30"],
     colors: {
-      primary: "#C4786E", primaryDeep: "#3D2420",
-      background: "#141010", surface: "#1C1614", surface2: "#241C1A",
-      text: "#EDE6E0", muted: "#9A8E88",
+      primary: "#C2788E", primaryDeep: "#9E5A72",
+      background: "#FAF7F4", surface: "#FFFFFF", surface2: "#F3E8E4",
+      text: "#3D2A30", muted: "#8E757C",
+      tintSkills: "#EBE3EF", tintActivities: "#E8EFE8",
     },
-    fonts: { serif: "Cormorant Garamond", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
-    mode: "dark",
-  },
-  paper: {
-    label: "Paper",
-    desc: "라이트 · 네이비",
-    swatch: ["#1E3A5F", "#F6F4EF", "#1E293B"],
-    colors: {
-      primary: "#1E3A5F", primaryDeep: "#0F2847",
-      background: "#F6F4EF", surface: "#FFFFFF", surface2: "#EDEAE4",
-      text: "#1E293B", muted: "#64748B",
-    },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
     mode: "light",
   },
-  obsidian: {
-    label: "Obsidian",
-    desc: "블랙 · 골드",
-    swatch: ["#C4A962", "#080808", "#E8E4DC"],
+  lilac: {
+    label: "Lilac",
+    desc: "라일락 · 퍼플",
+    swatch: ["#9B7EB8", "#F8F5FA", "#2E2438"],
     colors: {
-      primary: "#C4A962", primaryDeep: "#1A1608",
-      background: "#080808", surface: "#101010", surface2: "#181818",
-      text: "#E8E4DC", muted: "#8A8780",
+      primary: "#9B7EB8", primaryDeep: "#6B5088",
+      background: "#F8F5FA", surface: "#FFFFFF", surface2: "#EDE6F2",
+      text: "#2E2438", muted: "#7A6E88",
+      tintSkills: "#E3E8F0", tintActivities: "#E8F0E8",
     },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
-    mode: "dark",
+    fonts: EDITORIAL_FONTS,
+    mode: "light",
   },
   sage: {
     label: "Sage",
-    desc: "다크 · 세이지",
-    swatch: ["#7EA68C", "#0E1210", "#E8EDE8"],
+    desc: "세이지 · 그린",
+    swatch: ["#6E9B82", "#F5F8F5", "#243028"],
     colors: {
-      primary: "#7EA68C", primaryDeep: "#1F3328",
-      background: "#0E1210", surface: "#151A17", surface2: "#1C2420",
-      text: "#E8EDE8", muted: "#8A9A90",
+      primary: "#6E9B82", primaryDeep: "#3D6B52",
+      background: "#F5F8F5", surface: "#FFFFFF", surface2: "#E5EFE8",
+      text: "#243028", muted: "#6E7A72",
+      tintSkills: "#E8EDE3", tintActivities: "#DFEAE2",
     },
-    fonts: { serif: "Cormorant Garamond", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
-    mode: "dark",
-  },
-  dusk: {
-    label: "Dusk",
-    desc: "다크 · 퍼플",
-    swatch: ["#9B8EC4", "#100D18", "#EAE6F0"],
-    colors: {
-      primary: "#9B8EC4", primaryDeep: "#2A1F42",
-      background: "#100D18", surface: "#171420", surface2: "#1F1A2C",
-      text: "#EAE6F0", muted: "#9A92A8",
-    },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
-    mode: "dark",
-  },
-  sand: {
-    label: "Sand",
-    desc: "라이트 · 샌드",
-    swatch: ["#B8956B", "#F7F3EC", "#2C2824"],
-    colors: {
-      primary: "#B8956B", primaryDeep: "#5C4A32",
-      background: "#F7F3EC", surface: "#FFFFFF", surface2: "#EFEBE3",
-      text: "#2C2824", muted: "#7A7268",
-    },
-    fonts: { serif: "Cormorant Garamond", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
     mode: "light",
   },
-  carbon: {
-    label: "Carbon",
-    desc: "다크 · 시안",
-    swatch: ["#5ECEC6", "#0A0C0D", "#E2E8EA"],
+  peach: {
+    label: "Peach",
+    desc: "피치 · 코랄",
+    swatch: ["#D4876A", "#FBF6F2", "#3A2820"],
     colors: {
-      primary: "#5ECEC6", primaryDeep: "#143836",
-      background: "#0A0C0D", surface: "#121517", surface2: "#1A1E20",
-      text: "#E2E8EA", muted: "#8A9398",
+      primary: "#D4876A", primaryDeep: "#A85A42",
+      background: "#FBF6F2", surface: "#FFFFFF", surface2: "#F5E8DF",
+      text: "#3A2820", muted: "#917A6E",
+      tintSkills: "#F0E8E3", tintActivities: "#EDE5DC",
     },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
+    mode: "light",
+  },
+  ocean: {
+    label: "Ocean",
+    desc: "오션 · 블루",
+    swatch: ["#5A94B8", "#F4F8FA", "#1E2E38"],
+    colors: {
+      primary: "#5A94B8", primaryDeep: "#3A6888",
+      background: "#F4F8FA", surface: "#FFFFFF", surface2: "#E3EEF2",
+      text: "#1E2E38", muted: "#6E828E",
+      tintSkills: "#E5EAF0", tintActivities: "#E0EBE8",
+    },
+    fonts: EDITORIAL_FONTS,
+    mode: "light",
+  },
+  pearl: {
+    label: "Pearl",
+    desc: "펄 · 골드",
+    swatch: ["#B8956B", "#FAF8F5", "#2C2824"],
+    colors: {
+      primary: "#B8956B", primaryDeep: "#8A6848",
+      background: "#FAF8F5", surface: "#FFFFFF", surface2: "#F0EBE3",
+      text: "#2C2824", muted: "#7A7268",
+      tintSkills: "#EBE8E0", tintActivities: "#E8E5DD",
+    },
+    fonts: EDITORIAL_FONTS,
+    mode: "light",
+  },
+  twilight: {
+    label: "Twilight",
+    desc: "트와일라 · 플럼",
+    swatch: ["#A898D8", "#16101E", "#EDE8F5"],
+    colors: {
+      primary: "#A898D8", primaryDeep: "#6B58A8",
+      background: "#16101E", surface: "#221C2C", surface2: "#2A2238",
+      text: "#EDE8F5", muted: "#A098B0",
+      tintSkills: "#1E1828", tintActivities: "#1A2028",
+    },
+    fonts: EDITORIAL_FONTS,
     mode: "dark",
   },
-  neon: {
-    label: "Neon",
-    desc: "네온 · 사이버펑크",
-    swatch: ["#FF2D95", "#0A0014", "#E0F7FF"],
+  mulberry: {
+    label: "Mulberry",
+    desc: "멀베리 · 와인",
+    swatch: ["#C2788E", "#1A1014", "#F5E8EC"],
     colors: {
-      primary: "#FF2D95", primaryDeep: "#3D0A5C",
-      background: "#0A0014", surface: "#140020", surface2: "#1E0030",
-      text: "#F0EEFF", muted: "#A890C8",
+      primary: "#C2788E", primaryDeep: "#8E4558",
+      background: "#1A1014", surface: "#261820", surface2: "#322028",
+      text: "#F5E8EC", muted: "#B098A0",
+      tintSkills: "#281820", tintActivities: "#182018",
     },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
     mode: "dark",
-    flashy: true,
   },
-  aurora: {
-    label: "Aurora",
-    desc: "오로라 · 그린-핑크",
-    swatch: ["#00F5A0", "#0C1020", "#FFB8E8"],
+  moonlit: {
+    label: "Moonlit",
+    desc: "문릿 · 네이비",
+    swatch: ["#6EB8C8", "#0E1418", "#E4EEF2"],
     colors: {
-      primary: "#00F5A0", primaryDeep: "#1A3D5C",
-      background: "#0C1020", surface: "#121828", surface2: "#1A2038",
-      text: "#E8FFF5", muted: "#88A8B8",
+      primary: "#6EB8C8", primaryDeep: "#3A7888",
+      background: "#0E1418", surface: "#161E24", surface2: "#1C2830",
+      text: "#E4EEF2", muted: "#8898A0",
+      tintSkills: "#141C24", tintActivities: "#142018",
     },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    fonts: EDITORIAL_FONTS,
     mode: "dark",
-    flashy: true,
-  },
-  sunset: {
-    label: "Sunset",
-    desc: "선셋 · 오렌지-마젠타",
-    swatch: ["#FF6B35", "#1A0A14", "#FFD4A8"],
-    colors: {
-      primary: "#FF6B35", primaryDeep: "#5C1838",
-      background: "#1A0A14", surface: "#241018", surface2: "#2E1820",
-      text: "#FFF0E8", muted: "#B89890",
-    },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
-    mode: "dark",
-    flashy: true,
-  },
-  electric: {
-    label: "Electric",
-    desc: "일렉트릭 · 블루-옐로",
-    swatch: ["#FFE600", "#1A0A3C", "#4D9FFF"],
-    colors: {
-      primary: "#FFE600", primaryDeep: "#2A1A6C",
-      background: "#1A0A3C", surface: "#221048", surface2: "#2C1860",
-      text: "#F0F0FF", muted: "#A8A0C8",
-    },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
-    mode: "dark",
-    flashy: true,
-  },
-  prism: {
-    label: "Prism",
-    desc: "프리즘 · 레인보우",
-    swatch: ["#B24BF3", "#101018", "#FF6EC7"],
-    colors: {
-      primary: "#B24BF3", primaryDeep: "#4A2080",
-      background: "#101018", surface: "#181820", surface2: "#202028",
-      text: "#F5F0FF", muted: "#9898B0",
-    },
-    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
-    mode: "dark",
-    flashy: true,
   },
 };
 
@@ -309,9 +297,14 @@ function applyThemeSurfaces(colors, mode) {
   root.style.setProperty("--body-faint", `color-mix(in srgb, ${textHex} 48%, transparent)`);
 
   if (isLight) {
-    root.style.setProperty("--header-bg", "rgba(255, 255, 255, 0.9)");
-    root.style.setProperty("--overlay-bg", "rgba(250, 248, 245, 0.88)");
-    root.style.setProperty("--nav-mobile-bg", "rgba(255, 255, 255, 0.98)");
+    const bgRgb = hexToRgb(bgHex);
+    const surfRgb = hexToRgb(surfaceHex);
+    root.style.setProperty("--header-bg", `rgba(${bgRgb.r}, ${bgRgb.g}, ${bgRgb.b}, 0.9)`);
+    root.style.setProperty("--overlay-bg", `rgba(${bgRgb.r}, ${bgRgb.g}, ${bgRgb.b}, 0.88)`);
+    root.style.setProperty("--nav-mobile-bg", `rgba(${surfRgb.r}, ${surfRgb.g}, ${surfRgb.b}, 0.98)`);
+    const accentRgb = hexToRgb(accent.startsWith("#") ? accent : "#8B2942");
+    root.style.setProperty("--line", `rgba(${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}, 0.1)`);
+    root.style.setProperty("--line-strong", `rgba(${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}, 0.16)`);
   } else {
     const { r, g, b } = hexToRgb(bg.startsWith("#") ? bg : "#0D0D0D");
     root.style.setProperty("--header-bg", `rgba(${r}, ${g}, ${b}, 0.92)`);
@@ -342,6 +335,62 @@ function applyThemeSurfaces(colors, mode) {
   root.style.setProperty("--edit-accent-bg", `color-mix(in srgb, ${editAccent} 8%, transparent)`);
   root.style.setProperty("--edit-accent-bg-hover", `color-mix(in srgb, ${editAccent} 14%, transparent)`);
   root.style.setProperty("--edit-accent-bg-strong", `color-mix(in srgb, ${editAccent} 50%, transparent)`);
+}
+
+function applyEditorialPalette(colors, mode) {
+  if (document.body.classList.contains("skin-shinbi") || !colors) return;
+
+  const root = document.documentElement;
+  const isLight = mode === "light";
+  const bg = colors.background || "#0D0D0D";
+  const surface = colors.surface || "#161616";
+  const surface2 = colors.surface2 || surface;
+  const accent = colors.primary || "#8B2942";
+  const deep = colors.primaryDeep || accent;
+  const text = colors.text || (isLight ? "#1A1A1A" : "#F5F0EA");
+  const muted = colors.muted || "#A39E97";
+  const tintSkills = colors.tintSkills || (isLight ? surface2 : surface);
+  const tintActivities = colors.tintActivities || (isLight ? surface2 : bg);
+  const visualBg = isLight ? surface2 : "#0A0A0A";
+
+  const onSurface = ensureContrast(text, surface, 4.5);
+  const onSurfaceMuted = ensureContrast(muted, surface, 3);
+  const accentOnBg = ensureContrast(accent, bg, 3.2);
+  const accentOnSurface = ensureContrast(accent, surface, 3.2);
+  const decoOnVisual = ensureContrast(accent, visualBg, 3);
+  const accentRgb = hexToRgb(accent.startsWith("#") ? accent : "#8B2942");
+  const journeyBorder = `rgba(${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}, ${isLight ? 0.14 : 0.2})`;
+
+  const tokens = {
+    "--ep-page-bg": bg,
+    "--ep-about-bg": isLight ? surface2 : bg,
+    "--ep-skills-bg": tintSkills,
+    "--ep-activities-bg": tintActivities,
+    "--ep-contact-bg": isLight ? surface2 : bg,
+    "--ep-education-visual-bg": visualBg,
+    "--ep-hanja-strong": `color-mix(in srgb, ${accent} ${isLight ? 30 : 24}%, transparent)`,
+    "--ep-hanja-soft": `color-mix(in srgb, ${accent} ${isLight ? 16 : 12}%, transparent)`,
+    "--ep-hanja-mobile": `color-mix(in srgb, ${accent} ${isLight ? 22 : 18}%, transparent)`,
+    "--ep-education-deco": decoOnVisual,
+    "--ep-journey-bg": isLight
+      ? `color-mix(in srgb, ${surface} 90%, ${surface2})`
+      : `color-mix(in srgb, ${surface} 88%, ${bg})`,
+    "--ep-journey-border": journeyBorder,
+    "--ep-journey-year": accentOnSurface,
+    "--ep-journey-label": onSurfaceMuted,
+    "--ep-box-text": onSurface,
+    "--ep-box-text-muted": onSurfaceMuted,
+    "--ep-chip-bg": isLight
+      ? `color-mix(in srgb, ${surface} 86%, ${bg})`
+      : `color-mix(in srgb, ${surface} 80%, ${bg})`,
+    "--ep-chip-border": `color-mix(in srgb, ${accentOnBg} 28%, var(--line))`,
+    "--ep-chip-text": onSurfaceMuted,
+    "--ep-education-panel": deep,
+  };
+
+  Object.entries(tokens).forEach(([key, val]) => root.style.setProperty(key, val));
+  document.body.style.background = bg;
+  document.body.style.color = ensureContrast(text, bg, 4.5);
 }
 
 function applyTheme(theme) {
@@ -378,6 +427,7 @@ function applyTheme(theme) {
   document.body.dataset.themeMode = mode;
 
   applyThemeLayout(theme);
+  applyEditorialPalette(colors || THEME_PRESETS[preset]?.colors, mode);
   ThemeSwitcher?.syncUI?.();
 }
 
@@ -428,7 +478,7 @@ function resolveThemeMode(mode) {
   return mode || "dark";
 }
 
-function applyPreset(presetName) {
+function applyPreset(presetName, baseTheme) {
   const preset = THEME_PRESETS[normalizePresetName(presetName)];
   if (!preset) return null;
   const { label, desc, swatch, ...rest } = preset;
@@ -436,8 +486,8 @@ function applyPreset(presetName) {
     ...rest,
     preset: normalizePresetName(presetName),
     mode: rest.mode || "dark",
-    animations: true,
-    glassmorphism: false,
+    animations: baseTheme?.animations ?? true,
+    glassmorphism: baseTheme?.glassmorphism ?? false,
   };
 }
 
@@ -464,7 +514,7 @@ function savePreset(presetName) {
 function mergeThemeWithVisitorChoice(baseTheme) {
   const saved = getSavedPreset();
   if (!saved) return { ...baseTheme, preset: normalizePresetName(baseTheme?.preset) };
-  const preset = applyPreset(saved);
+  const preset = applyPreset(saved, baseTheme);
   return preset
     ? { ...baseTheme, ...preset, colors: { ...baseTheme?.colors, ...preset.colors }, fonts: { ...baseTheme?.fonts, ...preset.fonts } }
     : baseTheme;
@@ -627,9 +677,15 @@ const ThemeSwitcher = (() => {
     const key = normalizePresetName(presetName);
     if (!THEME_PRESETS[key]) return;
     savePreset(key);
-    const preset = applyPreset(key);
     const base = window.PortfolioStore?.get?.()?.theme || {};
-    applyTheme({ ...base, ...preset, colors: { ...base.colors, ...preset.colors }, fonts: { ...base.fonts, ...preset.fonts } });
+    const preset = applyPreset(key, base);
+    applyTheme({
+      ...base,
+      ...preset,
+      colors: { ...base.colors, ...preset.colors },
+      fonts: { ...base.fonts, ...preset.fonts },
+      glassmorphism: base.glassmorphism ?? preset.glassmorphism,
+    });
   }
 
   function syncUI() {

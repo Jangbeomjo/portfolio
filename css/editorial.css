@@ -24,24 +24,25 @@ body {
   text-transform: uppercase;
 }
 
-/* ── Box link (VIEW MORE / VIEW ALL) ── */
+/* ── Section link (VIEW MORE / VIEW ALL) — borderless ── */
 .text-link--box {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1.15rem;
-  border: 1px solid var(--line-strong);
-  letter-spacing: 0.16em;
+  gap: 0.35rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 0.62rem;
   color: var(--muted);
-  transition: color 0.25s, border-color 0.25s, background 0.25s;
+  transition: color 0.25s;
 }
 
 .text-link--box:hover {
   color: var(--white);
-  border-color: var(--white);
-  background: var(--surface-tint-04);
+  border: none;
+  background: transparent;
 }
 
 /* ── Hero ── */
@@ -90,6 +91,40 @@ body {
   .hero-scroll {
     right: -2.5rem;
   }
+
+  .hero-portrait {
+    position: relative;
+  }
+
+  .hero-portrait::before {
+    content: "智 能 工 程";
+    position: absolute;
+    top: clamp(1rem, 4vh, 2.5rem);
+    left: clamp(-1.5rem, -2vw, -0.75rem);
+    z-index: 2;
+    writing-mode: vertical-rl;
+    font-family: var(--serif);
+    font-size: clamp(3rem, 6vw, 4.8rem);
+    letter-spacing: 0.28em;
+    color: var(--ep-hanja-strong, color-mix(in srgb, var(--accent) 22%, transparent));
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-body::before {
+    content: "算 法 代 码";
+    position: absolute;
+    top: -0.5rem;
+    right: clamp(-2rem, -3vw, -1rem);
+    z-index: 0;
+    writing-mode: vertical-rl;
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+    letter-spacing: 0.24em;
+    color: var(--ep-hanja-soft, color-mix(in srgb, var(--accent) 10%, transparent));
+    pointer-events: none;
+    user-select: none;
+  }
 }
 
 /* ── Section typography (editorial) ── */
@@ -109,7 +144,7 @@ body {
 
 /* ── About ── */
 .section-about {
-  background: var(--black);
+  background: var(--ep-about-bg, var(--black));
   border-top: 1px solid var(--line);
 }
 
@@ -164,7 +199,7 @@ body {
 
 /* ── Education (burgundy panel + visual) ── */
 .section-education {
-  background: var(--black);
+  background: var(--ep-page-bg, var(--black));
   border-top: 1px solid var(--line);
 }
 
@@ -173,7 +208,7 @@ body {
 }
 
 .education-panel {
-  background: var(--accent-deep);
+  background: var(--ep-education-panel, var(--accent-deep));
 }
 
 @media (min-width: 961px) {
@@ -183,19 +218,20 @@ body {
 }
 
 .education-visual {
-  background: var(--black);
+  background: var(--ep-education-visual-bg, var(--black));
 }
 
 .education-visual__deco {
-  color: var(--accent);
-  opacity: 0.55;
+  color: var(--ep-education-deco, var(--accent));
+  opacity: 0.62;
   letter-spacing: 0.42em;
   font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+  font-family: var(--serif);
 }
 
 /* ── Skills (language-bar feel) ── */
 .section-skills {
-  background: var(--black);
+  background: var(--ep-skills-bg, var(--black));
   border-top: 1px solid var(--line);
 }
 
@@ -227,6 +263,7 @@ body {
 
 /* ── Activities (icon row) ── */
 .section-activities {
+  background: var(--ep-activities-bg, var(--black));
   border-top: 1px solid var(--line);
 }
 
@@ -237,10 +274,19 @@ body {
   }
 
   .activity-card {
-    background: color-mix(in srgb, var(--black) 55%, transparent);
+    background: color-mix(in srgb, var(--ep-activities-bg, var(--black)) 72%, transparent);
     border: 1px solid var(--line);
     text-align: center;
     padding: 2rem 1rem;
+  }
+
+  .activity-card p {
+    color: var(--ep-box-text, var(--white));
+  }
+
+  .activity-card small,
+  .activity-card time {
+    color: var(--ep-box-text-muted, var(--body-soft));
   }
 
   .activity-card::before {
@@ -295,7 +341,7 @@ body {
 
 /* ── Contact (compact) ── */
 .section-contact {
-  background: var(--black);
+  background: var(--ep-contact-bg, var(--black));
   border-top: 1px solid var(--line);
 }
 
@@ -363,7 +409,7 @@ body {
 
   .text-link--box {
     font-size: 0.58rem;
-    padding: 0.45rem 0.85rem;
+    padding: 0;
   }
 
   .signature {

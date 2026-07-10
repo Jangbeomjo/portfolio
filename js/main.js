@@ -128,6 +128,7 @@ function updateHero(profile) {
   renderProfileImages(profile);
   renderDetailLines("heroIntroLines", profile.introLines, "introLines", false);
   renderHeroChips(PortfolioStore.get()?.skills);
+  renderHeroJourney(profile);
   refreshHeroMobile?.();
 }
 
@@ -357,7 +358,8 @@ function renderHeroLinks(links) {
     items.push(`<a href="${esc(links.resume)}" data-edit-href="profile.links.resume"${linkTargetAttrs(links.resume)}>RESUME</a>`);
   }
   container.innerHTML = items.length ? items.join("<span>—</span>") : "";
-  container.dataset.editGroup = "profile.links";
+  if (items.length) container.dataset.editGroup = "profile.links";
+  else delete container.dataset.editGroup;
 }
 
 window.renderHeroLinks = renderHeroLinks;
@@ -367,6 +369,38 @@ function renderHeroChips(skills) {
   if (!el) return;
   const tags = [...(skills?.tags || [])].slice(0, 4);
   el.innerHTML = tags.map((t) => `<span class="hero-chip">${esc(t)}</span>`).join("");
+}
+
+const HERO_JOURNEY = [
+  { year: "2021", label: "국민대 SW학과" },
+  { year: "2024", label: "빅데이터 과정" },
+  { year: "2025", label: "PAWS 배포" },
+  { year: "2026", label: "졸업 예정" },
+];
+
+function renderHeroJourney(profile) {
+  const el = document.getElementById("heroJourney");
+  if (!el) return;
+  const items = sortByOrder(profile?.heroJourney);
+  const isEdit = document.body.classList.contains("edit-mode");
+  const fallback = items.length ? items : (isEdit ? [] : HERO_JOURNEY.map((m, i) => ({
+    id: `hj-fb-${i}`, year: m.year, label: m.label, order: i,
+  })));
+
+  if (!fallback.length && !isEdit) {
+    el.innerHTML = "";
+    el.style.display = "none";
+    return;
+  }
+
+  el.style.display = "";
+  el.style.setProperty("--journey-cols", String(Math.max(fallback.length, 1)));
+  el.innerHTML = fallback.map(
+    (m) => `<div class="hero-journey__item edit-list-item" data-edit-list="heroJourney" data-edit-id="${m.id}">
+      <strong data-edit-field="year">${esc(m.year)}</strong>
+      <span data-edit-field="label">${esc(m.label)}</span>
+    </div>`
+  ).join("");
 }
 
 let heroMobileBound = false;
@@ -396,6 +430,7 @@ function initHeroMobile() {
   const mq = window.matchMedia("(max-width: 960px)");
   mq.addEventListener("change", () => {
     renderHeroChips(PortfolioStore.get()?.skills);
+    renderHeroJourney(PortfolioStore.get()?.profile);
     refreshHeroMobile();
   });
 
@@ -481,14 +516,23 @@ function renderEducationPhoto(profile) {
 /** ACTIVITIES 섹션 배경 이미지 */
 function renderActivitiesBackground(profile) {
   const el = document.querySelector(".section-activities__bg");
+  const btn = document.querySelector(".section-activities__bg-btn");
   if (!el) return;
-  const fallback = profile.avatar || "./assets/profile.png";
-  const path = profile.activitiesBackgroundImage || fallback;
-  const url = CMS.getImagePreviewUrl(path) || CMS.resolveAssetUrl(fallback);
-  const safe = (url || "").replace(/'/g, "%27");
-  el.style.backgroundImage = `linear-gradient(var(--overlay-bg), var(--overlay-bg)), url('${safe}')`;
-  el.style.backgroundSize = "cover";
-  el.style.backgroundPosition = "center";
+
+  const path = profile.activitiesBackgroundImage || "";
+  if (path) {
+    const url = CMS.getImagePreviewUrl(path) || CMS.resolveAssetUrl(path);
+    const safe = (url || "").replace(/'/g, "%27");
+    el.style.backgroundImage = `linear-gradient(var(--overlay-bg), var(--overlay-bg)), url('${safe}')`;
+    el.style.backgroundSize = "cover";
+    el.style.backgroundPosition = "center";
+    el.classList.add("has-image");
+    if (btn) btn.textContent = "배경 변경";
+  } else {
+    el.style.backgroundImage = "";
+    el.classList.remove("has-image");
+    if (btn) btn.textContent = "+ 배경 추가";
+  }
   el.dataset.editImage = "profile.activitiesBackgroundImage";
 }
 
@@ -539,7 +583,7 @@ function renderEduTimeline(e) {
 }
 
 function renderSkillBar(s) {
-  return `<div class="skill-bar" data-edit-list="skills" data-edit-id="${s.id}">
+  return `<div class="skill-bar edit-list-item" data-edit-list="skills" data-edit-id="${s.id}">
     <div class="skill-bar__label">
       <span data-edit-field="name">${esc(s.name)}</span>
       <span data-edit-field="stack">${esc(s.stack)}</span>
@@ -557,7 +601,7 @@ function renderProjectCard(p) {
   const thumbStyle = thumbUrl
     ? `style="background-image:url('${esc(thumbUrl)}');background-size:cover;background-position:center"`
     : "";
-  const tags = (p.tags || []).map((t, i) => `<span data-edit-tag-index="${i}">${esc(t)}</span>`).join("");
+  const tags = (p.tags || []).map((t, i) => `<span class="project-tag" data-edit-tag-index="${i}">${esc(t)}</span>`).join("");
   const screenshots = (p.screenshots || p.images || []).map((url, i) =>
     `<img class="project-screenshot edit-only" src="${esc(CMS.getImagePreviewUrl(url))}" data-screenshot-index="${i}" data-edit-image="screenshots" alt="">`
   ).join("");
@@ -567,16 +611,16 @@ function renderProjectCard(p) {
   const statusLabel = p.status ? `<span class="project-status">${esc(p.status)}</span>` : "";
 
   return `<article class="project-card${p.hidden ? " is-hidden-project" : ""}${p.featured ? " is-featured" : ""}"
-    data-edit-list="projects" data-edit-id="${p.id}" data-href="${esc(p.href || "#")}" tabindex="0" role="link">
+    data-edit-list="projects" data-edit-id="${p.id}" data-href="${esc(p.href || "")}" tabindex="0" role="button" aria-label="${esc(p.title)} 상세보기">
     <div class="project-card__controls edit-only"></div>
     ${hiddenBadge}${featured}${visBadge}
     <div class="project-card__thumb ${thumbClass}" data-edit-image="thumbnail" ${thumbStyle}></div>
-    <div class="project-card__screenshots edit-only">${screenshots}<button type="button" class="edit-tag-add edit-only" data-add-screenshot="${p.id}">+ 스크린샷</button></div>
+    <div class="project-card__screenshots edit-only">${screenshots}<button type="button" class="edit-screenshot-add edit-only" data-add-screenshot="${p.id}">+ 스크린샷</button></div>
     <div class="project-card__body">
       <div class="project-card__meta">
         <h3 data-edit-field="title">${esc(p.title)}</h3>
         ${statusLabel}
-        <a class="project-card__gh" href="${esc(p.github || "#")}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">↗</a>
+        <button type="button" class="project-card__detail" aria-label="${esc(p.title)} 상세보기">↗</button>
       </div>
       <time data-edit-field="period">${esc(p.period)}</time>
       <small data-edit-field="type">${esc(p.type)}</small>
@@ -587,7 +631,7 @@ function renderProjectCard(p) {
       <p class="edit-only" data-edit-field="achievements">${esc(p.achievements || "성과")}</p>
       <p class="edit-only" data-edit-field="troubleshooting">${esc(p.troubleshooting || "트러블슈팅")}</p>
       <p class="edit-only" data-edit-field="learned">${esc(p.learned || "배운 점")}</p>
-      <div class="project-card__tags" data-edit-tags="tags">${tags}</div>
+      <div class="project-card__tags" data-edit-tags="tags">${tags}<button type="button" class="project-tag-add edit-only">+ 태그</button></div>
       <small class="edit-only project-href" data-edit-field="href">${esc(p.href || "상세 페이지 경로 (예: ./pages/project.html)")}</small>
       <small class="edit-only project-deploy" data-edit-field="deployUrl">${esc(p.deployUrl || "Demo URL")}</small>
       <small class="edit-only" data-edit-field="youtube">${esc(p.youtube || "YouTube URL")}</small>
@@ -697,20 +741,27 @@ function initStaticInteractions() {
 function bindProjectCardClicks() {
   if (document.body.classList.contains("edit-mode")) return;
 
-  document.querySelectorAll(".project-card[data-href]").forEach((card) => {
-    if (card.dataset.navBound) return;
-    card.dataset.navBound = "1";
-    let href = card.dataset.href;
-    if (!href || href === "#") return;
-    if (CMSNav?.resolveMenuHref) href = CMSNav.resolveMenuHref(href);
-    else if (CMSNav?.resolveHref) href = CMSNav.resolveHref(href);
-    const go = () => {
-      CMS.saveReturnScroll?.();
-      window.location.href = href;
+  document.querySelectorAll(".project-card[data-edit-id]").forEach((card) => {
+    if (card.dataset.detailBound) return;
+    card.dataset.detailBound = "1";
+
+    const openDetail = (e) => {
+      const extLink = e.target.closest("a[href]");
+      if (extLink) {
+        const href = extLink.getAttribute("href");
+        if (href && href !== "#") return;
+      }
+      e.preventDefault();
+      const id = card.dataset.editId;
+      if (id) ProjectDetailModal?.open?.(id);
     };
-    card.addEventListener("click", go);
+
+    card.addEventListener("click", openDetail);
     card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openDetail(e);
+      }
     });
   });
 }

@@ -189,11 +189,27 @@ body.theme-light .nav-mobile a:active {
 }
 
 body.theme-light .section-about {
-  background: var(--surface);
+  background: var(--ep-about-bg, var(--surface));
 }
 
 body.theme-light .section-skills {
-  background: var(--black);
+  background: var(--ep-skills-bg, var(--black));
+}
+
+body.theme-light .section-activities {
+  background: var(--ep-activities-bg, var(--surface2));
+}
+
+body.theme-light .section-contact {
+  background: var(--ep-contact-bg, var(--surface2));
+}
+
+body.theme-light .text-link--box {
+  color: var(--ep-box-text-muted, var(--muted-readable, var(--muted)));
+}
+
+body.theme-light .text-link--box:hover {
+  color: var(--accent-readable, var(--accent));
 }
 
 body.theme-light .project-card,
@@ -204,135 +220,88 @@ body.theme-light .doc-card {
   background: var(--surface);
 }
 
+body.theme-light .project-card__body p,
+body.theme-light .project-card__body small {
+  color: var(--ep-box-text-muted, var(--body-soft));
+}
+
 body.theme-light .theme-switcher__panel {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
 }
 
-/* ── Preset accents ── */
+body.theme-light .theme-switcher__card {
+  color: var(--ep-box-text, var(--white));
+}
+
+body.theme-light .theme-switcher__desc {
+  color: var(--ep-box-text-muted, var(--muted));
+}
+
+/* ── Preset accents (12 themes) ── */
 body.theme-modern .education-panel,
 body.theme-ivory .education-panel {
-  background: var(--accent-deep);
+  background: var(--ep-education-panel, var(--accent-deep));
 }
 
 body.theme-ink .skill-bar__fill {
   background: linear-gradient(to right, var(--accent), #A8C0D8);
 }
 
-body.theme-rosewood .section-title {
-  letter-spacing: 0.05em;
+body.theme-blush .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #D8A8B8);
 }
 
-body.theme-paper .brand {
-  letter-spacing: 0.22em;
-}
-
-body.theme-obsidian .section-title {
-  letter-spacing: 0.08em;
-}
-
-body.theme-obsidian .nav-desktop a.is-active::after {
-  background: var(--accent);
+body.theme-lilac .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #C8B0D8);
 }
 
 body.theme-sage .skill-bar__fill {
   background: linear-gradient(to right, var(--accent), #A8C8B0);
 }
 
-body.theme-dusk .section-title {
-  letter-spacing: 0.06em;
+body.theme-peach .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #E8B8A0);
 }
 
-body.theme-dusk .skill-bar__fill {
-  background: linear-gradient(to right, var(--accent), #B8A8D8);
+body.theme-ocean .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #88B8D8);
 }
 
-body.theme-sand .brand {
-  letter-spacing: 0.18em;
+body.theme-pearl .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #D8C0A0);
 }
 
-body.theme-sand .education-panel {
-  background: var(--accent-deep);
+body.theme-twilight .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #C8B8E8);
 }
 
-body.theme-carbon .skill-bar__fill {
-  background: linear-gradient(to right, var(--accent), #8AD8D0);
+body.theme-mulberry .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #D898A8);
 }
 
-body.theme-carbon .section-title {
-  letter-spacing: 0.1em;
+body.theme-moonlit .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #98D0D8);
 }
 
-/* ── Flashy presets ── */
-body.theme-flashy .section-index {
-  text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 45%, transparent);
-}
-
-body.theme-flashy .skill-bar__fill {
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 50%, transparent);
-}
-
-body.theme-flashy .hero-chip {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 25%, transparent);
-}
-
-body.theme-neon .hero::before {
+body.theme-blush .hero::before,
+body.theme-lilac .hero::before,
+body.theme-sage .hero::before,
+body.theme-peach .hero::before,
+body.theme-ocean .hero::before,
+body.theme-pearl .hero::before {
   background:
-    radial-gradient(ellipse 85% 55% at 18% 28%, rgba(255, 45, 149, 0.22), transparent 62%),
-    radial-gradient(ellipse 65% 45% at 82% 72%, rgba(0, 245, 255, 0.14), transparent 58%);
+    radial-gradient(ellipse 85% 55% at 15% 25%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 65%),
+    radial-gradient(ellipse 70% 45% at 85% 80%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%);
 }
 
-body.theme-neon .skill-bar__fill {
-  background: linear-gradient(90deg, #FF2D95, #00F5FF);
-}
-
-body.theme-neon .section-title {
-  letter-spacing: 0.06em;
-}
-
-body.theme-aurora .hero::before {
+body.theme-twilight .hero::before,
+body.theme-mulberry .hero::before,
+body.theme-moonlit .hero::before,
+body.theme-ink .hero::before,
+body.theme-modern .hero::before {
   background:
-    radial-gradient(ellipse 80% 50% at 12% 35%, rgba(0, 245, 160, 0.2), transparent 60%),
-    radial-gradient(ellipse 70% 45% at 88% 65%, rgba(255, 110, 199, 0.16), transparent 58%);
-}
-
-body.theme-aurora .skill-bar__fill {
-  background: linear-gradient(90deg, #00F5A0, #FF6EC7);
-}
-
-body.theme-sunset .hero::before {
-  background:
-    radial-gradient(ellipse 75% 50% at 20% 30%, rgba(255, 107, 53, 0.24), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 75%, rgba(255, 45, 149, 0.14), transparent 55%);
-}
-
-body.theme-sunset .skill-bar__fill {
-  background: linear-gradient(90deg, #FF6B35, #FF2D95);
-}
-
-body.theme-electric .hero::before {
-  background:
-    radial-gradient(ellipse 70% 45% at 25% 25%, rgba(255, 230, 0, 0.18), transparent 58%),
-    radial-gradient(ellipse 65% 50% at 75% 70%, rgba(77, 159, 255, 0.2), transparent 60%);
-}
-
-body.theme-electric .skill-bar__fill {
-  background: linear-gradient(90deg, #FFE600, #4D9FFF);
-}
-
-body.theme-prism .hero::before {
-  background:
-    radial-gradient(ellipse 70% 45% at 15% 30%, rgba(178, 75, 243, 0.2), transparent 58%),
-    radial-gradient(ellipse 65% 45% at 85% 65%, rgba(255, 110, 199, 0.18), transparent 58%),
-    radial-gradient(ellipse 50% 35% at 50% 90%, rgba(0, 245, 160, 0.1), transparent 50%);
-}
-
-body.theme-prism .skill-bar__fill {
-  background: linear-gradient(90deg, #B24BF3, #FF6EC7, #00F5A0);
-}
-
-body.theme-prism .section-title {
-  letter-spacing: 0.07em;
+    radial-gradient(ellipse 90% 55% at 15% 25%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 65%),
+    radial-gradient(ellipse 70% 45% at 85% 80%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%);
 }
 
 /* ── Global surfaces ── */
@@ -377,7 +346,7 @@ body.theme-prism .section-title {
   }
 
   .theme-switcher__grid {
-    max-height: 46vh;
+    max-height: 52vh;
     overflow-y: auto;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.3rem;
@@ -414,11 +383,11 @@ body.theme-prism .section-title {
 }
 
 .section-activities .activity-card p {
-  color: var(--white);
+  color: var(--ep-box-text, var(--white));
 }
 
 .section-activities .activity-card small {
-  color: var(--body-soft);
+  color: var(--ep-box-text-muted, var(--body-soft));
 }
 
 .education-panel .section-index--light {
