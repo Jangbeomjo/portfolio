@@ -107,7 +107,7 @@ window.__PORTFOLIO_RAW__ = {
       "resume": "./pages/resume.html"
     },
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "projects": {
@@ -186,7 +186,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "skills": {
@@ -273,7 +273,7 @@ window.__PORTFOLIO_RAW__ = {
       "Git"
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "education": {
@@ -304,7 +304,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "experience": {
@@ -349,7 +349,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "certificates": {
@@ -364,7 +364,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "training": {
@@ -380,7 +380,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "awards": {
@@ -396,11 +396,11 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "seo": {
-    "title": "장범조 | Backend Developer Portfolio",
+    "title": "Portfolio",
     "description": "Backend Developer 장범조의 포트폴리오 — Spring Boot, Oracle, AWS 기반 프로젝트와 기술 스택",
     "keywords": "장범조, Backend Developer, Spring Boot, Oracle, AWS, Portfolio",
     "ogImage": "",
@@ -415,7 +415,7 @@ window.__PORTFOLIO_RAW__ = {
       ]
     },
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "theme": {
@@ -439,7 +439,7 @@ window.__PORTFOLIO_RAW__ = {
     },
     "animations": true,
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "resumes": {
@@ -562,7 +562,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   },
   "documents": {
@@ -659,14 +659,14 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z",
+      "updatedAt": "2026-07-10T06:53:28.892Z",
       "storageNote": "storage.provider: github | supabase | s3 — path/bucket/key로 클라우드 이전 가능"
     }
   },
   "images": {
     "items": [],
     "meta": {
-      "updatedAt": "2026-07-10T06:46:30.926Z"
+      "updatedAt": "2026-07-10T06:53:28.892Z"
     }
   }
 };
