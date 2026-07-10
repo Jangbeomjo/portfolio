@@ -1,0 +1,535 @@
+/* ===================================================
+   인라인 편집 UI — 편집모드에서만 표시
+   =================================================== */
+
+/* 편집 버튼 (헤더 우측) */
+.edit-toggle-btn {
+  position: fixed;
+  top: 1rem;
+  right: clamp(1.2rem, 4vw, 2.5rem);
+  z-index: 110;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  font-family: inherit;
+  color: var(--muted);
+  background: rgba(5, 5, 5, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.edit-toggle-btn:hover {
+  color: var(--white);
+  border-color: var(--accent);
+}
+
+/* 편집 툴바 (상단 고정) */
+.editor-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  background: rgba(12, 12, 12, 0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.editor-toolbar.is-visible {
+  transform: translateY(0);
+}
+
+body.edit-mode {
+  --editor-toolbar-h: 48px;
+  padding-top: var(--editor-toolbar-h);
+}
+
+body.edit-mode .site-header {
+  top: var(--editor-toolbar-h);
+}
+
+.editor-toolbar__badge {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  padding-right: 0.6rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  margin-right: 0.2rem;
+}
+
+.editor-toolbar__btn {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  font-family: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editor-toolbar__btn:hover { border-color: var(--accent); }
+.editor-toolbar__btn--primary { background: var(--accent); border-color: var(--accent); }
+.editor-toolbar__btn--primary:hover { background: var(--accent-deep); }
+.editor-toolbar__btn--ghost { border-color: transparent; color: var(--muted); }
+
+/* 편집모드 — 편집 가능 요소 스타일 */
+.edit-mode .is-editable {
+  outline: 1px dashed rgba(122, 31, 31, 0.5);
+  outline-offset: 3px;
+  border-radius: 2px;
+  cursor: text;
+  transition: outline-color 0.2s, background 0.2s;
+}
+
+.edit-mode .is-editable:hover {
+  outline-color: var(--accent);
+  background: rgba(122, 31, 31, 0.06);
+}
+
+.edit-mode .is-editable:focus {
+  outline: 2px solid var(--accent);
+  background: rgba(122, 31, 31, 0.1);
+}
+
+.edit-mode .is-editable::after {
+  content: "✎";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 0.6rem;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.edit-mode .is-editable { position: relative; }
+.edit-mode .is-editable:hover::after { opacity: 1; }
+
+/* 이미지 편집 */
+.edit-mode .is-editable-image {
+  cursor: pointer;
+  outline: 2px dashed rgba(122, 31, 31, 0.4);
+  outline-offset: 4px;
+  position: relative;
+}
+
+.edit-mode .is-editable-image::after {
+  content: "📷 변경";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.edit-mode .is-editable-image:hover::after { opacity: 1; }
+
+.edit-mode .portrait-frame img.is-editable-image::after {
+  border-radius: inherit;
+}
+
+.edit-mode .education-panel__bg.is-editable-image {
+  cursor: pointer;
+  outline: 2px dashed rgba(255, 255, 255, 0.35);
+  outline-offset: -4px;
+}
+
+.edit-mode .education-panel__bg.is-editable-image::after {
+  content: "📷 패널 배경";
+}
+
+.edit-mode .education-visual__img.is-editable-image::after {
+  content: "📷 사진 변경";
+}
+
+.edit-mode .section-activities__bg.is-editable-image::after {
+  content: "📷 배경 변경";
+}
+
+.edit-mode .brand__logo.is-editable-image::after {
+  content: "변경";
+  font-size: 0.48rem;
+  letter-spacing: 0.04em;
+  border-radius: 50%;
+}
+
+
+/* 스킬 숙련도 */
+.edit-mode .is-editable-level {
+  cursor: pointer;
+  position: relative;
+}
+
+.edit-mode .is-editable-level:hover::after {
+  content: "클릭하여 숙련도 변경";
+  position: absolute;
+  right: 0;
+  top: -1.2rem;
+  font-size: 0.6rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* 편집 전용 요소 */
+.edit-only { display: none !important; }
+.edit-mode .edit-only { display: flex !important; }
+.edit-mode .doc-dropzone.edit-only { display: block !important; }
+.edit-mode .resume-add-btns.edit-only { display: flex !important; flex-wrap: wrap; }
+
+.edit-mode .page-controls { display: flex; }
+
+.edit-mode .tech-cloud .edit-tag-add {
+  display: inline-flex !important;
+  align-items: center;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.6rem;
+  border: 1px dashed var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 0.4rem;
+}
+
+.edit-add-btn {
+  display: none;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  border: 1px dashed rgba(122, 31, 31, 0.5);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.edit-mode .edit-add-btn { display: inline-block; }
+.edit-add-btn:hover { background: rgba(122, 31, 31, 0.1); border-style: solid; }
+
+/* 프로젝트 컨트롤 */
+.edit-mode .project-card { position: relative; }
+.edit-mode .project-card__controls {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 5;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.edit-ctrl-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.edit-ctrl-btn:hover { border-color: var(--accent); background: rgba(122, 31, 31, 0.5); }
+
+.edit-hidden-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  padding: 0.15rem 0.4rem;
+  background: rgba(155, 34, 38, 0.8);
+  color: #fff;
+  border-radius: 3px;
+  z-index: 5;
+}
+
+.edit-mode .is-hidden-project { opacity: 0.5; }
+
+.edit-mode .project-deploy {
+  display: block !important;
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+
+/* 모달 */
+.editor-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.editor-modal.is-open { opacity: 1; pointer-events: auto; }
+
+.editor-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+}
+
+.editor-modal__box {
+  position: relative;
+  width: min(440px, 92vw);
+  background: rgba(12, 12, 12, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+}
+
+.editor-modal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.editor-modal__head h3 { font-size: 0.9rem; letter-spacing: 0.05em; }
+
+.editor-modal__close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.editor-modal__body { padding: 1.2rem; }
+.editor-modal__foot { padding: 0.8rem 1.2rem; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end; gap: 0.4rem; }
+
+.editor-device-code {
+  text-align: center;
+  padding: 1.2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.editor-device-code strong {
+  font-size: 1.6rem;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+}
+
+.editor-oauth-link {
+  display: block;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--accent);
+  margin-top: 0.8rem;
+}
+
+.editor-loading-text { font-size: 0.82rem; color: var(--muted); text-align: center; }
+
+/* 폼 */
+.editor-form { display: flex; flex-direction: column; gap: 0.8rem; }
+
+.editor-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.editor-form input,
+.editor-form textarea,
+.editor-form select {
+  padding: 0.6rem 0.8rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.editor-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.editor-range-wrap input[type="range"] { flex: 1; accent-color: var(--accent); }
+
+/* 토스트 */
+.editor-toast {
+  position: fixed;
+  top: calc(var(--editor-toolbar-h, 48px) + 0.75rem);
+  right: 1.5rem;
+  z-index: 10025;
+  padding: 0.7rem 1.2rem;
+  background: rgba(12, 12, 12, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+}
+
+.editor-toast.is-show { opacity: 1; transform: translateY(0); }
+.editor-toast--success { border-color: #2d6a4f; }
+.editor-toast--error { border-color: #9b2226; }
+
+/* 스킬 바 메타 (편집모드) */
+.skill-bar__meta { display: none; font-size: 0.6rem; color: var(--muted); margin-top: 0.2rem; }
+.edit-mode .skill-bar__meta { display: block; }
+
+/* 리스트 항목 컨트롤 (학력·활동·상세라인) */
+.edit-mode .edit-list-item {
+  position: relative;
+}
+
+.edit-mode .edit-list-item__controls {
+  position: absolute;
+  top: 0.35rem;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  gap: 0.2rem;
+}
+
+.edit-mode .timeline-full .edit-list-item__controls {
+  right: -0.25rem;
+}
+
+.detail-lines {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.detail-lines li {
+  position: relative;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: var(--muted);
+  padding: 0.35rem 0 0.35rem 1rem;
+  border-left: 2px solid var(--line);
+  margin-bottom: 0.4rem;
+}
+
+.detail-lines li::before {
+  content: "·";
+  position: absolute;
+  left: -0.15rem;
+  color: var(--accent);
+}
+
+.detail-lines--light li {
+  color: rgba(255, 255, 255, 0.65);
+  border-left-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-lines--hero li {
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.detail-lines__heading {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin-top: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.detail-lines__heading--light {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 768px) {
+  .editor-toolbar { flex-wrap: wrap; padding: 0.45rem 0.6rem; }
+  body.edit-mode { --editor-toolbar-h: 72px; }
+  .edit-toggle-btn { top: auto; bottom: 1rem; right: 1rem; }
+}
+
+/* 확장 툴바 */
+.editor-toolbar__autosave {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-right: 0.5rem;
+}
+
+.editor-toolbar__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Preview bar */
+.editor-preview-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.65rem 1rem;
+  background: #1a3a5c;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.editor-preview-bar.is-visible { display: flex; }
+
+body.preview-mode { padding-top: 48px; }
+
+/* Diff 목록 */
+.editor-diff-list {
+  margin: 0.75rem 0;
+  padding-left: 1.25rem;
+}
+
+.editor-diff-list li { margin: 0.25rem 0; }
+
+.editor-diff-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+}
+
+/* 로딩 skeleton */
+body.is-loading main { opacity: 0.4; pointer-events: none; }
+

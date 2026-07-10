@@ -1,0 +1,114 @@
+/* ===================================================
+   모바일 레이아웃 — 여백 · 네비 · overflow
+   =================================================== */
+
+:root {
+  --page-gutter: clamp(1rem, 4.5vw, 1.5rem);
+}
+
+@media (max-width: 960px) {
+  :root {
+    --container: 100%;
+    --page-gutter: clamp(1rem, 4vw, 1.25rem);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: var(--page-gutter);
+    box-sizing: border-box;
+  }
+
+  .site-header {
+    padding-inline: var(--page-gutter);
+    min-height: 56px;
+  }
+
+  .brand {
+    letter-spacing: 0.1em;
+    font-size: 0.68rem;
+    max-width: calc(100vw - 72px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .section-index,
+  .section-title,
+  .hero-name,
+  .about-copy,
+  .about-copy p,
+  .page-lead,
+  .meta-block,
+  .stack-lines p,
+  .timeline-compact p,
+  .detail-lines li {
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+  }
+
+  .resume-grid,
+  .documents-grid,
+  .training-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem;
+  }
+
+  .page-action-hub,
+  .section-add-hub,
+  .doc-dropzone {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .page-action-bar {
+    gap: 0.45rem;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --page-gutter: 1rem;
+    --section-pad: 2.25rem;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    overflow-x: clip;
+  }
+
+  main,
+  .page-main {
+    overflow-x: clip;
+  }
+
+  .hero-inner,
+  .container {
+    padding-inline: var(--page-gutter);
+  }
+
+  .section-title {
+    letter-spacing: 0.06em;
+    font-size: 0.95rem;
+  }
+
+  .section-index {
+    font-size: 1.35rem;
+  }
+
+  /* 에디터 툴바 위에 모바일 메뉴 */
+  body.nav-open .nav-mobile {
+    z-index: 10100 !important;
+  }
+
+  body.nav-open .editor-toolbar {
+    z-index: 50;
+  }
+
+  body.nav-open header.menu-open {
+    z-index: 10101;
+  }
+}

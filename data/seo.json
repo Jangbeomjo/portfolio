@@ -1,0 +1,19 @@
+{
+  "title": "장범조 | Backend Developer Portfolio",
+  "description": "Backend Developer 장범조의 포트폴리오 — Spring Boot, Oracle, AWS 기반 프로젝트와 기술 스택",
+  "keywords": "장범조, Backend Developer, Spring Boot, Oracle, AWS, Portfolio",
+  "ogImage": "",
+  "favicon": "",
+  "robots": "index, follow",
+  "sitemap": {
+    "enabled": true,
+    "baseUrl": "https://portfolio-main.vercel.app",
+    "pages": [
+      "/",
+      "/index.html"
+    ]
+  },
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z"
+  }
+}

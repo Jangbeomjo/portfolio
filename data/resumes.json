@@ -1,0 +1,123 @@
+{
+  "items": [
+    {
+      "id": "resume-backend",
+      "type": "resume",
+      "title": "Backend Resume",
+      "slug": "backend",
+      "description": "백엔드 개발자 이력서",
+      "pdfUrl": "",
+      "sections": [],
+      "order": 0,
+      "visibility": "public"
+    },
+    {
+      "id": "resume-ai",
+      "type": "resume",
+      "title": "AI Resume",
+      "slug": "ai",
+      "description": "AI/ML 포지션 이력서",
+      "pdfUrl": "",
+      "sections": [],
+      "order": 1,
+      "visibility": "private"
+    },
+    {
+      "id": "career-tech",
+      "type": "career-description",
+      "title": "경력기술서",
+      "slug": "career-tech",
+      "description": "상세 경력 기술서",
+      "pdfUrl": "",
+      "sections": [
+        {
+          "id": "ct-1",
+          "title": "PAWS 프로젝트",
+          "content": "1인 기획·설계·개발·배포",
+          "order": 0
+        }
+      ],
+      "order": 2,
+      "visibility": "public"
+    },
+    {
+      "id": "cover-common",
+      "type": "cover-letter",
+      "title": "공통 자기소개서",
+      "slug": "common",
+      "description": "모든 지원에 공통으로 사용",
+      "pdfUrl": "",
+      "sections": [
+        {
+          "id": "s-growth",
+          "title": "성장과정",
+          "content": "어려움을 성장의 기회로 바꾸며 끊임없이 도전해온 개발자입니다.",
+          "order": 0
+        },
+        {
+          "id": "s-motivation",
+          "title": "지원동기",
+          "content": "신뢰할 수 있는 백엔드 시스템을 설계하고 운영하는 데 기여하고 싶습니다.",
+          "order": 1
+        },
+        {
+          "id": "s-project",
+          "title": "프로젝트 경험",
+          "content": "PAWS 캡스톤 프로젝트를 기획·설계·개발·배포까지 1인 개발했습니다.",
+          "order": 2
+        },
+        {
+          "id": "s-teamwork",
+          "title": "협업 경험",
+          "content": "헬스포인터 팀 프로젝트에서 백엔드 API 설계 및 Flask 연동을 담당했습니다.",
+          "order": 3
+        },
+        {
+          "id": "s-strength",
+          "title": "성격의 장단점",
+          "content": "꼼꼼한 문제 해결력이 강점이며, 완벽주의 성향을 개선 중입니다.",
+          "order": 4
+        },
+        {
+          "id": "s-challenge",
+          "title": "어려움을 해결한 경험",
+          "content": "Oracle 성능 이슈를 인덱스 재설계와 쿼리 최적화로 해결했습니다.",
+          "order": 5
+        },
+        {
+          "id": "s-vision",
+          "title": "입사 후 포부",
+          "content": "서비스 안정성과 개발 문화 개선에 기여하는 엔지니어가 되겠습니다.",
+          "order": 6
+        }
+      ],
+      "order": 0,
+      "visibility": "private"
+    },
+    {
+      "id": "cover-naver",
+      "type": "cover-letter",
+      "title": "네이버 지원",
+      "slug": "naver",
+      "description": "네이버 지원용 자기소개서",
+      "pdfUrl": "",
+      "sections": [],
+      "order": 1,
+      "visibility": "private"
+    },
+    {
+      "id": "portfolio-pdf",
+      "type": "portfolio-pdf",
+      "title": "Portfolio PDF",
+      "slug": "portfolio-pdf",
+      "description": "포트폴리오 PDF",
+      "pdfUrl": "",
+      "sections": [],
+      "order": 3,
+      "visibility": "public"
+    }
+  ],
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z"
+  }
+}

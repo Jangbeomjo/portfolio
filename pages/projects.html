@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Projects | Portfolio</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  <link rel="stylesheet" href="../css/editor.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+  <header class="site-header" id="header">
+    <a href="../index.html" class="brand">JANG BEOM JO</a>
+    <nav class="nav-desktop" id="navDesktop"></nav>
+    <div class="header-actions" id="headerActions"></div>
+    <button class="nav-toggle" type="button" aria-label="메뉴" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+  <nav class="nav-mobile" id="navMobile" aria-hidden="true"></nav>
+  <script src="../js/cms/nav.js"></script>
+
+  <main class="page-main">
+    <div class="container">
+      <div class="projects-page__head reveal">
+        <span class="section-index">Projects</span>
+        <h1 class="section-title">PROJECTS</h1>
+        <p class="page-lead">전체 프로젝트 목록입니다. 카드를 클릭하면 상세 페이지로 이동합니다.</p>
+        <div class="projects-page__actions">
+          <a class="text-link" href="../index.html#projects">← 메인으로</a>
+          <a class="text-link" href="https://github.com/Jangbeomjo" target="_blank" rel="noopener">GitHub 전체 보기 →</a>
+        </div>
+        <div class="page-action-hub edit-only" id="projectsActionHub">
+          <div class="page-action-bar">
+            <button type="button" class="page-action-btn page-action-btn--primary" id="projectAddBtn">+ 프로젝트 추가</button>
+          </div>
+        </div>
+      </div>
+      <div class="project-grid project-grid--page reveal" id="projectsPageGrid"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer"><p>© Portfolio</p></footer>
+  <div class="editor-drawer" id="editorDrawer" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="../js/portfolio-data.js"></script>
+  <script src="../js/data-loader.js"></script>
+  <script src="../js/editor/store.js"></script>
+  <script src="../js/editor/history.js"></script>
+  <script src="../js/editor/autosave.js"></script>
+  <script src="../js/editor/draft.js"></script>
+  <script src="../js/cms/shared.js"></script>
+  <script src="../js/cms/page-actions.js"></script>
+  <script src="../js/editor/auth.js"></script>
+  <script src="../js/editor/github.js"></script>
+  <script src="../js/editor/upload.js"></script>
+  <script src="../js/editor/ui.js"></script>
+  <script src="../js/cms/github-panel.js"></script>
+  <script src="../js/cms/header.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/editor/inline-editor.js"></script>
+  <script src="../js/pages/projects.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "github": {
+    "clientId": "",
+    "owner": "Jangbeomjo",
+    "repo": "portfolio",
+    "branch": "main",
+    "repository": "https://github.com/Jangbeomjo/portfolio",
+    "token": ""
+  },
+  "adminUsers": [],
+  "meta": {
+    "updatedAt": "2026-07-09T00:00:00.000Z"
+  }
+}

@@ -1,0 +1,21 @@
+# 정적 HTML 포트폴리오 — 빌드 없음 (Vercel이 루트 파일 그대로 배포)
+name: Static site check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required files exist
+        run: |
+          test -f index.html || (echo "Missing index.html" && exit 1)
+          test -f vercel.json || (echo "Missing vercel.json" && exit 1)
+          test -f pages/resume.html
+          test -f pages/documents.html
+          echo "Static site files OK"

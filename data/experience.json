@@ -1,0 +1,45 @@
+{
+  "items": [
+    {
+      "id": "career-intern",
+      "category": "career",
+      "company": "인턴 경험 ",
+      "role": "Backend Developer Intern",
+      "period": "2025.01 — 2025.06",
+      "title": "인턴",
+      "desc": "Spring Boot API 개발 및 Oracle DB 설계",
+      "achievements": "REST API 15개 엔드포인트 설계·구현",
+      "tech": [
+        "Java",
+        "Spring Boot",
+        "Oracle"
+      ],
+      "order": 0
+    },
+    {
+      "id": "act-1",
+      "category": "activity",
+      "activityType": "volunteer",
+      "period": "2022.03 — 2025.11",
+      "title": "한강 쓰레기줍기",
+      "description": "봉사활동",
+      "sub": "봉사활동",
+      "organization": "",
+      "order": 1
+    },
+    {
+      "id": "act-2",
+      "category": "activity",
+      "activityType": "external",
+      "period": "2021.03 — 2026.07",
+      "title": "자유동아리",
+      "description": "교내동아리 · 국민대학교",
+      "sub": "교내동아리 · 국민대학교",
+      "organization": "국민대학교",
+      "order": 2
+    }
+  ],
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z"
+  }
+}

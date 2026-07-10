@@ -1,0 +1,87 @@
+{
+  "bars": [
+    {
+      "id": "skill-1",
+      "name": "Java / Spring Boot",
+      "level": 90,
+      "stack": "Spring MVC · MyBatis · REST API",
+      "category": "Backend",
+      "icon": "java",
+      "order": 0
+    },
+    {
+      "id": "skill-2",
+      "name": "Oracle / SQL",
+      "level": 88,
+      "stack": "ERD · PL/SQL · 정규화",
+      "category": "Database",
+      "icon": "database",
+      "order": 1
+    },
+    {
+      "id": "skill-3",
+      "name": "JavaScript / Frontend",
+      "level": 82,
+      "stack": "HTML5 · CSS3 · AJAX · jQuery",
+      "category": "Frontend",
+      "icon": "javascript",
+      "order": 2
+    },
+    {
+      "id": "skill-4",
+      "name": "Python / AI",
+      "level": 78,
+      "stack": "Flask · OpenAI API · 데이터 분석",
+      "category": "AI",
+      "icon": "python",
+      "order": 3
+    },
+    {
+      "id": "skill-5",
+      "name": "Cloud / DevOps",
+      "level": 75,
+      "stack": "AWS EC2 · Docker · Git · Linux",
+      "category": "DevOps",
+      "icon": "cloud",
+      "order": 4
+    }
+  ],
+  "stackLines": [
+    {
+      "id": "cs-1",
+      "label": "Backend",
+      "text": "Java · Spring Boot · REST API",
+      "order": 0
+    },
+    {
+      "id": "cs-2",
+      "label": "Data",
+      "text": "Oracle · SQL · ERD Modeling",
+      "order": 1
+    },
+    {
+      "id": "cs-3",
+      "label": "Cloud",
+      "text": "AWS EC2 · Docker · Git",
+      "order": 2
+    }
+  ],
+  "tags": [
+    "Java",
+    "Spring Boot",
+    "MyBatis",
+    "Oracle",
+    "Python",
+    "Flask",
+    "JavaScript",
+    "HTML5",
+    "CSS3",
+    "OpenAI API",
+    "AWS EC2",
+    "Docker",
+    "Git"
+  ],
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z"
+  }
+}

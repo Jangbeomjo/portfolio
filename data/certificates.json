@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "id": "cert-1",
+      "name": "SQLD",
+      "date": "2025.06",
+      "issuer": "한국데이터산업진흥원",
+      "proofUrl": "",
+      "order": 0
+    }
+  ],
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "id": "award-1",
+      "title": "직업능력개발훈련과정 우수상",
+      "organization": "솔데스크",
+      "date": "2024.07",
+      "description": "자바·파이썬 활용 통계기반 빅데이터분석 과정",
+      "proofUrl": "",
+      "order": 0
+    }
+  ],
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z"
+  }
+}

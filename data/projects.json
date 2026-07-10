@@ -1,0 +1,79 @@
+{
+  "items": [
+    {
+      "id": "paws",
+      "title": "PAWS",
+      "period": "2026.03 — 2026.06",
+      "type": "캡스톤디자인 · 1인 개발",
+      "role": "1인 풀스택 개발",
+      "desc": "AI 기반 반려견 라이프 통합 플랫폼. GPS 산책 매칭, AI 상담, 커뮤니티, AWS EC2 배포.",
+      "tags": [
+        "Spring Boot",
+        "Oracle",
+        "OpenAI",
+        "AWS EC2"
+      ],
+      "href": "./pages/paws.html",
+      "github": "https://kookmin-sw.github.io/2026-capstone-61/",
+      "deployUrl": "",
+      "thumb": "paws",
+      "thumbnail": "",
+      "images": [],
+      "pdf": "",
+      "videoUrl": "",
+      "hidden": false,
+      "order": 0
+    },
+    {
+      "id": "health",
+      "title": "헬스포인터",
+      "period": "2024.06 — 2024.07",
+      "type": "솔데스크 팀 프로젝트 · 4인",
+      "role": "백엔드 개발",
+      "desc": "AI 운동·식단 추천 건강관리 플랫폼. 감성 분석, Google Chart 시각화, Flask 연동.",
+      "tags": [
+        "Spring Boot",
+        "Flask",
+        "Oracle",
+        "OpenAI"
+      ],
+      "href": "./pages/healthpointer.html",
+      "github": "https://github.com/ljh325/team1_v2sbm3c",
+      "deployUrl": "",
+      "thumb": "health",
+      "thumbnail": "",
+      "images": [],
+      "pdf": "",
+      "videoUrl": "",
+      "hidden": false,
+      "order": 1
+    },
+    {
+      "id": "hobby",
+      "title": "숨쉴취미",
+      "period": "팀 프로젝트",
+      "type": "대학생 맞춤형 취미 추천",
+      "role": "풀스택 개발",
+      "desc": "취미 추천·커뮤니티 플랫폼. DB 설계, 게시판, 풀스택 개발.",
+      "tags": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Spring Boot"
+      ],
+      "href": "./pages/hobby.html",
+      "github": "https://github.com/SilVerBell0109/ss_hobby",
+      "deployUrl": "",
+      "thumb": "hobby",
+      "thumbnail": "",
+      "images": [],
+      "pdf": "",
+      "videoUrl": "",
+      "hidden": false,
+      "order": 2
+    }
+  ],
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z"
+  }
+}

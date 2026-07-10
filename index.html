@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HOME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=Noto+Sans+KR:wght@300;400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/themes.css">
+  <link rel="stylesheet" href="./css/mobile.css">
+  <link rel="stylesheet" href="./css/editor.css">
+  <link rel="stylesheet" href="./css/pages.css">
+</head>
+<body>
+
+  <header class="site-header" id="header">
+    <a href="#home" class="brand">JANG BEOM JO</a>
+    <nav class="nav-desktop" id="navDesktop"></nav>
+    <div class="header-actions" id="headerActions"></div>
+    <button class="nav-toggle" type="button" aria-label="메뉴" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <nav class="nav-mobile" id="navMobile" aria-hidden="true"></nav>
+  <script src="./js/cms/nav.js"></script>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="hero-inner container">
+        <div class="hero-portrait reveal">
+          <div class="portrait-frame portrait-frame--hero">
+            <img src="./assets/profile.png" alt="장범조 프로필">
+          </div>
+        </div>
+        <div class="hero-body">
+          <p class="hero-eyebrow reveal">Backend Developer · Portfolio</p>
+          <h1 class="hero-name reveal">JANG<br>BEOM JO</h1>
+          <p class="hero-tagline-ko reveal" id="heroIntro"></p>
+          <p class="hero-tagline-en reveal" id="heroTaglineEn"></p>
+          <ul class="detail-lines detail-lines--hero reveal" id="heroIntroLines"></ul>
+          <div class="hero-links reveal">
+            <a href="https://github.com/Jangbeomjo" target="_blank" rel="noopener">GITHUB</a>
+            <span>—</span>
+            <a href="./pages/resume.html">RESUME</a>
+          </div>
+          <div class="hero-scroll reveal" aria-hidden="true">
+            <span>SCROLL</span><i></i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01 ABOUT -->
+    <section class="section section-about" id="about">
+      <div class="container about-grid">
+        <div class="about-copy reveal">
+          <span class="section-index">01</span>
+          <h2 class="section-title">ABOUT ME</h2>
+          <p id="aboutText"></p>
+          <p id="aboutExtra"></p>
+          <div id="aboutSections" class="about-sections"></div>
+
+          <p class="section-crosslink"><a href="./pages/resume.html" class="text-link signature">상세보기</a></p>
+          
+        </div>
+        <div class="about-portrait reveal">
+          <div class="portrait-frame portrait-frame--about">
+            <img src="./assets/profile.png" alt="">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 EDUCATION -->
+    <section class="section section-education" id="education">
+      <div class="education-panel reveal">
+        <div class="education-panel__bg" data-edit-image="profile.educationPanelBackground" aria-hidden="true"></div>
+        <div class="education-panel__content">
+          <button type="button" class="education-panel__bg-btn edit-only" data-trigger-edit-image="profile.educationPanelBackground">+ 배경 추가</button>
+          <span class="section-index section-index--light">02</span>
+          <h2 class="section-title section-title--light">EDUCATION</h2>
+          <ul class="timeline-full" id="eduTimeline"></ul>
+          <p class="detail-lines__heading detail-lines__heading--light">이력서 요약</p>
+          <ul class="detail-lines detail-lines--light" id="resumeLines"></ul>
+          <div class="education-resume-links">
+            <a class="text-link" href="./pages/resume.html">자기소개서·이력서 보기→</a>
+          </div>
+        </div>
+      </div>
+      <div class="education-visual reveal">
+        <img class="education-visual__img" src="./assets/profile.png" alt="">
+        <p class="education-visual__deco" aria-hidden="true">BUILD<br>DEPLOY<br>CREATE</p>
+      </div>
+    </section>
+
+    <!-- 03 SKILLS -->
+    <section class="section section-skills" id="skills">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-index">03</span>
+            <h2 class="section-title">SKILLS</h2>
+          </div>
+        </div>
+        <div class="skill-categories reveal" id="skillCategories"></div>
+        <div class="skill-bars reveal" id="skillBars"></div>
+        <div class="tech-cloud reveal" id="techCloud"></div>
+      </div>
+    </section>
+
+    <!-- 04 CAREER -->
+    <section class="section section-career" id="career">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">04</span>
+          <h2 class="section-title">CAREER</h2>
+        </div>
+        <ul class="timeline-full" id="careerTimeline"></ul>
+      </div>
+    </section>
+
+    <!-- 05 ACTIVITIES -->
+    <section class="section section-activities" id="activities">
+      <div class="section-activities__bg" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">05</span>
+          <h2 class="section-title">ACTIVITIES</h2>
+        </div>
+        <div class="activity-grid reveal" id="activityGrid"></div>
+      </div>
+    </section>
+
+    <!-- 06 TRAINING -->
+    <section class="section section-training" id="training">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">06</span>
+          <h2 class="section-title">TRAINING & EXPERIENCE</h2>
+        </div>
+        <div class="training-grid reveal" id="trainingGrid"></div>
+      </div>
+    </section>
+
+    <!-- 07 CERTIFICATES -->
+    <section class="section section-certificates" id="certificates">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">07</span>
+          <h2 class="section-title">CERTIFICATES</h2>
+        </div>
+        <ul class="cert-list reveal" id="certList"></ul>
+      </div>
+    </section>
+
+    <!-- 08 AWARDS -->
+    <section class="section section-awards" id="awards">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">08</span>
+          <h2 class="section-title">AWARDS</h2>
+        </div>
+        <ul class="award-list reveal" id="awardList"></ul>
+      </div>
+    </section>
+
+    
+    <!-- 09 PROJECTS -->
+    <section class="section section-projects" id="projects">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-index">09</span>
+            <h2 class="section-title">PROJECTS</h2>
+          </div>
+          <a class="text-link" href="./pages/projects.html">더보기 →</a>
+        </div>
+        <div class="project-grid reveal" id="projectGrid"></div>
+      </div>
+    </section>
+
+    <!-- 10 CONTACT -->
+    <section class="section section-contact" id="contact">
+      <div class="container contact-compact reveal">
+        <div class="contact-head">
+          <span class="section-index">10</span>
+          <h2 class="section-title">CONTACT</h2>
+        </div>
+        <p class="contact-lead">언제나 환영합니다.</p>
+        <dl class="contact-row"></dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 JANG BEOM JO. ALL RIGHTS RESERVED.</p>
+    <button type="button" class="top-btn" id="topBtn">TOP ↑</button>
+  </footer>
+
+  <div class="skeleton-overlay" id="skeletonOverlay" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="editor-drawer" id="editorDrawer" aria-hidden="true"></div>
+
+  <script src="./js/portfolio-data.js"></script>
+  <script src="./js/data-loader.js"></script>
+  <script src="./js/cms/documents-access.js"></script>
+  <script src="./js/editor/store.js"></script>
+  <script src="./js/editor/history.js"></script>
+  <script src="./js/editor/autosave.js"></script>
+  <script src="./js/editor/draft.js"></script>
+  <script src="./js/cms/shared.js"></script>
+  <script src="./js/editor/auth.js"></script>
+  <script src="./js/editor/github.js"></script>
+  <script src="./js/editor/upload.js"></script>
+  <script src="./js/editor/ui.js"></script>
+  <script src="./js/cms/github-panel.js"></script>
+  <script src="./js/cms/header.js"></script>
+  <script src="./js/editor/inline-editor.js"></script>
+  <script src="./js/seo.js"></script>
+  <script src="./js/theme.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>

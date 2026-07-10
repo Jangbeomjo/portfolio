@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Resume | Portfolio CMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  <link rel="stylesheet" href="../css/editor.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+  <header class="site-header" id="header">
+    <a href="../index.html" class="brand">JANG BEOM JO</a>
+    <nav class="nav-desktop" id="navDesktop"></nav>
+    <div class="header-actions" id="headerActions"></div>
+    <button class="nav-toggle" type="button" aria-label="메뉴" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+  <nav class="nav-mobile" id="navMobile" aria-hidden="true"></nav>
+  <script src="../js/cms/nav.js"></script>
+
+  <main class="page-main">
+    <div class="container">
+      <div class="resume-page__head reveal">
+        <span class="section-index">Resume</span>
+        <h1 class="section-title">RESUME & COVER LETTER</h1>
+        <div class="resume-type-tabs" id="resumeTypeTabs">
+          <button type="button" class="resume-type-tab is-active" data-filter="all">전체</button>
+          <button type="button" class="resume-type-tab" data-filter="cover-letter">자기소개서</button>
+          <button type="button" class="resume-type-tab" data-filter="resume">이력서</button>
+          <button type="button" class="resume-type-tab" data-filter="career-description">경력기술서</button>
+        </div>
+        <div class="resume-summary" id="resumeSummary"></div>
+
+        <!-- 작성 홈 — 항상 표시 -->
+        <div class="page-action-hub edit-only" id="resumeActionHub">
+          
+          <div class="page-action-bar">
+            <button type="button" class="page-action-btn page-action-btn--primary" data-resume-add="cover-letter">+ 자기소개서</button>
+            <button type="button" class="page-action-btn page-action-btn--primary" data-resume-add="resume">+ 이력서</button>
+            <button type="button" class="page-action-btn" data-resume-add="career-description">+ 경력기술서</button>
+          </div>
+        </div>
+      </div>
+      <div class="resume-grid reveal" id="resumeGrid"></div>
+
+      <!-- EDUCATION 학력 관리 -->
+      <section class="resume-education-panel reveal" id="resumeEducationPanel">
+        <div class="resume-education-panel__head">
+          <span class="section-index">Education</span>
+          <h2 class="section-title">EDUCATION · 학력</h2>
+          <p class="page-lead">메인 페이지 EDUCATION 섹션에 표시되는 학력을 여기서 추가·수정합니다.</p>
+          <button type="button" class="page-action-btn edit-only" id="resumeEduAddBtn">+ 학력 추가</button>
+        </div>
+        <ul class="resume-edu-list" id="resumeEduList"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer"><p>© Portfolio CMS</p></footer>
+
+  <div class="editor-drawer" id="editorDrawer" aria-hidden="true"></div>
+
+  <script src="../js/portfolio-data.js"></script>
+  <script src="../js/data-loader.js"></script>
+  <script src="../js/cms/documents-access.js"></script>
+  <script src="../js/editor/store.js"></script>
+  <script src="../js/editor/history.js"></script>
+  <script src="../js/editor/autosave.js"></script>
+  <script src="../js/editor/draft.js"></script>
+  <script src="../js/cms/shared.js"></script>
+  <script src="../js/cms/page-actions.js"></script>
+  <script src="../js/editor/auth.js"></script>
+  <script src="../js/editor/github.js"></script>
+  <script src="../js/editor/upload.js"></script>
+  <script src="../js/editor/ui.js"></script>
+  <script src="../js/cms/github-panel.js"></script>
+  <script src="../js/cms/header.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/editor/inline-editor.js"></script>
+  <script src="../js/pages/resume.js"></script>
+</body>
+</html>

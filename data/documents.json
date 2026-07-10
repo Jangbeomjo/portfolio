@@ -1,0 +1,98 @@
+{
+  "items": [
+    {
+      "id": "doc-graduation",
+      "name": "졸업증명서",
+      "category": "graduation",
+      "classification": "private",
+      "storage": {
+        "provider": "github",
+        "path": "",
+        "bucket": "",
+        "key": "",
+        "region": ""
+      },
+      "fileUrl": "",
+      "fileType": "pdf",
+      "fileSize": 0,
+      "description": "비공개 — 관리자만 열람",
+      "uploadedAt": "2026-07-09T00:00:00.000Z",
+      "updatedAt": "2026-07-09T00:00:00.000Z",
+      "visibility": "private",
+      "access": {
+        "allowPreview": true,
+        "allowDownload": false,
+        "watermarkOnDownload": true,
+        "shareToken": "",
+        "shareExpiresAt": "",
+        "passwordHash": ""
+      },
+      "versions": [],
+      "order": 0
+    },
+    {
+      "id": "doc-portfolio-pdf",
+      "name": "Portfolio PDF",
+      "category": "portfolio",
+      "classification": "public",
+      "storage": {
+        "provider": "github",
+        "path": "./pages/resume.html",
+        "bucket": "",
+        "key": "",
+        "region": ""
+      },
+      "fileUrl": "./pages/resume.html",
+      "fileType": "html",
+      "fileSize": 0,
+      "description": "온라인 이력서 페이지 (PDF 업로드 전)",
+      "uploadedAt": "2026-07-09T00:00:00.000Z",
+      "updatedAt": "2026-07-09T00:00:00.000Z",
+      "visibility": "public",
+      "access": {
+        "allowPreview": true,
+        "allowDownload": false,
+        "watermarkOnDownload": false,
+        "shareToken": "",
+        "shareExpiresAt": "",
+        "passwordHash": ""
+      },
+      "versions": [],
+      "order": 1
+    },
+    {
+      "id": "doc-resume-pdf",
+      "name": "Resume PDF",
+      "category": "resume",
+      "classification": "public",
+      "storage": {
+        "provider": "github",
+        "path": "./pages/resume.html",
+        "bucket": "",
+        "key": "",
+        "region": ""
+      },
+      "fileUrl": "./pages/resume.html",
+      "fileType": "html",
+      "fileSize": 0,
+      "description": "온라인 이력서 페이지",
+      "uploadedAt": "2026-07-09T00:00:00.000Z",
+      "updatedAt": "2026-07-09T00:00:00.000Z",
+      "visibility": "public",
+      "access": {
+        "allowPreview": true,
+        "allowDownload": false,
+        "watermarkOnDownload": false,
+        "shareToken": "",
+        "shareExpiresAt": "",
+        "passwordHash": ""
+      },
+      "versions": [],
+      "order": 2
+    }
+  ],
+  "meta": {
+    "updatedAt": "2026-07-09T16:50:22.007Z",
+    "storageNote": "storage.provider: github | supabase | s3 — path/bucket/key로 클라우드 이전 가능"
+  }
+}

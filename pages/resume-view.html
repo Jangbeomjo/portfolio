@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Resume | Portfolio CMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  <link rel="stylesheet" href="../css/editor.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+  <header class="site-header" id="header">
+    <a href="../index.html" class="brand">JANG BEOM JO</a>
+    <nav class="nav-desktop" id="navDesktop"></nav>
+    <div class="header-actions" id="headerActions"></div>
+    <button class="nav-toggle" type="button" aria-label="메뉴" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+  <nav class="nav-mobile" id="navMobile" aria-hidden="true"></nav>
+  <script src="../js/cms/nav.js"></script>
+
+  <main class="page-main resume-doc-page">
+    <div class="container container--doc">
+      <h1 class="resume-doc-page__title" id="resumeDocTitle"></h1>
+      <div class="resume-doc-toolbar">
+        <div class="resume-doc-page__meta" id="resumeDocMeta"></div>
+        <div class="section-add-hub__head edit-only">
+          <span class="section-add-hub__title">항목 추가</span>
+          <span class="section-add-hub__sep" aria-hidden="true">·</span>
+          <span class="section-add-hub__hint">섹션을 추가한 뒤 아래 입력란에 작성하세요.</span>
+        </div>
+      </div>
+
+      <div class="section-add-hub edit-only" id="sectionAddHub">
+        <div class="section-preset-row">
+          <div class="section-preset-btns" id="sectionPresetBtns"></div>
+          <button type="button" class="section-preset-btn section-preset-btn--custom" id="sectionCustomAddBtn">+ 직접 입력 (제목)</button>
+        </div>
+      </div>
+
+      <article class="resume-document" id="resumeDoc"></article>
+    </div>
+  </main>
+
+  <footer class="site-footer"><p>© Portfolio CMS</p></footer>
+  <div class="editor-drawer" id="editorDrawer" aria-hidden="true"></div>
+
+  <script src="../js/portfolio-data.js"></script>
+  <script src="../js/data-loader.js"></script>
+  <script src="../js/cms/documents-access.js"></script>
+  <script src="../js/editor/store.js"></script>
+  <script src="../js/editor/history.js"></script>
+  <script src="../js/editor/autosave.js"></script>
+  <script src="../js/editor/draft.js"></script>
+  <script src="../js/cms/shared.js"></script>
+  <script src="../js/cms/page-actions.js"></script>
+  <script src="../js/editor/auth.js"></script>
+  <script src="../js/editor/github.js"></script>
+  <script src="../js/editor/upload.js"></script>
+  <script src="../js/editor/ui.js"></script>
+  <script src="../js/cms/github-panel.js"></script>
+  <script src="../js/cms/header.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/editor/inline-editor.js"></script>
+  <script src="../js/pages/resume-view.js"></script>
+</body>
+</html>
