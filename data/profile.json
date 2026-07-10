@@ -34,11 +34,11 @@
       "order": 1
     }
   ],
-  "avatar": "./assets/profile.png",
+  "avatar": "./assets/images/1783665769957-img_4643.jpeg",
   "aboutImage": "./assets/profile.png",
   "backgroundImage": "",
-  "educationImage": "",
-  "educationPanelBackground": "",
+  "educationImage": "./assets/images/1783665791761-beauty_1662860172772_original.jpeg",
+  "educationPanelBackground": "./assets/images/1783665974174-img_2586.jpeg",
   "activitiesBackgroundImage": "",
   "logo": "",
   "contactLead": "언제나 환영합니다.",
@@ -105,6 +105,6 @@
     "resume": "./pages/resume.html"
   },
   "meta": {
-    "updatedAt": "2026-07-09T16:50:22.007Z"
+    "updatedAt": "2026-07-10T06:46:30.926Z"
   }
 }
