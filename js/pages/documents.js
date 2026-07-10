@@ -31,6 +31,7 @@
       CMSHeader.render();
       CMS.initReveal?.();
       CMS.signalPortfolioReady?.();
+      setTimeout(() => CMS.restoreReturnScroll?.(), 80);
     } catch (err) {
       console.error(err);
       const grid = document.getElementById("documentsGrid");

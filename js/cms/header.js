@@ -13,12 +13,13 @@ const CMSHeader = (() => {
     const session = EditorAuth?.getSession?.() || null;
     const isEdit = document.body.classList.contains("edit-mode");
     const profile = PortfolioStore.get()?.profile || {};
+    const isMobile = window.matchMedia("(max-width: 960px)").matches;
 
     let actionHtml = "";
     if (session?.user) {
       const editBtn = isEdit
-        ? `<button type="button" class="header-actions__btn header-actions__btn--ghost" id="exitEditHeaderBtn">편집 종료</button>`
-        : `<button type="button" class="header-actions__btn header-actions__btn--primary" id="enterEditHeaderBtn">편집 시작</button>`;
+        ? `<button type="button" class="header-actions__btn header-actions__btn--ghost" id="exitEditHeaderBtn">${isMobile ? "종료" : "편집 종료"}</button>`
+        : `<button type="button" class="header-actions__btn header-actions__btn--primary" id="enterEditHeaderBtn">${isMobile ? "편집" : "편집 시작"}</button>`;
       actionHtml = `
         <div class="header-actions__user">
           <img class="header-actions__avatar" src="${CMS.esc(session.user.avatar || "")}" alt="${CMS.esc(session.user.login || "avatar")}">
@@ -27,7 +28,7 @@ const CMSHeader = (() => {
         ${editBtn}
         <button type="button" class="header-actions__btn" id="logoutHeaderBtn">Logout</button>`;
     } else {
-      actionHtml = `<button type="button" class="header-actions__btn header-actions__btn--primary" id="loginHeaderBtn">Login with GitHub</button>`;
+      actionHtml = `<button type="button" class="header-actions__btn header-actions__btn--primary" id="loginHeaderBtn">${isMobile ? "로그인" : "Login with GitHub"}</button>`;
     }
 
     container.innerHTML = actionHtml;

@@ -935,17 +935,13 @@ const InlineEditor = (() => {
     const theme = PortfolioStore.get().theme;
     const c = theme.colors || {};
     const f = theme.fonts || {};
+    const presetOptions = Object.entries(window.THEME_PRESETS || {}).map(([key, p]) =>
+      `<option value="${key}"${theme.preset === key ? " selected" : ""}>${CMS.esc(p.label)} — ${CMS.esc(p.desc)}</option>`
+    ).join("");
     EditorUI.openModal({
       title: "테마 설정",
       body: `<div class="editor-form">
-        <label>프리셋<select id="themePreset">
-          <option value="modern"${theme.preset === "modern" ? " selected" : ""}>Editorial — 다크 버건디</option>
-          <option value="ivory"${theme.preset === "ivory" ? " selected" : ""}>Ivory — 라이트 아이보리</option>
-          <option value="ink"${theme.preset === "ink" ? " selected" : ""}>Ink — 딥 네이비</option>
-          <option value="rosewood"${theme.preset === "rosewood" ? " selected" : ""}>Rosewood — 로즈우드</option>
-          <option value="paper"${theme.preset === "paper" ? " selected" : ""}>Paper — 라이트 네이비</option>
-          <option value="obsidian"${theme.preset === "obsidian" ? " selected" : ""}>Obsidian — 블랙 골드</option>
-        </select></label>
+        <label>프리셋<select id="themePreset">${presetOptions}</select></label>
         <label>모드<select id="themeMode">
           <option value="dark"${theme.mode === "dark" ? " selected" : ""}>Dark</option>
           <option value="light"${theme.mode === "light" ? " selected" : ""}>Light</option>

@@ -20,6 +20,7 @@
       CMSHeader.render();
       CMS.initReveal?.();
       CMS.signalPortfolioReady?.();
+      setTimeout(() => CMS.restoreReturnScroll?.(), 80);
       ready = true;
     } catch (err) {
       console.error(err);

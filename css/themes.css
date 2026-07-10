@@ -64,8 +64,8 @@
 
 .theme-switcher__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
 }
 
 .theme-switcher__card {
@@ -202,6 +202,107 @@ body.theme-obsidian .nav-desktop a.is-active::after {
   background: var(--accent);
 }
 
+body.theme-sage .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #A8C8B0);
+}
+
+body.theme-dusk .section-title {
+  letter-spacing: 0.06em;
+}
+
+body.theme-dusk .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #B8A8D8);
+}
+
+body.theme-sand .brand {
+  letter-spacing: 0.18em;
+}
+
+body.theme-sand .education-panel {
+  background: var(--accent-deep);
+}
+
+body.theme-carbon .skill-bar__fill {
+  background: linear-gradient(to right, var(--accent), #8AD8D0);
+}
+
+body.theme-carbon .section-title {
+  letter-spacing: 0.1em;
+}
+
+/* ── Flashy presets ── */
+body.theme-flashy .section-index {
+  text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+body.theme-flashy .skill-bar__fill {
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+body.theme-flashy .hero-chip {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+body.theme-neon .hero::before {
+  background:
+    radial-gradient(ellipse 85% 55% at 18% 28%, rgba(255, 45, 149, 0.22), transparent 62%),
+    radial-gradient(ellipse 65% 45% at 82% 72%, rgba(0, 245, 255, 0.14), transparent 58%);
+}
+
+body.theme-neon .skill-bar__fill {
+  background: linear-gradient(90deg, #FF2D95, #00F5FF);
+}
+
+body.theme-neon .section-title {
+  letter-spacing: 0.06em;
+}
+
+body.theme-aurora .hero::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 12% 35%, rgba(0, 245, 160, 0.2), transparent 60%),
+    radial-gradient(ellipse 70% 45% at 88% 65%, rgba(255, 110, 199, 0.16), transparent 58%);
+}
+
+body.theme-aurora .skill-bar__fill {
+  background: linear-gradient(90deg, #00F5A0, #FF6EC7);
+}
+
+body.theme-sunset .hero::before {
+  background:
+    radial-gradient(ellipse 75% 50% at 20% 30%, rgba(255, 107, 53, 0.24), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 75%, rgba(255, 45, 149, 0.14), transparent 55%);
+}
+
+body.theme-sunset .skill-bar__fill {
+  background: linear-gradient(90deg, #FF6B35, #FF2D95);
+}
+
+body.theme-electric .hero::before {
+  background:
+    radial-gradient(ellipse 70% 45% at 25% 25%, rgba(255, 230, 0, 0.18), transparent 58%),
+    radial-gradient(ellipse 65% 50% at 75% 70%, rgba(77, 159, 255, 0.2), transparent 60%);
+}
+
+body.theme-electric .skill-bar__fill {
+  background: linear-gradient(90deg, #FFE600, #4D9FFF);
+}
+
+body.theme-prism .hero::before {
+  background:
+    radial-gradient(ellipse 70% 45% at 15% 30%, rgba(178, 75, 243, 0.2), transparent 58%),
+    radial-gradient(ellipse 65% 45% at 85% 65%, rgba(255, 110, 199, 0.18), transparent 58%),
+    radial-gradient(ellipse 50% 35% at 50% 90%, rgba(0, 245, 160, 0.1), transparent 50%);
+}
+
+body.theme-prism .skill-bar__fill {
+  background: linear-gradient(90deg, #B24BF3, #FF6EC7, #00F5A0);
+}
+
+body.theme-prism .section-title {
+  letter-spacing: 0.07em;
+}
+
 /* ── Global surfaces ── */
 .site-header.is-scrolled {
   background: var(--header-bg) !important;
@@ -211,7 +312,7 @@ body.theme-obsidian .nav-desktop a.is-active::after {
   background: var(--nav-mobile-bg) !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 960px) {
   .theme-switcher__panel {
     position: fixed;
     top: auto;
@@ -222,7 +323,8 @@ body.theme-obsidian .nav-desktop a.is-active::after {
     max-width: 100%;
     border-radius: 1rem 1rem 0 0;
     transform: translateY(100%);
-    padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom));
+    padding: 1.1rem 1rem calc(1.1rem + env(safe-area-inset-bottom));
+    z-index: 10105;
   }
 
   .theme-switcher__panel.is-open {
@@ -230,7 +332,26 @@ body.theme-obsidian .nav-desktop a.is-active::after {
   }
 
   .theme-switcher__grid {
-    max-height: 52vh;
+    max-height: 58vh;
     overflow-y: auto;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+  }
+
+  .theme-switcher__card {
+    padding: 0.55rem;
+  }
+
+  .theme-switcher__label {
+    font-size: 0.64rem;
+  }
+
+  .theme-switcher__desc {
+    font-size: 0.52rem;
+  }
+
+  .theme-switcher__preview {
+    height: 22px;
+    margin-bottom: 0.25rem;
   }
 }

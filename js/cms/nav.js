@@ -144,23 +144,13 @@ const CMSNav = (() => {
     if (!slot || !src) return;
 
     slot.innerHTML = "";
-    src.querySelectorAll("button, .header-actions__user, .theme-switcher").forEach((el) => {
+    src.querySelectorAll(".header-actions__btn, .header-actions__user").forEach((el) => {
       const clone = el.cloneNode(true);
       clone.removeAttribute("id");
       clone.querySelectorAll("[id]").forEach((n) => n.removeAttribute("id"));
       clone.addEventListener("click", (e) => {
         e.preventDefault();
-        const preset = e.target.closest("[data-theme-preset]");
-        if (preset) {
-          ThemeSwitcher?.selectPreset?.(preset.dataset.themePreset);
-          return;
-        }
-        const origToggle = src.querySelector("#themeSwitcherToggle");
-        if (e.target.closest(".theme-switcher__toggle") && origToggle) {
-          origToggle.click();
-          return;
-        }
-        const origBtn = [...src.querySelectorAll("button")].find((b) => b.textContent === clone.textContent);
+        const origBtn = [...src.querySelectorAll(".header-actions__btn, .header-actions__user")].find((b) => b.textContent === clone.textContent);
         if (origBtn) origBtn.click();
         else el.click();
         closeMenu();
@@ -197,6 +187,8 @@ const CMSNav = (() => {
     if (!header || !toggle || !mobile) return;
 
     if (open) {
+      document.getElementById("themeSwitcherPanel")?.classList.remove("is-open");
+      document.getElementById("themeSwitcherToggle")?.setAttribute("aria-expanded", "false");
       refreshMobileNav();
       mobile.removeAttribute("aria-hidden");
     } else {

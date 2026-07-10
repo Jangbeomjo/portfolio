@@ -533,3 +533,41 @@ body.preview-mode { padding-top: 48px; }
 /* 로딩 skeleton */
 body.is-loading main { opacity: 0.4; pointer-events: none; }
 
+@media (max-width: 640px) {
+  .editor-modal__box {
+    width: min(300px, 88vw);
+  }
+
+  .editor-modal__head {
+    padding: 0.7rem 0.9rem;
+  }
+
+  .editor-modal__head h3 {
+    font-size: 0.82rem;
+  }
+
+  .editor-modal__body {
+    padding: 0.8rem 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  .editor-modal__foot {
+    padding: 0.55rem 0.9rem;
+  }
+
+  .editor-device-code {
+    padding: 0.75rem;
+    margin: 0.55rem 0;
+  }
+
+  .editor-device-code strong {
+    font-size: 1.2rem;
+    letter-spacing: 0.16em;
+  }
+
+  .editor-oauth-link {
+    font-size: 0.72rem;
+    margin-top: 0.55rem;
+  }
+}
+

@@ -11,6 +11,7 @@
       CMSHeader.render();
       CMS.initReveal?.();
       CMS.signalPortfolioReady?.();
+      window.scrollTo(0, 0);
     } catch (err) {
       console.error("프로젝트 페이지 초기화 실패:", err);
     }

@@ -21,6 +21,7 @@
     EditorHistory.reset(PortfolioStore.get());
     window.renderPortfolio();
     CMS.signalPortfolioReady?.();
+    setTimeout(() => CMS.restoreReturnScroll?.(), 80);
   } catch (err) {
     console.error("포트폴리오 데이터 로드 실패:", err);
     if (DataLoader.isFileProtocol?.() && !DataLoader.hasBundledData?.()) {
@@ -135,6 +136,8 @@ function updateHero(profile) {
   renderHeroLinks(profile.links);
   renderProfileImages(profile);
   renderDetailLines("heroIntroLines", profile.introLines, "introLines", false);
+  renderHeroChips(PortfolioStore.get()?.skills);
+  refreshHeroMobile?.();
 }
 
 function updateAbout(profile, education, about) {
@@ -351,6 +354,62 @@ function renderHeroLinks(links) {
   container.innerHTML = items.length ? items.join("<span>—</span>") : "";
   container.dataset.editGroup = "profile.links";
 }
+
+function renderHeroChips(skills) {
+  const el = document.getElementById("heroChips");
+  if (!el) return;
+  const tags = [...(skills?.tags || [])].slice(0, 4);
+  el.innerHTML = tags.map((t) => `<span class="hero-chip">${esc(t)}</span>`).join("");
+}
+
+let heroMobileBound = false;
+
+function refreshHeroMobile() {
+  const hero = document.querySelector(".hero");
+  const bar = document.getElementById("heroMobileBar");
+  if (!hero || !bar) return;
+
+  const mobile = window.matchMedia("(max-width: 960px)").matches;
+  bar.setAttribute("aria-hidden", mobile ? "false" : "true");
+
+  if (!mobile) {
+    hero.classList.remove("hero--mobile-ready");
+    return;
+  }
+
+  hero.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-visible"));
+  hero.classList.remove("hero--mobile-ready");
+  requestAnimationFrame(() => hero.classList.add("hero--mobile-ready"));
+}
+
+function initHeroMobile() {
+  if (heroMobileBound) return;
+  heroMobileBound = true;
+
+  const mq = window.matchMedia("(max-width: 960px)");
+  mq.addEventListener("change", () => {
+    renderHeroChips(PortfolioStore.get()?.skills);
+    refreshHeroMobile();
+  });
+
+  document.getElementById("heroScrollCue")?.addEventListener("click", () => {
+    CMSNav?.closeMenu?.();
+    document.getElementById("about")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  document.getElementById("heroQuickNav")?.addEventListener("click", (e) => {
+    const link = e.target.closest("a[href^='#']");
+    if (!link) return;
+    e.preventDefault();
+    CMSNav?.closeMenu?.();
+    const id = link.getAttribute("href").slice(1);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  refreshHeroMobile();
+}
+
+window.refreshHeroMobile = refreshHeroMobile;
 
 function renderProfileImages(profile) {
   const fallback = "./assets/profile.png";
@@ -625,7 +684,10 @@ function bindProjectCardClicks() {
     if (!href || href === "#") return;
     if (CMSNav?.resolveMenuHref) href = CMSNav.resolveMenuHref(href);
     else if (CMSNav?.resolveHref) href = CMSNav.resolveHref(href);
-    const go = () => { window.location.href = href; };
+    const go = () => {
+      CMS.saveReturnScroll?.();
+      window.location.href = href;
+    };
     card.addEventListener("click", go);
     card.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
@@ -635,6 +697,7 @@ function bindProjectCardClicks() {
 
 function bindDynamicInteractions() {
   initStaticInteractions();
+  initHeroMobile();
   CMS.initReveal?.();
   bindProjectCardClicks();
 }

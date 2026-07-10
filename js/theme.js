@@ -8,8 +8,8 @@ const LEGACY_PRESET_MAP = {
   glass: "ink",
   midnight: "obsidian",
   cream: "paper",
-  slate: "ink",
-  forest: "rosewood",
+  slate: "carbon",
+  forest: "sage",
   noir: "obsidian",
 };
 
@@ -86,6 +86,119 @@ const THEME_PRESETS = {
     fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
     mode: "dark",
   },
+  sage: {
+    label: "Sage",
+    desc: "다크 · 세이지",
+    swatch: ["#7EA68C", "#0E1210", "#E8EDE8"],
+    colors: {
+      primary: "#7EA68C", primaryDeep: "#1F3328",
+      background: "#0E1210", surface: "#151A17", surface2: "#1C2420",
+      text: "#E8EDE8", muted: "#8A9A90",
+    },
+    fonts: { serif: "Cormorant Garamond", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+  },
+  dusk: {
+    label: "Dusk",
+    desc: "다크 · 퍼플",
+    swatch: ["#9B8EC4", "#100D18", "#EAE6F0"],
+    colors: {
+      primary: "#9B8EC4", primaryDeep: "#2A1F42",
+      background: "#100D18", surface: "#171420", surface2: "#1F1A2C",
+      text: "#EAE6F0", muted: "#9A92A8",
+    },
+    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+  },
+  sand: {
+    label: "Sand",
+    desc: "라이트 · 샌드",
+    swatch: ["#B8956B", "#F7F3EC", "#2C2824"],
+    colors: {
+      primary: "#B8956B", primaryDeep: "#5C4A32",
+      background: "#F7F3EC", surface: "#FFFFFF", surface2: "#EFEBE3",
+      text: "#2C2824", muted: "#7A7268",
+    },
+    fonts: { serif: "Cormorant Garamond", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "light",
+  },
+  carbon: {
+    label: "Carbon",
+    desc: "다크 · 시안",
+    swatch: ["#5ECEC6", "#0A0C0D", "#E2E8EA"],
+    colors: {
+      primary: "#5ECEC6", primaryDeep: "#143836",
+      background: "#0A0C0D", surface: "#121517", surface2: "#1A1E20",
+      text: "#E2E8EA", muted: "#8A9398",
+    },
+    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+  },
+  neon: {
+    label: "Neon",
+    desc: "네온 · 사이버펑크",
+    swatch: ["#FF2D95", "#0A0014", "#E0F7FF"],
+    colors: {
+      primary: "#FF2D95", primaryDeep: "#3D0A5C",
+      background: "#0A0014", surface: "#140020", surface2: "#1E0030",
+      text: "#F0EEFF", muted: "#A890C8",
+    },
+    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+    flashy: true,
+  },
+  aurora: {
+    label: "Aurora",
+    desc: "오로라 · 그린-핑크",
+    swatch: ["#00F5A0", "#0C1020", "#FFB8E8"],
+    colors: {
+      primary: "#00F5A0", primaryDeep: "#1A3D5C",
+      background: "#0C1020", surface: "#121828", surface2: "#1A2038",
+      text: "#E8FFF5", muted: "#88A8B8",
+    },
+    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+    flashy: true,
+  },
+  sunset: {
+    label: "Sunset",
+    desc: "선셋 · 오렌지-마젠타",
+    swatch: ["#FF6B35", "#1A0A14", "#FFD4A8"],
+    colors: {
+      primary: "#FF6B35", primaryDeep: "#5C1838",
+      background: "#1A0A14", surface: "#241018", surface2: "#2E1820",
+      text: "#FFF0E8", muted: "#B89890",
+    },
+    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+    flashy: true,
+  },
+  electric: {
+    label: "Electric",
+    desc: "일렉트릭 · 블루-옐로",
+    swatch: ["#FFE600", "#1A0A3C", "#4D9FFF"],
+    colors: {
+      primary: "#FFE600", primaryDeep: "#2A1A6C",
+      background: "#1A0A3C", surface: "#221048", surface2: "#2C1860",
+      text: "#F0F0FF", muted: "#A8A0C8",
+    },
+    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+    flashy: true,
+  },
+  prism: {
+    label: "Prism",
+    desc: "프리즘 · 레인보우",
+    swatch: ["#B24BF3", "#101018", "#FF6EC7"],
+    colors: {
+      primary: "#B24BF3", primaryDeep: "#4A2080",
+      background: "#101018", surface: "#181820", surface2: "#202028",
+      text: "#F5F0FF", muted: "#9898B0",
+    },
+    fonts: { serif: "Playfair Display", sans: "Noto Sans KR", signature: "Cormorant Garamond" },
+    mode: "dark",
+    flashy: true,
+  },
 };
 
 const PRESET_NAMES = Object.keys(THEME_PRESETS);
@@ -160,6 +273,7 @@ function applyTheme(theme) {
   document.body.classList.toggle("theme-light", mode === "light");
   document.body.classList.toggle("no-animations", animations === false);
   document.body.classList.toggle("theme-glass", false);
+  document.body.classList.toggle("theme-flashy", !!THEME_PRESETS[preset]?.flashy);
   document.body.dataset.themePreset = preset;
   document.body.dataset.themeMode = mode;
 
@@ -259,6 +373,7 @@ const ThemeSwitcher = (() => {
 
       if (toggle) {
         e.stopPropagation();
+        CMSNav?.closeMenu?.();
         const open = !panel?.classList.contains("is-open");
         panel?.classList.toggle("is-open", open);
         toggle.setAttribute("aria-expanded", String(open));

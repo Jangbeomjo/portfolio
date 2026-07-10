@@ -121,6 +121,8 @@ const CMS = (() => {
     return `${base}/${clean}`;
   }
 
+  const DEFAULT_PROFILE_IMAGE = "./assets/profile.png";
+
   /** asset URL — 정적 파일은 로컬 우선, CMS 업로드만 GitHub raw */
   function resolveAssetUrl(path) {
     if (!path) return "";
@@ -128,6 +130,7 @@ const CMS = (() => {
     const clean = path.replace(/^\.\//, "");
     const local = localAssetUrl(path);
 
+    /* assets/images/* — CMS 업로드 (GitHub raw fallback) */
     if (clean.startsWith("assets/images/")) {
       const cached = readCachedPreview(path);
       if (cached) return cached;
@@ -135,16 +138,18 @@ const CMS = (() => {
       if (raw) return raw;
     }
 
+    /* assets/* 정적 파일 — 항상 로컬 */
+    if (clean.startsWith("assets/")) return local;
+
     return local;
   }
-
-  const DEFAULT_PROFILE_IMAGE = "./assets/profile.png";
 
   /** 이미지 로드 실패 시 GitHub raw → 로컬 fallback */
   function setImageSrc(img, path, fallback = DEFAULT_PROFILE_IMAGE) {
     if (!img) return;
     const fb = localAssetUrl(fallback) || fallback;
-    const clean = (path || "").replace(/^\.\//, "");
+    const trimmed = (path || "").trim();
+    const clean = trimmed.replace(/^\.\//, "");
     const githubRaw = clean.startsWith("assets/images/") ? githubRawUrl(clean) : null;
 
     img.onerror = () => {
@@ -159,7 +164,7 @@ const CMS = (() => {
       img.onerror = null;
       if (img.src !== fb) img.src = fb;
     };
-    const url = path ? resolveAssetUrl(path) : fb;
+    const url = trimmed ? resolveAssetUrl(trimmed) : fb;
     img.src = url || fb;
   }
 
@@ -328,6 +333,55 @@ const CMS = (() => {
   document.addEventListener("portfolio:ready", initReveal);
   document.addEventListener("portfolio:rendered", initReveal);
 
+  const SCROLL_KEY_PREFIX = "portfolio:scroll:";
+
+  function scrollStorageKey(path) {
+    return SCROLL_KEY_PREFIX + (path || location.pathname);
+  }
+
+  /** 목록·메인에서 상세로 이동 전 스크롤 위치 저장 */
+  function saveReturnScroll(from) {
+    try {
+      const path = from || location.pathname;
+      if (!shouldTrackScroll(path)) return;
+      sessionStorage.setItem(scrollStorageKey(path), String(window.scrollY));
+    } catch { /* quota */ }
+  }
+
+  function shouldTrackScroll(path) {
+    const p = path || location.pathname;
+    if (p.includes("/pages/")) return true;
+    return !!(document.getElementById("projectGrid") || document.getElementById("hero"));
+  }
+
+  /** 뒤로가기·브랜드 링크 복귀 시 스크롤 복원 */
+  function restoreReturnScroll() {
+    try {
+      const raw = sessionStorage.getItem(scrollStorageKey());
+      if (raw == null) return;
+      const top = parseInt(raw, 10);
+      if (!Number.isFinite(top)) return;
+      sessionStorage.removeItem(scrollStorageKey());
+      const apply = () => window.scrollTo(0, top);
+      requestAnimationFrame(() => {
+        apply();
+        requestAnimationFrame(apply);
+      });
+    } catch { /* ignore */ }
+  }
+
+  function bindScrollRestore() {
+    window.addEventListener("pagehide", () => {
+      if (shouldTrackScroll()) saveReturnScroll();
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindScrollRestore);
+  } else {
+    bindScrollRestore();
+  }
+
   /** portfolio:ready — InlineEditor 초기화 race 방지 */
   function signalPortfolioReady() {
     window.__portfolioReady = true;
@@ -448,6 +502,7 @@ const CMS = (() => {
     fileToPersistentUrl, persistUploadedFile, initReveal, signalPortfolioReady,
     collectUsedImages, uploadImageWithFallback, applyImageSource, clearImageSource, toDraftImageUrl,
     getImagePreviewUrl, getGithubConfig,
+    saveReturnScroll, restoreReturnScroll,
     SKILL_CATEGORIES, ACTIVITY_TYPES, DOC_VISIBILITY, PROJECT_STATUS,
   };
 })();

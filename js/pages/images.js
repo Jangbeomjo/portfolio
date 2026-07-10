@@ -18,21 +18,32 @@
   }
 
   async function bootstrap() {
-    const raw = await DataLoader.loadAllRaw();
-    PortfolioStore.init(raw);
-    if (EditorAuth?.getSession?.() && EditorAutosave.hasDraft()) {
-      const restore = await EditorAutosave.promptRestore();
-      if (restore) {
-        const draft = EditorAutosave.loadDraft();
-        if (draft) PortfolioStore.importAll(draft);
+    try {
+      const raw = await DataLoader.loadAllRaw();
+      PortfolioStore.init(raw);
+      if (EditorAuth?.getSession?.() && EditorAutosave.hasDraft()) {
+        const restore = await EditorAutosave.promptRestore();
+        if (restore) {
+          const draft = EditorAutosave.loadDraft();
+          if (draft) PortfolioStore.importAll(draft);
+        }
       }
+      EditorHistory.reset(PortfolioStore.get());
+      renderImageLibrary();
+      bindDropzone();
+      CMSHeader.render();
+      CMS.initReveal?.();
+      CMS.signalPortfolioReady?.();
+      setTimeout(() => CMS.restoreReturnScroll?.(), 80);
+    } catch (err) {
+      console.error(err);
+      const grid = document.getElementById("imageGrid");
+      const hint = DataLoader.isFileProtocol?.() && !DataLoader.hasBundledData?.()
+        ? "<code>python scripts/bundle-data.py</code> 실행 또는 <code>start-server.bat</code> 사용"
+        : "<code>start-server.bat</code>으로 localhost에서 다시 시도하세요.";
+      if (grid) grid.innerHTML = `<p class="doc-empty-hint">이미지 데이터를 불러오지 못했습니다.<br>${hint}</p>`;
+      EditorUI?.showToast?.("이미지 데이터를 불러오지 못했습니다.", "error");
     }
-    EditorHistory.reset(PortfolioStore.get());
-    renderImageLibrary();
-    bindDropzone();
-    CMSHeader.render();
-    CMS.initReveal?.();
-    CMS.signalPortfolioReady?.();
   }
 
   function renderImageLibrary() {
