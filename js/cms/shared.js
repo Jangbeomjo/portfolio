@@ -248,7 +248,7 @@ const CMS = (() => {
     return url;
   }
 
-  /** 업로드 — GitHub 시도 후 실패 시 Draft 로컬 저장 */
+  /** Draft 전용 업로드 — LocalStorage Draft에만 저장 (GitHub 미사용) */
   async function persistUploadedFile(file) {
     const buildPreview = async () => {
       if (file.type?.startsWith("image/")) {
@@ -257,22 +257,9 @@ const CMS = (() => {
       return fileToPersistentUrl(file);
     };
 
-    if (EditorAuth?.canUseGithub?.()) {
-      try {
-        const path = await EditorUpload.uploadFile(file);
-        try {
-          const preview = await buildPreview();
-          if (preview) cacheImagePreview(path, preview);
-        } catch { /* preview optional */ }
-        return path;
-      } catch (err) {
-        console.warn("[CMS] GitHub upload failed:", err);
-      }
-    }
-    EditorUI?.showToast?.("Draft에 로컬 저장됩니다.", "info");
     const localUrl = await buildPreview();
     if (localUrl?.startsWith("blob:")) {
-      throw new Error("파일이 너무 커서 Draft에 저장할 수 없습니다. GitHub 로그인 후 업로드하세요.");
+      throw new Error("파일이 너무 커서 Draft에 저장할 수 없습니다. 더 작은 파일을 사용해 주세요.");
     }
     return localUrl;
   }
@@ -501,19 +488,67 @@ const CMS = (() => {
     if (compress) {
       try { f = await compressImage(file); } catch { f = file; }
     }
+    return toDraftImageUrl(f);
+  }
 
-    if (EditorAuth?.canUseGithub?.()) {
-      try {
-        const githubPath = await EditorUpload.uploadImage(f, false);
-        const preview = await fileToPersistentUrl(f);
-        cacheImagePreview(githubPath, preview);
-        return githubPath;
-      } catch (err) {
-        console.warn("[CMS] GitHub image upload failed:", err);
-      }
+  function publishAssetPathForMime(mime, index) {
+    const extMap = {
+      "image/jpeg": "jpg", "image/jpg": "jpg", "image/png": "png",
+      "image/gif": "gif", "image/webp": "webp", "application/pdf": "pdf",
+    };
+    const ext = extMap[mime] || (mime.startsWith("image/") ? mime.split("/")[1] : "bin");
+    const folder = mime.startsWith("image/") ? "assets/images" : "assets/docs";
+    return `${folder}/${Date.now().toString(36)}-${index}.${ext}`;
+  }
+
+  /** Publish 전 — data URL을 GitHub asset 경로로 치환하고 바이너리 수집 */
+  function prepareDataForPublish(data) {
+    const cloned = JSON.parse(JSON.stringify(data));
+    const binaries = [];
+    const urlToPath = new Map();
+    let assetIndex = 0;
+
+    function resolveDataUrl(url) {
+      if (!url.startsWith("data:")) return url;
+      if (urlToPath.has(url)) return urlToPath.get(url);
+
+      const mimeMatch = url.match(/^data:([^;,]+)/);
+      const mime = mimeMatch?.[1] || "application/octet-stream";
+      const base64 = url.includes(",") ? url.slice(url.indexOf(",") + 1) : "";
+      const relPath = publishAssetPathForMime(mime, assetIndex++);
+      const publicPath = `./${relPath}`;
+
+      binaries.push({ path: relPath, content: base64, encoding: "base64" });
+      urlToPath.set(url, publicPath);
+      return publicPath;
     }
 
-    return toDraftImageUrl(f);
+    function walk(obj) {
+      if (!obj || typeof obj !== "object") return;
+      if (Array.isArray(obj)) {
+        obj.forEach((item, i) => {
+          if (typeof item === "string") {
+            if (item.startsWith("blob:")) {
+              throw new Error("만료된 임시 파일이 있습니다. 해당 파일을 다시 업로드한 후 Publish해 주세요.");
+            }
+            if (item.startsWith("data:")) obj[i] = resolveDataUrl(item);
+          } else walk(item);
+        });
+        return;
+      }
+      Object.keys(obj).forEach((key) => {
+        const value = obj[key];
+        if (typeof value === "string") {
+          if (value.startsWith("blob:")) {
+            throw new Error("만료된 임시 파일이 있습니다. 해당 파일을 다시 업로드한 후 Publish해 주세요.");
+          }
+          if (value.startsWith("data:")) obj[key] = resolveDataUrl(value);
+        } else if (value && typeof value === "object") walk(value);
+      });
+    }
+
+    walk(cloned);
+    return { data: cloned, binaries };
   }
 
   function getImagePreviewUrl(path) {
@@ -569,7 +604,7 @@ const CMS = (() => {
     injectGenericControls, handleListAction, handleLineAction,
     rerender, rerenderForList, compressImage, resolveAssetUrl, setImageSrc, localAssetUrl, githubRawUrl,
     fileToPersistentUrl, persistUploadedFile, initReveal, signalPortfolioReady,
-    collectUsedImages, uploadImageWithFallback, applyImageSource, clearImageSource, toDraftImageUrl,
+    collectUsedImages, uploadImageWithFallback, prepareDataForPublish, applyImageSource, clearImageSource, toDraftImageUrl,
     getImagePreviewUrl, getGithubConfig,
     saveReturnScroll, restoreReturnScroll,
     SKILL_CATEGORIES, ACTIVITY_TYPES, DOC_VISIBILITY, PROJECT_STATUS,

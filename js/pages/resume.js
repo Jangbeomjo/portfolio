@@ -299,14 +299,14 @@
   async function uploadResumePdf(id) {
     const file = await EditorUpload.pick("application/pdf");
     if (!file) return;
-    EditorUI.showLoading("PDF 업로드 중...");
+    EditorUI.showLoading("Draft 저장 중...");
     try {
       const path = await CMS.persistUploadedFile(file);
       const item = PortfolioStore.findResume(id);
       if (item) { item.pdfUrl = path; PortfolioStore.notifyChange(); }
       EditorUI.closeModal();
       renderResumeList();
-      EditorUI.showToast("PDF 업로드 완료", "success");
+      EditorUI.showToast("Draft에 저장됐습니다. Publish로 반영하세요.", "success");
     } catch (err) {
       EditorUI.closeModal();
       EditorUI.showToast(err.message, "error");

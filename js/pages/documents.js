@@ -579,7 +579,7 @@
     const store = PortfolioStore.get();
     let ok = 0;
     for (const file of files) {
-      EditorUI.showLoading(`${file.name} 업로드 중...`);
+      EditorUI.showLoading(`${file.name} Draft 저장 중...`);
       try {
         const ext = file.name.split(".").pop().toLowerCase();
         const fileUrl = await CMS.persistUploadedFile(file);
@@ -610,7 +610,7 @@
     }
     EditorUI.closeModal();
     renderDocuments();
-    if (ok > 0) EditorUI.showToast(`업로드 완료 (${ok}개)`, "success");
+    if (ok > 0) EditorUI.showToast(`Draft에 저장됐습니다 (${ok}개). Publish로 반영하세요.`, "success");
     else if (files.length) EditorUI.showToast("업로드에 실패했습니다.", "error");
   }
 
@@ -619,7 +619,7 @@
     if (!doc) return;
     const file = await EditorUpload.pick(ACCEPT);
     if (!file) return;
-    EditorUI.showLoading("업로드 중...");
+    EditorUI.showLoading("Draft 저장 중...");
     try {
       const ext = file.name.split(".").pop().toLowerCase();
       const prevUrl = doc.storage?.path || doc.fileUrl;
@@ -636,7 +636,7 @@
       PortfolioStore.notifyChange();
       EditorUI.closeModal();
       renderDocuments();
-      EditorUI.showToast(prevUrl ? "파일 교체 완료 (이전 버전 보관됨)" : "파일 업로드 완료", "success");
+      EditorUI.showToast(prevUrl ? "Draft에 교체됐습니다. Publish로 반영하세요." : "Draft에 저장됐습니다. Publish로 반영하세요.", "success");
     } catch (err) {
       EditorUI.closeModal();
       EditorUI.showToast(err.message || "업로드 실패", "error");

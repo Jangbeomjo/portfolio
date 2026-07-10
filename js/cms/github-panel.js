@@ -17,7 +17,7 @@ const GitHubPanel = (() => {
           <label>Owner<input id="ghOwner" value="${CMS.esc(owner)}"></label>
           <label>Repository<input id="ghRepo" value="${CMS.esc(repo)}"></label>
           <label>Branch<input id="ghBranch" value="${CMS.esc(branch)}"></label>
-          <label>Commit Message<input id="ghCommitMsg" value="CMS: 콘텐츠 Publish" placeholder="Publish 시 사용"></label>
+          <p class="editor-form__hint">Publish 시 커밋 메시지: <strong>CMS: 콘텐츠 Publish</strong> (단일 커밋)</p>
           <div class="editor-form__actions">
             <button type="button" class="editor-toolbar__btn" id="ghLoadHistory">Commit History</button>
             <button type="button" class="editor-toolbar__btn" id="ghApplyRepo">저장소 적용</button>
@@ -30,8 +30,6 @@ const GitHubPanel = (() => {
     document.getElementById("ghClose").onclick = EditorUI.closeModal;
     document.getElementById("ghApplyRepo").onclick = applyRepo;
     document.getElementById("ghLoadHistory").onclick = loadHistory;
-    // Publish 시 commit message 사용하도록 전역 저장
-    window._cmsCommitMessage = () => document.getElementById("ghCommitMsg")?.value || "CMS: 콘텐츠 Publish";
   }
 
   function applyRepo() {

@@ -630,26 +630,38 @@ const InlineEditor = (() => {
   async function uploadCertProof(id) {
     const file = await EditorUpload.pick("image/*,application/pdf");
     if (!file) return;
-    EditorUI.showLoading("업로드 중...");
-    const path = file.type === "application/pdf" ? await EditorUpload.uploadPdf(file) : await EditorUpload.uploadImage(file);
-    PortfolioStore.updateItem("certificates", id, "proofUrl", path);
-    EditorUI.closeModal();
-    window.renderPortfolio?.(["certificates"]);
+    EditorUI.showLoading("Draft에 저장 중...");
+    try {
+      const path = await CMS.persistUploadedFile(file);
+      PortfolioStore.updateItem("certificates", id, "proofUrl", path);
+      EditorUI.closeModal();
+      EditorUI.showToast("Draft에 저장됐습니다. Publish로 반영하세요.", "success");
+      window.renderPortfolio?.(["certificates"]);
+    } catch (err) {
+      EditorUI.closeModal();
+      EditorUI.showToast(err?.message || "파일 저장 실패", "error");
+    }
   }
 
   async function addProjectScreenshot(projectId) {
     const file = await EditorUpload.pick("image/*");
     if (!file) return;
-    EditorUI.showLoading("업로드 중...");
-    const path = await EditorUpload.uploadImage(file);
-    const p = PortfolioStore.findItem("projects", projectId);
-    if (p) {
-      p.screenshots = p.screenshots || p.images || [];
-      p.screenshots.push(path);
-      PortfolioStore.notifyChange();
+    EditorUI.showLoading("Draft에 저장 중...");
+    try {
+      const path = await CMS.uploadImageWithFallback(file);
+      const p = PortfolioStore.findItem("projects", projectId);
+      if (p) {
+        p.screenshots = p.screenshots || p.images || [];
+        p.screenshots.push(path);
+        PortfolioStore.notifyChange();
+      }
+      EditorUI.closeModal();
+      EditorUI.showToast("Draft에 저장됐습니다. Publish로 반영하세요.", "success");
+      rerenderAllProjects?.();
+    } catch (err) {
+      EditorUI.closeModal();
+      EditorUI.showToast(err?.message || "이미지 저장 실패", "error");
     }
-    EditorUI.closeModal();
-    rerenderAllProjects?.();
   }
 
   function openCategoryPicker(skill) {
@@ -890,16 +902,11 @@ const InlineEditor = (() => {
         CMSHeader?.render?.();
       }
       EditorUI.closeModal();
-      EditorUI.showToast(
-        path.startsWith("data:") ? "Draft에 저장됐습니다." : "이미지가 저장되었습니다.",
-        "success"
-      );
+      EditorUI.showToast("Draft에 저장됐습니다. Publish로 반영하세요.", "success");
     } catch (err) {
       EditorUI.closeModal();
       const msg = err?.message || "이미지 저장 실패";
-      EditorUI.showToast(/session|credentials|401|bad/i.test(msg)
-        ? "GitHub 세션 문제 — 다시 로그인하거나 더 작은 이미지를 사용해 주세요."
-        : msg, "error");
+      EditorUI.showToast(msg, "error");
     }
   }
 
@@ -955,7 +962,7 @@ const InlineEditor = (() => {
     EditorUI.showToast("Draft 저장됨", "success");
   }
 
-  /** GitHub Publish — Diff 확인 후 커밋, 편집 모드 유지 */
+  /** GitHub Publish — 단일 커밋으로 반영 후 Vercel 자동 배포 */
   async function publishAll() {
     if (!EditorAuth.getSession()) {
       EditorUI.showToast("Publish하려면 GitHub 로그인이 필요합니다.", "error");
@@ -967,15 +974,16 @@ const InlineEditor = (() => {
       async () => {
         EditorUI.showLoading("GitHub에 Publish 중...");
         try {
-          await commitToGitHub();
+          const publishedData = await commitToGitHub();
+          PortfolioStore.importAll(publishedData);
           PortfolioStore.commitSnapshot();
+          EditorAutosave.flush(null);
           EditorAutosave.clearDraft();
           EditorHistory.reset(PortfolioStore.get());
           DataLoader.clearCache();
           EditorUI.closeModal();
           EditorUI.showToast("Publish 완료! Vercel 재배포가 시작됩니다.", "success");
           EditorUI.updateAutosaveLabel?.(null);
-          // 편집 모드 유지 + 재바인딩
           rerenderCurrentPage();
           refreshEditState();
         } catch (err) {
@@ -986,35 +994,39 @@ const InlineEditor = (() => {
     );
   }
 
+  const PUBLISH_COMMIT_MESSAGE = "CMS: 콘텐츠 Publish";
+
   async function commitToGitHub() {
-    const data = PortfolioStore.get();
     PortfolioStore.touchProfile();
-    const msg = window._cmsCommitMessage?.() || "CMS: 콘텐츠 Publish";
     ["projects", "skills", "education", "experience", "certificates", "training", "awards", "resumes", "documents", "images"].forEach((k) => PortfolioStore.touchMeta(k));
-    data.seo.meta = { updatedAt: new Date().toISOString() };
-    data.theme.meta = { updatedAt: new Date().toISOString() };
+    const storeData = PortfolioStore.get();
+    storeData.seo.meta = { updatedAt: new Date().toISOString() };
+    storeData.theme.meta = { updatedAt: new Date().toISOString() };
+
+    const prepared = CMS.prepareDataForPublish(storeData);
+    const data = prepared.data;
 
     const files = [
-      { path: "data/profile.json", data: { ...data.profile, about: data.about } },
-      { path: "data/projects.json", data: data.projects },
-      { path: "data/skills.json", data: data.skills },
-      { path: "data/education.json", data: data.education },
-      { path: "data/experience.json", data: data.experience },
-      { path: "data/certificates.json", data: data.certificates },
-      { path: "data/training.json", data: data.training },
-      { path: "data/resumes.json", data: data.resumes },
-      { path: "data/documents.json", data: data.documents },
-      { path: "data/awards.json", data: data.awards },
-      { path: "data/images.json", data: data.images },
-      { path: "data/seo.json", data: data.seo },
-      { path: "data/theme.json", data: data.theme },
+      { path: "data/profile.json", content: JSON.stringify({ ...data.profile, about: data.about }, null, 2), encoding: "utf-8" },
+      { path: "data/projects.json", content: JSON.stringify(data.projects, null, 2), encoding: "utf-8" },
+      { path: "data/skills.json", content: JSON.stringify(data.skills, null, 2), encoding: "utf-8" },
+      { path: "data/education.json", content: JSON.stringify(data.education, null, 2), encoding: "utf-8" },
+      { path: "data/experience.json", content: JSON.stringify(data.experience, null, 2), encoding: "utf-8" },
+      { path: "data/certificates.json", content: JSON.stringify(data.certificates, null, 2), encoding: "utf-8" },
+      { path: "data/training.json", content: JSON.stringify(data.training, null, 2), encoding: "utf-8" },
+      { path: "data/resumes.json", content: JSON.stringify(data.resumes, null, 2), encoding: "utf-8" },
+      { path: "data/documents.json", content: JSON.stringify(data.documents, null, 2), encoding: "utf-8" },
+      { path: "data/awards.json", content: JSON.stringify(data.awards, null, 2), encoding: "utf-8" },
+      { path: "data/images.json", content: JSON.stringify(data.images, null, 2), encoding: "utf-8" },
+      { path: "data/seo.json", content: JSON.stringify(data.seo, null, 2), encoding: "utf-8" },
+      { path: "data/theme.json", content: JSON.stringify(data.theme, null, 2), encoding: "utf-8" },
+      ...prepared.binaries,
+      { path: "js/portfolio-data.js", content: DataLoader.buildBundleScript(data), encoding: "utf-8" },
     ];
-    for (const f of files) {
-      await EditorGitHub.saveJson(f.path, f.data, msg);
-    }
-    const bundle = DataLoader.buildBundleScript(data);
-    await EditorGitHub.saveText("js/portfolio-data.js", bundle, msg);
+
+    await EditorGitHub.publishBatch(files, PUBLISH_COMMIT_MESSAGE);
     window.__PORTFOLIO_RAW__ = DataLoader.buildBundleObject(data);
+    return data;
   }
 
   function cancelEdit() {

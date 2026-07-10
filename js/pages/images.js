@@ -116,7 +116,7 @@
     }
     EditorUI.closeModal();
     renderImageLibrary();
-    EditorUI.showToast("이미지 업로드 완료", "success");
+    EditorUI.showToast("Draft에 저장됐습니다. Publish로 반영하세요.", "success");
   }
 
   async function replaceImage(id, sourceKey) {
@@ -125,7 +125,6 @@
       if (!file) return;
       EditorUI.showLoading("저장 중...");
       const path = await CMS.uploadImageWithFallback(file);
-      const isLocal = path.startsWith("data:");
       if (sourceKey) {
         CMS.applyImageSource(sourceKey, path);
       } else {
@@ -139,10 +138,7 @@
       }
       EditorUI.closeModal();
       renderImageLibrary();
-      EditorUI.showToast(
-        isLocal ? "Draft에 저장됐습니다. Publish 시 GitHub 로그인이 필요합니다." : "이미지가 저장되었습니다.",
-        isLocal ? "info" : "success"
-      );
+      EditorUI.showToast("Draft에 저장됐습니다. Publish로 반영하세요.", "success");
     } catch (err) {
       EditorUI.closeModal();
       EditorUI.showToast(err?.message || "이미지 저장 실패", "error");

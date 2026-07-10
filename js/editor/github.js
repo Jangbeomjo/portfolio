@@ -1,5 +1,5 @@
 /**
- * GitHub REST API — JSON 저장, 파일 업로드, Commit History, Rollback
+ * GitHub REST API — Publish 단일 커밋, Commit History, Rollback
  */
 const EditorGitHub = (() => {
   const API = "https://api.github.com";
@@ -22,59 +22,73 @@ const EditorGitHub = (() => {
     return { sha: data.sha, content: data.content };
   }
 
-  async function saveJson(path, jsonData, message) {
-    const jsonStr = JSON.stringify(jsonData, null, 2);
-    return saveText(path, jsonStr, message);
-  }
-
-  async function saveText(path, text, message) {
+  /** Publish 전용 — 모든 파일을 단일 커밋으로 반영 */
+  async function publishBatch(fileEntries, message) {
     const { owner, repo, branch } = getRepoContext();
-    const existing = await getFile(path);
-    const encoded = btoa(unescape(encodeURIComponent(text)));
-    const body = { message, content: encoded, branch };
-    if (existing.sha) body.sha = existing.sha;
+    const headers = { ...EditorAuth.getHeaders(), "Content-Type": "application/json" };
 
-    const res = await fetch(`${API}/repos/${owner}/${repo}/contents/${path}`, {
-      method: "PUT",
-      headers: { ...EditorAuth.getHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+    const refRes = await fetch(`${API}/repos/${owner}/${repo}/git/ref/heads/${branch}`, { headers });
+    if (!refRes.ok) throw new Error("브랜치 정보를 가져오지 못했습니다.");
+    const refData = await refRes.json();
+    const parentSha = refData.object.sha;
+
+    const commitRes = await fetch(`${API}/repos/${owner}/${repo}/git/commits/${parentSha}`, { headers });
+    if (!commitRes.ok) throw new Error("최신 커밋을 가져오지 못했습니다.");
+    const parentCommit = await commitRes.json();
+
+    const treeItems = [];
+    for (const entry of fileEntries) {
+      const cleanPath = entry.path.replace(/^\.\//, "");
+      const blobBody = entry.encoding === "base64"
+        ? { content: entry.content, encoding: "base64" }
+        : { content: entry.content, encoding: "utf-8" };
+
+      const blobRes = await fetch(`${API}/repos/${owner}/${repo}/git/blobs`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(blobBody),
+      });
+      if (!blobRes.ok) {
+        const err = await blobRes.json().catch(() => ({}));
+        throw new Error(err.message || `파일 준비 실패: ${cleanPath}`);
+      }
+      const blob = await blobRes.json();
+      treeItems.push({ path: cleanPath, mode: entry.mode || "100644", type: "blob", sha: blob.sha });
+    }
+
+    const treeRes = await fetch(`${API}/repos/${owner}/${repo}/git/trees`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ base_tree: parentCommit.tree.sha, tree: treeItems }),
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `저장 실패: ${path}`);
+    if (!treeRes.ok) {
+      const err = await treeRes.json().catch(() => ({}));
+      throw new Error(err.message || "커밋 트리 생성 실패");
     }
-    return res.json();
-  }
+    const tree = await treeRes.json();
 
-  async function uploadBinary(path, file, message, options = {}) {
-    const { replace = false } = options;
-    const { owner, repo, branch } = getRepoContext();
-    const buffer = await file.arrayBuffer();
-    const bytes = new Uint8Array(buffer);
-    let binary = "";
-    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-    const encoded = btoa(binary);
-
-    const body = { message, content: encoded, branch };
-    // 교체 업로드만 기존 sha 조회 (신규 파일은 404 조회 생략)
-    if (replace) {
-      const existing = await getFile(path);
-      if (existing.sha) body.sha = existing.sha;
-    }
-
-    const res = await fetch(`${API}/repos/${owner}/${repo}/contents/${path}`, {
-      method: "PUT",
-      headers: { ...EditorAuth.getHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+    const newCommitRes = await fetch(`${API}/repos/${owner}/${repo}/git/commits`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ message, tree: tree.sha, parents: [parentSha] }),
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const msg = err.message || "";
-      if (res.status === 401) throw new Error("GitHub 로그인이 만료되었습니다. 다시 로그인해 주세요.");
-      if (/bad credentials/i.test(msg)) throw new Error("GitHub 토큰이 유효하지 않습니다. 다시 로그인해 주세요.");
-      throw new Error(msg || "파일 업로드 실패");
+    if (!newCommitRes.ok) {
+      const err = await newCommitRes.json().catch(() => ({}));
+      throw new Error(err.message || "커밋 생성 실패");
     }
-    return `./${path}`;
+    const newCommit = await newCommitRes.json();
+
+    const updateRefRes = await fetch(`${API}/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ sha: newCommit.sha }),
+    });
+    if (!updateRefRes.ok) {
+      const err = await updateRefRes.json().catch(() => ({}));
+      throw new Error(err.message || "브랜치 업데이트 실패");
+    }
+
+    return newCommit;
   }
 
   /** 최근 커밋 목록 */
@@ -113,7 +127,7 @@ const EditorGitHub = (() => {
     return `${prefix}-${Date.now().toString(36)}`;
   }
 
-  return { getFile, saveJson, saveText, uploadBinary, listCommits, getFileAtCommit, generateId };
+  return { getFile, publishBatch, listCommits, getFileAtCommit, generateId };
 })();
 
 window.EditorGitHub = EditorGitHub;

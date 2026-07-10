@@ -1,6 +1,6 @@
 /**
  * Draft / Preview / Publish 워크플로우
- * Edit → Draft 자동저장 → Preview → Diff → Publish → GitHub
+ * Edit → LocalStorage 자동저장 → Preview → Publish(단일 GitHub 커밋) → Vercel
  */
 const EditorDraft = (() => {
   let previewMode = false;
