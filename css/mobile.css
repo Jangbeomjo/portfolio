@@ -21,8 +21,15 @@
     margin-left: auto;
   }
 
-  #headerActions > :not(.theme-switcher) {
+  #headerActions > :not(.theme-switcher):not(.header-actions__btn--mobile-pinned) {
     display: none !important;
+  }
+
+  #headerActions .header-actions__btn--mobile-pinned {
+    display: inline-flex !important;
+    padding: 0.32rem 0.55rem;
+    font-size: 0.52rem;
+    min-height: 28px;
   }
 
   .site-header .theme-switcher {
@@ -188,7 +195,17 @@
   }
 
   .edit-mode .section-about .about-section-block {
-    padding: 0.58rem 0.68rem;
+    padding: 0.72rem 0.65rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .edit-mode .about-intro-lines {
+    margin: 0.75rem 0 0.45rem;
+  }
+
+  .edit-mode #aboutText,
+  .edit-mode #aboutExtra {
+    margin-bottom: 0.55rem;
   }
 
   .section-about .section-headline {
@@ -656,6 +673,110 @@
 
   .hero-body .hero-scroll {
     display: none;
+  }
+
+  .edit-mode .hero {
+    height: auto;
+    min-height: auto;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 1rem;
+  }
+
+  .edit-mode .hero-inner {
+    overflow: visible;
+    min-height: auto;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding-bottom: 1rem;
+  }
+
+  .edit-mode .hero-inner.container::before,
+  .edit-mode .hero-inner.container::after {
+    display: none;
+  }
+
+  .edit-mode .hero-portrait {
+    align-self: center;
+    width: min(160px, 52vw);
+    max-height: none;
+    order: 1;
+  }
+
+  .edit-mode .hero-eyebrow {
+    order: 0;
+    white-space: normal;
+    text-align: center;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  .edit-mode .hero-name {
+    order: 2;
+    margin: 0;
+    text-align: center;
+    font-size: clamp(1.45rem, 5.5vw, 1.75rem);
+  }
+
+  .edit-mode .hero-tagline-ko,
+  .edit-mode #heroIntro {
+    order: 3;
+    -webkit-line-clamp: unset;
+    display: block;
+    overflow: visible;
+    min-height: 2.5em;
+    margin-top: 0.35rem;
+    padding-top: 0.55rem;
+  }
+
+  .edit-mode .hero-tagline-en,
+  .edit-mode #heroTaglineEn {
+    order: 4;
+    -webkit-line-clamp: unset;
+    display: block;
+    overflow: visible;
+    min-height: 1.8em;
+    margin-top: 0.25rem;
+  }
+
+  .edit-mode .hero-links {
+    order: 5;
+    justify-content: center;
+    margin-top: 0.35rem;
+  }
+
+  .edit-mode .hero-intro-block {
+    order: 6;
+    margin-top: 0.45rem;
+    padding-top: 0.65rem;
+  }
+
+  .edit-mode .hero-mobile-bar {
+    order: 7;
+    flex: none;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+    padding-top: 0.65rem;
+    margin-top: 0.35rem;
+  }
+
+  .edit-mode .hero-chips {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .edit-mode .hero-journey {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    width: 100%;
   }
 
   .hero-intro-block {

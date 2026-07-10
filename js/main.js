@@ -750,6 +750,8 @@ function bindProjectCardClicks() {
     card.dataset.detailBound = "1";
 
     const openDetail = (e) => {
+      if (document.body.classList.contains("edit-mode")) return;
+      if (e.target.closest(".project-card__controls, [data-edit-field], .edit-ctrl-btn, .edit-add-btn")) return;
       const extLink = e.target.closest("a[href]");
       if (extLink) {
         const href = extLink.getAttribute("href");

@@ -15,29 +15,40 @@ const InlineEditor = (() => {
 
   function ensureActive() {
     const session = EditorAuth.getSession();
-    if (document.body.classList.contains("edit-mode") && session) {
+    const inEditMode = document.body.classList.contains("edit-mode") && !!session;
+    if (inEditMode) {
       if (!active) {
         active = true;
         EditorUI.showToolbar();
       }
       return true;
     }
-    return active;
+    if (active) active = false;
+    return false;
   }
 
   function syncLoggedInViewState() {
     if (!EditorAuth.getSession()) return;
-    if (document.body.classList.contains("edit-mode")) {
-      ensureActive();
-      refreshEditState();
+    if (!document.body.classList.contains("edit-mode")) {
+      active = false;
+      EditorUI.hideToolbar?.();
+      EditorUI.hidePreviewBar?.();
+      CMSHeader?.render?.();
       return;
     }
+    ensureActive();
+    refreshEditState();
+  }
+
+  function resetViewStateOnLoad() {
+    document.body.classList.remove("edit-mode", "preview-mode");
     active = false;
     EditorUI.hideToolbar?.();
-    CMSHeader?.render?.();
+    EditorUI.hidePreviewBar?.();
   }
 
   function init() {
+    resetViewStateOnLoad();
     EditorUI.init();
     bindToolbar();
     bindDelegation();
@@ -58,13 +69,14 @@ const InlineEditor = (() => {
   function bindDataPipeline() {
     let historyTimer = null;
     document.addEventListener("cms:data-changed", (e) => {
-      if (!active && !EditorAuth?.getSession?.()) return;
+      if (!ensureActive() && !EditorAuth?.getSession?.()) return;
       const recordHistory = e.detail?.recordHistory !== false && active;
       if (recordHistory) {
         clearTimeout(historyTimer);
         historyTimer = setTimeout(() => EditorHistory.push(), 400);
       }
       EditorAutosave.schedule(PortfolioStore.exportAll());
+      if (active) refreshEditState();
     });
   }
 
@@ -667,6 +679,15 @@ const InlineEditor = (() => {
       btn.className = "edit-add-btn edit-only";
       btn.dataset.for = containerId;
       btn.textContent = `+ ${label}`;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!ensureActive()) {
+          EditorUI.showToast("「편집 시작」을 눌러 편집 모드를 활성화해 주세요.", "info");
+          return;
+        }
+        btn._handler?.();
+      });
       container.insertAdjacentElement("afterend", btn);
     }
     btn._handler = handler;

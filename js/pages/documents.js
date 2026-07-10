@@ -285,7 +285,8 @@
   }
 
   function openPreviewModal(doc) {
-    const url = DocumentAccess.getFileUrl(doc);
+    const urls = DocumentAccess.getFileUrlCandidates?.(doc) || [DocumentAccess.getFileUrl(doc)].filter(Boolean);
+    const url = urls[0];
     if (!url) {
       EditorUI.showToast("파일 URL을 찾을 수 없습니다. PDF를 다시 업로드해 주세요.", "error");
       return;
@@ -327,7 +328,7 @@
     if (isPdf) {
       requestAnimationFrame(() => {
         const container = document.getElementById("docPreviewPdf");
-        renderPdfViewer(container, url).catch((err) => {
+        renderPdfViewer(container, urls).catch((err) => {
           EditorUI.showToast(err.message || "PDF 미리보기에 실패했습니다.", "error");
           if (container) {
             container.innerHTML = `<p class="doc-empty-hint">${CMS.esc(err.message || "PDF 미리보기에 실패했습니다.")}</p>`;
@@ -381,17 +382,27 @@
     return pdfJsLoadPromise;
   }
 
-  async function fetchPdfData(url) {
-    if (url.startsWith("data:")) {
-      const base64 = url.split(",")[1];
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      return bytes.buffer;
+  async function fetchPdfData(urlOrUrls) {
+    const urls = Array.isArray(urlOrUrls) ? urlOrUrls : [urlOrUrls];
+    let lastErr = null;
+    for (const url of urls) {
+      if (!url) continue;
+      try {
+        if (url.startsWith("data:")) {
+          const base64 = url.split(",")[1];
+          const binary = atob(base64);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          return bytes.buffer;
+        }
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.arrayBuffer();
+      } catch (err) {
+        lastErr = err;
+      }
     }
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("PDF 파일을 불러오지 못했습니다.");
-    return res.arrayBuffer();
+    throw new Error(lastErr?.message || "PDF 파일을 불러오지 못했습니다.");
   }
 
   function measurePdfScale(container, baseWidth) {
@@ -408,12 +419,12 @@
   }
 
   /** PDF.js — 1페이지 먼저 표시, 나머지는 스크롤 시 렌더 */
-  async function renderPdfViewer(container, url) {
+  async function renderPdfViewer(container, urlOrUrls) {
     if (!container) throw new Error("미리보기 영역을 찾지 못했습니다.");
 
     const pdfjsLib = await loadPdfJs();
     container.innerHTML = `<p class="doc-preview-loading">문서 불러오는 중...</p>`;
-    const data = await fetchPdfData(url);
+    const data = await fetchPdfData(urlOrUrls);
     const pdf = await pdfjsLib.getDocument({ data }).promise;
 
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));

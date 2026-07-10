@@ -317,6 +317,7 @@ const CMS = (() => {
 
   /** 공통 리스트 컨트롤 클릭 (Event Delegation) */
   function handleListAction(btn) {
+    if (!document.body.classList.contains("edit-mode") || !EditorAuth?.getSession?.()) return;
     const action = btn.dataset.listAction;
     const listKey = btn.dataset.listKey;
     const id = btn.dataset.listId;
@@ -328,6 +329,7 @@ const CMS = (() => {
   }
 
   function handleLineAction(btn) {
+    if (!document.body.classList.contains("edit-mode") || !EditorAuth?.getSession?.()) return;
     deleteProfileLine(btn.dataset.lineKey, btn.dataset.lineId);
   }
 

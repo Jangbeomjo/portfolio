@@ -102,10 +102,31 @@ const DocumentAccess = (() => {
   }
 
   function getFileUrl(doc) {
-    if (!doc) return "";
+    const urls = getFileUrlCandidates(doc);
+    return urls[0] || "";
+  }
+
+  /** Draft 캐시 → resolve → 로컬 → GitHub raw 순으로 시도 */
+  function getFileUrlCandidates(doc) {
+    if (!doc) return [];
     const path = doc.storage?.path || doc.fileUrl || "";
-    if (!isDocumentAsset(path)) return "";
-    return path ? CMS.resolveAssetUrl(path) : "";
+    if (!isDocumentAsset(path)) return [];
+    const urls = [];
+    const add = (url) => {
+      if (url && !urls.includes(url)) urls.push(url);
+    };
+
+    if (/^(https?:|blob:|data:)/.test(path)) {
+      add(path);
+      return urls;
+    }
+
+    add(CMS.getImagePreviewUrl?.(path));
+    add(CMS.resolveAssetUrl?.(path));
+    const clean = path.replace(/^\.\//, "");
+    add(CMS.localAssetUrl?.(path));
+    add(CMS.githubRawUrl?.(clean));
+    return urls;
   }
 
   /** 사이트 내부 HTML 페이지는 문서 파일로 취급하지 않음 */
@@ -272,25 +293,16 @@ const DocumentAccess = (() => {
 
   async function downloadFile(doc) {
     const path = doc.storage?.path || doc.fileUrl || "";
-    let url = getFileUrl(doc);
-    if (!url) throw new Error("파일이 없습니다.");
+    const urls = getFileUrlCandidates(doc);
+    if (!urls.length) throw new Error("파일이 없습니다.");
     const ext = doc.fileType ? `.${doc.fileType}` : "";
     const name = `${doc.name}${ext}`;
     const wm = doc.access?.watermarkOnDownload;
     const isImage = ["png", "jpg", "jpeg", "webp", "gif"].includes(doc.fileType);
 
     if (wm && isImage && !isEditMode()) {
-      await downloadWithWatermark(url, name, `${doc.name} — Confidential`);
+      await downloadWithWatermark(urls[0], name, `${doc.name} — Confidential`);
       return;
-    }
-
-    const urls = [url];
-    const clean = path.replace(/^\.\//, "");
-    if (clean.startsWith("assets/docs/") || clean.startsWith("assets/images/")) {
-      const raw = CMS.githubRawUrl?.(clean) || "";
-      if (raw && !urls.includes(raw)) urls.push(raw);
-      const local = CMS.localAssetUrl?.(path) || "";
-      if (local && !urls.includes(local)) urls.push(local);
     }
 
     for (const tryUrl of urls) {
@@ -302,7 +314,7 @@ const DocumentAccess = (() => {
         return;
       } catch { /* try next */ }
     }
-    triggerDownload(url, name);
+    triggerDownload(urls[0], name);
   }
 
   async function openFile(doc, { inline = true } = {}) {
@@ -349,7 +361,7 @@ const DocumentAccess = (() => {
   }
 
   return {
-    normalize, normalizeAll, getContext, getFileUrl, hasFile, isDocumentAsset,
+    normalize, normalizeAll, getContext, getFileUrl, getFileUrlCandidates, hasFile, isDocumentAsset,
     isAdmin, isEditMode, hasDocAccess, canList, canPreview, canOpen, canDownload,
     visibilityLabel, classificationLabel, badgeClass,
     hashPassword, verifyPassword, unlockDoc, generateShareToken, buildShareLink,
