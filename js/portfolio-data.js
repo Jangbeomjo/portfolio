@@ -1,4 +1,4 @@
-/** Auto-generated — file:// fallback. Run: python scripts/bundle-data.py */
+/** Auto-generated — file:// fallback */
 window.__PORTFOLIO_RAW__ = {
   "profile": {
     "name": "장범조",
@@ -36,32 +36,7 @@ window.__PORTFOLIO_RAW__ = {
         "order": 1
       }
     ],
-    "heroJourney": [
-      {
-        "id": "hj-1",
-        "year": "2021",
-        "label": "국민대 SW학과",
-        "order": 0
-      },
-      {
-        "id": "hj-2",
-        "year": "2024",
-        "label": "빅데이터 과정",
-        "order": 1
-      },
-      {
-        "id": "hj-3",
-        "year": "2025",
-        "label": "PAWS 배포",
-        "order": 2
-      },
-      {
-        "id": "hj-4",
-        "year": "2026",
-        "label": "졸업 예정",
-        "order": 3
-      }
-    ],
+    "heroJourney": [],
     "avatar": "./assets/images/1783665769957-img_4643.jpeg",
     "aboutImage": "./assets/profile.png",
     "backgroundImage": "",
@@ -79,7 +54,39 @@ window.__PORTFOLIO_RAW__ = {
       "growth": "국민대학교 소프트웨어학과에서 백엔드와 데이터베이스를 집중적으로 학습했습니다.",
       "strengths": "문제 해결력, 꼼꼼함, End-to-End 개발 경험",
       "collaboration": "헬스포인터 팀 프로젝트에서 API 설계 및 백엔드 개발을 담당했습니다.",
-      "goals": "안정적인 서비스를 설계하고 운영하는 백엔드 엔지니어가 되겠습니다."
+      "goals": "안정적인 서비스를 설계하고 운영하는 백엔드 엔지니어가 되겠습니다.",
+      "sections": [
+        {
+          "id": "as-tagline",
+          "label": "한 줄 소개",
+          "text": "어려움을 성장의 기회로 바꾸며 끊임없이 도전하는 개발자",
+          "order": 0
+        },
+        {
+          "id": "as-growth",
+          "label": "성장 과정",
+          "text": "국민대학교 소프트웨어학과에서 백엔드와 데이터베이스를 집중적으로 학습했습니다.",
+          "order": 2
+        },
+        {
+          "id": "as-strengths",
+          "label": "강점",
+          "text": "문제 해결력, 꼼꼼함, End-to-End 개발 경험",
+          "order": 3
+        },
+        {
+          "id": "as-collaboration",
+          "label": "협업 경험",
+          "text": "헬스포인터 팀 프로젝트에서 API 설계 및 백엔드 개발을 담당했습니다.",
+          "order": 4
+        },
+        {
+          "id": "as-goals",
+          "label": "목표",
+          "text": "안정적인 서비스를 설계하고 운영하는 백엔드 엔지니어가 되겠습니다.",
+          "order": 5
+        }
+      ]
     },
     "menu": [
       {
@@ -134,7 +141,7 @@ window.__PORTFOLIO_RAW__ = {
       "resume": "./pages/resume.html"
     },
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "projects": {
@@ -213,7 +220,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "skills": {
@@ -300,7 +307,7 @@ window.__PORTFOLIO_RAW__ = {
       "Git"
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "education": {
@@ -331,7 +338,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "experience": {
@@ -376,7 +383,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "certificates": {
@@ -391,7 +398,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "training": {
@@ -407,7 +414,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "awards": {
@@ -423,7 +430,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "seo": {
@@ -442,7 +449,7 @@ window.__PORTFOLIO_RAW__ = {
       ]
     },
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "theme": {
@@ -474,7 +481,7 @@ window.__PORTFOLIO_RAW__ = {
       "titleScale": 1
     },
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "resumes": {
@@ -597,7 +604,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   },
   "documents": {
@@ -694,14 +701,14 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z",
+      "updatedAt": "2026-07-10T18:04:23.498Z",
       "storageNote": "storage.provider: github | supabase | s3 — path/bucket/key로 클라우드 이전 가능"
     }
   },
   "images": {
     "items": [],
     "meta": {
-      "updatedAt": "2026-07-10T06:53:28.892Z"
+      "updatedAt": "2026-07-10T18:04:23.498Z"
     }
   }
 };
