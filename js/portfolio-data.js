@@ -1,4 +1,4 @@
-/** Auto-generated — file:// fallback. Run: python scripts/bundle-data.py */
+/** Auto-generated — file:// fallback */
 window.__PORTFOLIO_RAW__ = {
   "profile": {
     "name": "장범조",
@@ -36,11 +36,11 @@ window.__PORTFOLIO_RAW__ = {
         "order": 1
       }
     ],
-    "avatar": "./assets/profile.png",
+    "avatar": "./assets/images/1783665769957-img_4643.jpeg",
     "aboutImage": "./assets/profile.png",
     "backgroundImage": "",
-    "educationImage": "",
-    "educationPanelBackground": "",
+    "educationImage": "./assets/images/1783665791761-beauty_1662860172772_original.jpeg",
+    "educationPanelBackground": "./assets/images/1783665974174-img_2586.jpeg",
     "activitiesBackgroundImage": "",
     "logo": "",
     "contactLead": "언제나 환영합니다.",
@@ -107,7 +107,7 @@ window.__PORTFOLIO_RAW__ = {
       "resume": "./pages/resume.html"
     },
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "projects": {
@@ -129,7 +129,7 @@ window.__PORTFOLIO_RAW__ = {
         "github": "https://kookmin-sw.github.io/2026-capstone-61/",
         "deployUrl": "",
         "thumb": "paws",
-        "thumbnail": "",
+        "thumbnail": "./assets/images/1783665864067-img_4657_original.jpeg",
         "images": [],
         "pdf": "",
         "videoUrl": "",
@@ -186,7 +186,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "skills": {
@@ -273,7 +273,7 @@ window.__PORTFOLIO_RAW__ = {
       "Git"
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "education": {
@@ -304,7 +304,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "experience": {
@@ -349,7 +349,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "certificates": {
@@ -364,7 +364,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "training": {
@@ -380,7 +380,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "awards": {
@@ -396,7 +396,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "seo": {
@@ -415,7 +415,7 @@ window.__PORTFOLIO_RAW__ = {
       ]
     },
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "theme": {
@@ -439,7 +439,7 @@ window.__PORTFOLIO_RAW__ = {
     },
     "animations": true,
     "meta": {
-      "updatedAt": "2026-07-10T00:00:00.000Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "resumes": {
@@ -562,7 +562,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   },
   "documents": {
@@ -659,14 +659,14 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z",
+      "updatedAt": "2026-07-10T06:46:30.926Z",
       "storageNote": "storage.provider: github | supabase | s3 — path/bucket/key로 클라우드 이전 가능"
     }
   },
   "images": {
     "items": [],
     "meta": {
-      "updatedAt": "2026-07-09T16:50:22.007Z"
+      "updatedAt": "2026-07-10T06:46:30.926Z"
     }
   }
 };
