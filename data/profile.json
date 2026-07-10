@@ -39,7 +39,7 @@
   "aboutImage": "./assets/profile.png",
   "backgroundImage": "",
   "educationImage": "./assets/images/1783665791761-beauty_1662860172772_original.jpeg",
-  "educationPanelBackground": "./assets/images/1783665974174-img_2586.jpeg",
+  "educationPanelBackground": "",
   "activitiesBackgroundImage": "",
   "logo": "",
   "contactImage": "./assets/profile.png",
@@ -139,6 +139,6 @@
     "resume": "./pages/resume.html"
   },
   "meta": {
-    "updatedAt": "2026-07-10T18:04:23.498Z"
+    "updatedAt": "2026-07-10T18:09:38.138Z"
   }
 }

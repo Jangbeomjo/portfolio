@@ -41,7 +41,7 @@ window.__PORTFOLIO_RAW__ = {
     "aboutImage": "./assets/profile.png",
     "backgroundImage": "",
     "educationImage": "./assets/images/1783665791761-beauty_1662860172772_original.jpeg",
-    "educationPanelBackground": "./assets/images/1783665974174-img_2586.jpeg",
+    "educationPanelBackground": "",
     "activitiesBackgroundImage": "",
     "logo": "",
     "contactImage": "./assets/profile.png",
@@ -141,7 +141,7 @@ window.__PORTFOLIO_RAW__ = {
       "resume": "./pages/resume.html"
     },
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "projects": {
@@ -220,7 +220,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "skills": {
@@ -307,7 +307,7 @@ window.__PORTFOLIO_RAW__ = {
       "Git"
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "education": {
@@ -338,7 +338,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "experience": {
@@ -383,7 +383,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "certificates": {
@@ -398,7 +398,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "training": {
@@ -414,7 +414,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "awards": {
@@ -430,7 +430,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "seo": {
@@ -449,7 +449,7 @@ window.__PORTFOLIO_RAW__ = {
       ]
     },
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "theme": {
@@ -481,7 +481,7 @@ window.__PORTFOLIO_RAW__ = {
       "titleScale": 1
     },
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "resumes": {
@@ -604,7 +604,7 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   },
   "documents": {
@@ -701,14 +701,14 @@ window.__PORTFOLIO_RAW__ = {
       }
     ],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z",
+      "updatedAt": "2026-07-10T18:09:38.138Z",
       "storageNote": "storage.provider: github | supabase | s3 — path/bucket/key로 클라우드 이전 가능"
     }
   },
   "images": {
     "items": [],
     "meta": {
-      "updatedAt": "2026-07-10T18:04:23.498Z"
+      "updatedAt": "2026-07-10T18:09:38.138Z"
     }
   }
 };
