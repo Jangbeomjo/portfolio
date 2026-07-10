@@ -394,7 +394,11 @@ function renderHeroJourney(profile) {
   }
 
   el.style.display = "";
-  el.style.setProperty("--journey-cols", String(Math.max(fallback.length, 1)));
+  const count = fallback.length;
+  el.style.setProperty("--journey-cols", String(Math.max(count, 1)));
+  el.classList.remove("hero-journey--compact", "hero-journey--dense");
+  if (count > 4) el.classList.add("hero-journey--compact");
+  if (count > 5) el.classList.add("hero-journey--dense");
   el.innerHTML = fallback.map(
     (m) => `<div class="hero-journey__item edit-list-item" data-edit-list="heroJourney" data-edit-id="${m.id}">
       <strong data-edit-field="year">${esc(m.year)}</strong>
